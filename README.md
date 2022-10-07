@@ -20,5 +20,6 @@ This extension aims to enhance UX around `Course Results/成績照会` page on K
 p.s.
 *The developer is currently considering adding an academic plan interface that  enables freshman/sophomore students to conveniently formulate plans on taking courses throughout their undergraduate career.*
 
-
+## Reasons
+QCampusmate Mate is a web application by itself. The only reason that it is released as a browser extension is that one of the two critical data the application depends on, i.e., the grade record of a student, is available only through explicit accessing the KyuDai campusmate's transcript? page. Since we do not, in principle, store a student's grade in our server, there's no need for user authentication as normal web apps that deal with private user assets. Also, as a content script within browser extensions can be silently injected into a webpage, doing web scraping in the background this ways provide s smoother user experience.
 
