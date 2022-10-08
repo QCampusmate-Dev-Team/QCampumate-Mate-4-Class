@@ -5,6 +5,7 @@
     <button @click="export_j">JSON</button>
     <input type="checkbox" id="isRandom" v-model="checked">
     <label for="isRandom">Randomize</label>
+    <button @click="openTab">open checker</button>
   </div>
 </template>
 
@@ -20,7 +21,14 @@ export default {
   methods: {
     load_: loadTranscript,
     export_x: exportTranscript,
-    export_j: exportTranscriptJSON
+    export_j: exportTranscriptJSON,
+    openTab: function() {
+      let url = chrome.runtime.getURL("checker.html");
+      chrome.windows.create({
+        url,
+        type: "popup",
+      });
+    }
   },
 };
 </script>

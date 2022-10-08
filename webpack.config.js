@@ -49,12 +49,13 @@ function configFunc(env, argv) {
     plugins: [
       new VueLoaderPlugin(),
       new CleanWebpackPlugin({
-        cleanStaleWebpackAssets: false,
+        cleanStaleWebpackAssets: true,
       }),
       new CopyWebpackPlugin({
         patterns: [
           // { from: 'assets', to: 'assets' },
-          { from: 'manifest.json', to: 'manifest.json' }
+          { from: 'manifest.json', to: 'manifest.json' },
+          { from: 'checker.html', to: 'checker.html' }
         ]
       }),
       new HtmlWebpackPlugin({
