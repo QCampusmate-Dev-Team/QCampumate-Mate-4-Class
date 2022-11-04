@@ -1,0 +1,13 @@
+{
+  "name": "QCampusmate Mate 4 Class",
+  "description": "Export your transcript at Kyushu University in excel format.",
+  "version": "1.0.0",
+  "manifest_version": 3,
+  "action": { "default_popup": "index.html" },
+  "permissions": [
+    "storage",
+    "activeTab",
+    "tabs",
+    "scripting"
+  ]
+}

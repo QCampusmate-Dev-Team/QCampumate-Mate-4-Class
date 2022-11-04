@@ -32,8 +32,8 @@ function load(isRandomized) {
   }
   ////////////////////////////////////////
   function toHalfSize(str){
-    if (str.length !== 1) throw new Error('toHalfSize: str.length !== 1');
-    return String.fromCharCode(str.charCodeAt(0) - 65248);
+    if (str.length == 1) return String.fromCharCode(str.charCodeAt(0) - 65248);
+    // throw new Error(`toHalfSize: str.length !== 1, str=${str}`);
   }
 
 

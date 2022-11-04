@@ -6,10 +6,10 @@
     "lib": "lib"
   },
   "scripts": {
-    "lint": "eslint --ext .js,.vue --fix ./src",
-    "dev": "webpack --mode=development  --progress --hot --watch",
-    "pack": "webpack --mode=production  --progress",
-    "build": "npm run pack"
+    "dev": "vite",
+    "build": "vue-tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test": "vitest"
   },
   "repository": {
     "type": "git",
@@ -39,25 +39,24 @@
     "@babel/core": "^7.17.10",
     "@babel/eslint-parser": "^7.19.1",
     "@babel/preset-env": "^7.17.10",
-    "@vue/compiler-sfc": "^3.2.40",
+    "@crxjs/vite-plugin": "^1.0.14",
+    "@types/chrome": "^0.0.197",
+    "@types/node": "^18.8.3",
+    "@vitejs/plugin-vue": "^3.1.0",
+    "@vitest/coverage-c8": "^0.24.5",
+    "@vitest/ui": "^0.24.5",
     "archiver": "^5.3.1",
     "babel-loader": "^8.2.5",
-    "clean-webpack-plugin": "^4.0.0",
-    "copy-webpack-plugin": "^10.2.4",
-    "css-loader": "^6.7.1",
     "eslint": "^8.14.0",
     "eslint-config-standard": "^17.0.0",
     "eslint-plugin-html": "^6.2.0",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^6.0.0",
-    "file-loader": "^6.2.0",
-    "html-webpack-plugin": "^5.5.0",
-    "url-loader": "^4.1.1",
-    "vue-loader": "^17.0.0",
-    "vue-style-loader": "^4.1.3",
-    "webpack": "^5.45.0",
-    "webpack-cli": "^4.9.2",
-    "webpack-extension-reloader": "^1.1.4"
+    "jsdom": "^20.0.2",
+    "typescript": "^4.6.4",
+    "vite": "^3.1.0",
+    "vitest": "^0.24.5",
+    "vue-tsc": "^0.40.4"
   }
 }
