@@ -10,7 +10,6 @@
   <KeepAlive>
     <HelloWorld msg="User Settings" v-if="vis"/>
   </KeepAlive>
-
   <button @click="load(checked)">Load</button>
   <button @click="exportXLSX">Excel</button>
   <button @click="exportJSON">JSON</button>
@@ -19,30 +18,39 @@
 
   <button @click="toggle">Toggle Page</button>
   <button @click="openTab">Open DRC</button>
+  <button @click="testSW">testSW</button>
 </template>
 
 <script setup>
-import { loadTranscript as load, exportTranscript as exportXLSX, exportTranscriptJSON as exportJSON } from "../contentScripts/index.js";
+import { loadTranscript as load, exportTranscript as exportXLSX, exportTranscriptJSON as exportJSON } from "../contentScripts/index";
+import openTab from '../utils/openTab'
 import HelloWorld from '../components/HelloWorld.vue'
-import { ref } from 'vue'
-
+import { ref, onMounted} from 'vue'
 
 const vis = ref(false)
 const checked = ref(false)
 
+// hooks
+onMounted(() => {
+//  alert("mounted")
+ const DRCTree = {a: 1}
+ const AP = [1, 2, 3]
+ chrome.storage.local.set({ DRCTree, AP }, function () {
+    // alert(`Setting DRCTree & AP's initial value. DRCTree: ${JSON.stringify(DRCTree)}, AP: ${AP}`)
+  })
+})
+
+// handlers
 const toggle = () => {
   vis.value = !vis.value;
   alert(vis)
 }
 
-const openTab = () => {
-  let url = chrome.runtime.getURL("./src/drc/index.html");
-  chrome.windows.create({
-    url, 
-    type: 'popup',
-  })
+const testSW = () => {
+  chrome.runtime.sendMessage({msg: "hello"}, function(response) {
+    alert(response.farewell);
+  });
 }
-
 </script>
 
 <style scoped>

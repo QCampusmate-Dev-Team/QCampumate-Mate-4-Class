@@ -9,11 +9,12 @@
     "sourceMap": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "lib": ["ESNext", "DOM"],
+    "lib": ["ESNext", "dom", "dom.iterable"],
     "skipLibCheck": true,
-    "types": ["chrome", "vitest/globals"],
+    "types": ["chrome", "vitest/globals", "element-plus/global"],
     "allowJs": true
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue", "src/extension/manifest.json"],
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue", "src/extension/manifest.json", "test/*.test.ts", "locals/*.test.ts", "locals/**/*.vue"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
+
