@@ -1,9 +1,28 @@
-/* This files provides functions for data synchronization */
+/* This files provides utility functions for synchronization between data in the view model and client storage*/
 /* Execution context is expected to be in a Service Worker context */
-
 import { PlannerTable, GradeEntry } from '../../lib/types'
 import { filterBy } from '../drc/DRC'
 
+/** (Think about potential validations needed upon saving..)
+ *  Save <currAP> along side
+ */
+export function savePlannerTable(plannerTable: PlannerTable, currAP: number) {
+
+  chrome.storage.local.get(['PlannerTables'], ({PlannerTables}) => {
+    PlannerTables[currAP] = plannerTable
+  })
+  chrome.storage.local.set({PlannerTables: plannerTables, currAP}, () => {
+    chrome.storage.local.get(['PlannerTables', 'currAP'], ({PlannerTables, currAP}) => {
+      console.log(`in sync.ts, savePlannerTable(): saved PlannerTables, count: ${PlannerTables.length}, currAP: ${currAP}`)
+    })
+  })
+}
+
+/**
+ * Update stored planner tables when course grades are imported. If neccessary, merge imported course grade entries and existing planned course entries.
+ * Reference: notion...
+ * @param course_grades 
+ */
 export function updatePlannerTables(course_grades: GradeEntry[]) {
   console.log("updatePlannerTables(course_grades: GradeEntry[]) is called")
   chrome.storage.local.get(['PlannerTables'], ({ PlannerTables }) => {
@@ -16,7 +35,7 @@ export function updatePlannerTables(course_grades: GradeEntry[]) {
     
     chrome.storage.local.set({ PlannerTables }, () => {
       console.log('Planner tables updated! length:', PlannerTables.length)
-      console.log(JSON.stringify(PlannerTables))
+      // console.log(JSON.stringify(PlannerTables))
     })
   })
 }

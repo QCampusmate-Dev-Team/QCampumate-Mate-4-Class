@@ -191,7 +191,7 @@ function load(isRandomized: boolean){
             courseRecord[theadNames[index]] = gpa;
             courseRecord['letter_evaluation'] = gp_to_letter(gpa);
           } else { // if gp is empty or non-number representation
-            courseRecord[theadNames[index]] = undefined; // gpa=undefined
+            courseRecord[theadNames[index]] = NaN; // gpa=undefined
           }
         } else if (index === 2 && item.textContent.trim()) { 
           // for non empty letter evaluation, convert to half-size

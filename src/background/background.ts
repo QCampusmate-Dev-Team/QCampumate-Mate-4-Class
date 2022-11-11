@@ -1,4 +1,4 @@
-import openTab from '../utils/openTab'
+import openTab from '../utils/openDRC'
 import { updatePlannerTables } from '../utils/sync' 
 
 /*global chrome */

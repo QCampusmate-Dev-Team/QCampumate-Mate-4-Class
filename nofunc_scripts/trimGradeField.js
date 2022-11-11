@@ -22,7 +22,19 @@ function useSTDIN() {
         console.log(grades)
         break
       default:
-        const pick = ({ category, subject, unit, year, subject_number }) => ({ category, subject, unit, year, subject_number, })
+        console.log("DEFAULT!!!")
+        // const pick = ({ category, subject, unit, year, subject_number }) => ({ category, subject, unit, year, subject_number, })
+        const pick = (grade) => {
+          const picked = {}
+          Array.from(args).forEach(k => {
+            if (grade.hasOwnProperty(k)) {
+              picked[k] = grade[k]
+            } else {
+              console.warn(`WARN: Key ${k} is not found in object ${grade}, skipping...\n`)
+            }
+          })
+          return picked
+        }
         const trimmedGrades = grades.map ? grades.map(grade => pick(grade)) : [pick(grades)]
         console.log(trimmedGrades)
     }

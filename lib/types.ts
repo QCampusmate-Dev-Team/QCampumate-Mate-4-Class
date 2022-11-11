@@ -52,11 +52,14 @@ interface ExIncludeOptions {
 }
 
 export interface Course {
-  subjectName: string;
-  school: School;
-  major: string | undefined;
-  subjectCode: string | undefined;
-  unit: number;
+  subject: string;
+  school?: School;
+  major?: string | undefined;
+  subjectCode?: string | undefined;
+  unit?: number;
+  target_students_from?: stringOrUndefined;
+  target_year?: stringOrUndefined;
+  quarter?: Quarter;
 }
 
 
@@ -77,10 +80,10 @@ undefined;
 export type numberOrUndefined = number | undefined;
 export type stringOrUndefined = string | undefined;
 
-export interface GradeEntry {
+
+
+export interface GradeEntry extends Course{ // GradeEntry should extend Course!! FIX THE INCONSISTENCY IN PROPERTY NAMES!!
   category?: CourseCategory,
-  subject: string,
-  unit?: number | undefined,
   letter_evaluation?: LetterEvaluation,
   gpa?: number | undefined,
   year?: number | undefined,
@@ -91,9 +94,17 @@ export interface GradeEntry {
   last_updated?: Date | undefined;
 }
 
+export interface _PlannerTableEntry extends GradeEntry {
+  isPlan: boolean;
+  plan_entry_id: number; 
+}
+
+// need to fix the duplicate code between GradeEntry and Course
+// FIGURE OUT THE RIGHT INHERITANCE STRUCTURE!!
+export type PlannerTableEntry = _PlannerTableEntry | GradeEntry | Course;
 
 export interface PlannerTable {
-  [year: number]: [GradeEntry[], GradeEntry[]]; // [前期, 後期]
+  [year: number]: [PlannerTableEntry[], PlannerTableEntry[]]; // [前期, 後期]
 }
 
 export interface GradeFilterOptions {

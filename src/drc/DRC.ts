@@ -1,7 +1,13 @@
 import * as ftrCompiler from './FilterCompiler'
 import { ref, reactive, Ref, UnwrapNestedRefs} from 'vue'
-import { GradeEntry, GradeFilterOptions, PlannerTable} from '../../lib/types';
+import { Course, GradeEntry, GradeFilterOptions, PlannerTable, PlannerTableEntry, _PlannerTableEntry } from '../../lib/types';
+import { savePlannerTable } from '../utils/sync'
+import { keysOf } from 'element-plus/es/utils';
 // import store from '../store/index.js'
+
+const LETTER_TO_GP = {
+  'A': 4, 'B': 3, 'C': 2, 'D': 1, 'F': 0,
+};
 
 interface DRCTree {
 }
@@ -10,9 +16,10 @@ interface DRCTreeNode {
 }
 
 class DRC {
-  ap: UnwrapNestedRefs<any>
+  ap: UnwrapNestedRefs<PlannerTable>
   tree: Ref<any>; // the DRC Tree
   drLeaves: any; //DRCTreeNode[]
+  currAP: number;
 
   constructor() {
     console.log("DRC constructor")
@@ -34,18 +41,86 @@ class DRC {
     
     chrome.storage.local.get(['DRCTree', "PlannerTables", "currAP"], ({ DRCTree, currAP, PlannerTables}) => {
       // console.log(`In DRC.ts, initialize(): ${JSON.stringify(DRCTree)}`)
-      this.tree.value = DRCTree
       if (!PlannerTables[currAP]) {
         alert(`Unexpected undefined: PlannerTables[${currAP}] is undefined!!`)
       }
       console.log("in DRC.ts, initialize() ", PlannerTables[currAP])
+
+      this.tree.value = DRCTree
       Object.assign(this.ap, PlannerTables[currAP])
+      this.currAP = currAP
     })
   }
 
-  public addCourseToAP() {
-    this.ap.value.push(10)
+  /**
+   * Add an empty year table to current plannerTable
+   * @returns void
+   */
+  public addNextYearToAP(): void {
+    const maxYear = this.getMaxYearInAP()
+    this.ap[maxYear+1] = [[], []]
   }
+
+  /**
+   * @returns {number}the maximum year in the current AP
+   */
+  public getMaxYearInAP(): number {
+    const years = Object.keys(this.ap).map(y => parseInt(y))
+    return Math.max(...years)
+  }
+
+  /** 1. Add multiple courses to the AP, 
+   *  2. Update PlannerTables in client storage 
+   * 
+   *  Considerations: keep the number of function calls low, so as to minimize the overhead of background synchronization 
+   * @param courses 
+   * @param year 
+   * @param quarter 
+   */
+  public addCourses(courses: Course[], year: number, quarter: 0 | 1) {
+    if ((year in this.ap)) {
+      console.log(`in DRC.ts, addCourses(): add courses to year${year}, quarter ${quarter ? "後期" : "前期"}`)
+      alert(`adding courses:${JSON.stringify(courses, null, 2)}`)
+
+      this.ap[year][quarter].push(...courses)
+      // for (let course of courses)
+      //   this.addCourseToAP(course, year, quarter)
+
+      // savePlannerTable(this.ap, this.currAP)
+    } else {
+      throw Error(`ERR!! Non-existing year or quarter! Attempt to add courses to ${year}, ${quarter}`)
+    }
+  }
+
+  public deleteCourses(deleteKeys: number[], year: number, quarter: 0 | 1) {
+    // delete courses from the AP
+    for (let k of deleteKeys) 
+      this.deleteCourseFromAP(k, year, quarter)
+
+    // update PlannerTables in client storage
+    savePlannerTable(this.ap, this.currAP)
+  }
+
+  /** Adding a single 
+   * 
+   * @param course 
+   * @param year 
+   * @param quarter 
+   */
+  private addCourseToAP(course: Course, year:number, quarter: 0 | 1) {
+    this.ap[year][quarter].push(course)
+  }
+
+  public deleteCourseFromAP(key: number, year: number, quarter: 0 | 1) {
+    // const i = this.ap.find(courseKey)
+    if((year in this.ap)) {
+      const delIdx = this.ap[year][quarter].findIndex((c:_PlannerTableEntry) => c.plan_entry_id === key)
+      this.ap[year][quarter].splice(delIdx, 1)
+    } else {
+      alert(`ERR!! in DRC.ts, deleteCourseFromAP(): ${year} is not a key of this.ap.`)
+    }
+  }
+
   private dumpDRC() {
     // send a DUMP_DRC message to service worker
   }
@@ -142,20 +217,31 @@ function aggregate(obj:GradeFilterOptions, planner_table: PlannerTable) {
   const { quarter, year, category } = obj;
   if (!(year)) console.error('Option is missing `year` key');
 
-  const LETTER_TO_GP = {
-    'A': 4, 'B': 3, 'C': 2, 'D': 1, 'F': 0,
-  };
+
   const plannerTable = typeof quarter === 'undefined' ? planner_table[year].flat() : planner_table[year][quarter];
   // console.log(plannerTable, quarter, year, category);
 
+
+  
   const grade_statistics = plannerTable
     .filter(
-      (e) => ['A', 'B', 'C', 'D', 'F']
-        .includes(e.letter_evaluation),
+      (e:GradeEntry | _PlannerTableEntry) => ['A', 'B', 'C', 'D', 'F']
+        .includes(e.letter_evaluation) || (e as _PlannerTableEntry).isPlan
     )// Process only A, B, C, D, F courses
-    .filter((e) => (typeof (category) === 'string' ? e.category === category : true))
-    .reduce((agg, e) => {
-      const { unit, letter_evaluation, gpa } = e
+    .filter((e:GradeEntry | _PlannerTableEntry) => (typeof (category) === 'string' ? e.category === category : true))
+    .reduce((agg, e: GradeEntry | _PlannerTableEntry) => {
+      const { unit, letter_evaluation, gpa } = e as GradeEntry | _PlannerTableEntry
+      
+      console.log(quarter, year)
+      if (quarter ==0 && year == 2023) {
+        console.log(`in DRC.ts, aggregate(): ${e}`)
+      }
+      // if is a plan entry...
+      if ((e as _PlannerTableEntry).isPlan){
+        console.log(`in DRC.ts, aggregate(): is a plan entry ${e}`)
+        agg.passed_units += unit;
+        return agg;
+      }
 
       if (e.subject === '基幹教育セミナー') {
         // console.log(gpa === 0 && letter === 'F');
@@ -174,7 +260,7 @@ function aggregate(obj:GradeFilterOptions, planner_table: PlannerTable) {
         agg.passed_units += unit;
         agg[letter_evaluation][0] += unit;
         agg[letter_evaluation][1] += totalGpa;
-      }
+      } 
       return agg;
     }, {
       total_gpa_units: 0,

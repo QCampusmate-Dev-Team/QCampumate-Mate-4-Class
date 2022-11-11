@@ -8,6 +8,25 @@
   :row-class-name="tableRowClassName"
   :cell-style="{padding:'5px'}"
   :show-header="false" border>
+
+
+    <el-table-column 
+      v-if="editable" 
+      prop="plan_entry_id" 
+      label="plan_entry_id" 
+      width="38"> 
+      <template #default="scope">
+        <el-button 
+          style="width: 16px;height:16px"
+          type="danger" 
+          size="small" 
+          icon="Minus"
+          @click="$emit('deleteCourse', { plan_entry_id: scope.row.plan_entry_id, year, quarter })"
+          circle />
+        <!-- <el-icon><Minus /></el-icon> -->
+        <!-- @click="deleteCourse(scope.row.plan_entry_id, scope.row.year, scope.row.quarter)" -->
+      </template>
+    </el-table-column>
     <el-table-column
       prop="subject"
       label="Subject"
@@ -23,6 +42,7 @@
       align="right"
     >
     <!-- effect="dark" -->
+    <!--  circle -->
       <template #default="scope">
         <el-tag
           v-if="scope.row.unit"
@@ -34,14 +54,11 @@
         </el-tag>
       </template>
     </el-table-column>
+    
   </el-table>
+
 </template>
 <style lang="scss">
-  .el-table{
-    &__row.failed-course > td {
-      color: red !important;
-    }
-  }
   .el-collapse-item {
     &__header {
       padding: 0px 10px;
@@ -55,23 +72,66 @@
     }
   }
 
-  .el-table .cell {
-    color:#151515;
+  .el-table { 
+    &__row > td:first-child{
+      color: #151515;
+    }
+
+    &__row.failed-course > td:first-child{
+      color: red;
+    }
   }
+
+  // .el-table .failed-course {
+  //   --el-table-tr-bg-color: var(--el-color-danger-dark-2);
+  // }
 </style>
 <script>
 import { ElTable, ElTag, ElTableColumn} from 'element-plus';
+import { Delete } from '@element-plus/icons-vue';
 export default {
   name: 'AcadedmicPlannerTable',
-  props: ['grades', 'addable'],
-  methods: {
-    subjectCellFormatter(row, column, cellValue) {
+  props: ['grades', 'editable', 'year', 'quarter'],
+  setup(props) {
+    const subjectCellFormatter = (row, column, cellValue, rowIndex) => {
       // console.log(`${row}:${column}:${cellValue}:${index}`);
-      return `${cellValue}${row.unit === '' ? '' : `(${row.gpa})`}`;
-    },
-    tableRowClassName({ row }) {
-      return row.gpa === 0 ? 'failed-course' : '';
-    },
-  },
+      // console.log(`in AcademicPlannerTable.vue, subjectCellFormatter(): ${JSON.stringify(props.grades[rowIndex], null, 2)}`)
+
+      const isPNPorW = ['R', 'W'].includes(props.grades[rowIndex].letter_evaluation)
+      const isPlanOrInProgress = props.grades[rowIndex].isPlan || row.unit === ''
+
+      if(isPNPorW) {
+        return `${cellValue}(*)`
+      } else if(isPlanOrInProgress) {
+        return cellValue
+      } else if(props.grades[rowIndex].letter_evaluation === 'F') {
+        return `${cellValue}(0)`
+      } else {
+        return `${cellValue}(${row.gpa})`
+      }
+
+      // return `${cellValue}${row.unit === '' ? '' : `(${ isPNPorW ? '*' :row.gpa })`}`;
+      // Number.isNaN(parseFloat(row.gpa))
+
+    }
+    const tableRowClassName = ({ row, rowIndex }) => {
+      // console.log(`in AcademicPlannerTable.vue, tableRowClassName(): ${JSON.stringify(props.grades[rowIndex], null, 2)}`)
+      // console.log(`in AcademicPlannerTable.vue, tableRowClassName():${parseInt(row.gpa) === 0 ? 'failed-course' : ''}`)
+
+      switch(props.grades[rowIndex].letter_evaluation) {
+        case 'F': 
+          return 'failed-course'
+        break
+        default:
+          return ''
+      }
+      // return parseInt(row.gpa) === 0 ? 'failed-course' : '';
+    }
+
+    return {
+      subjectCellFormatter,
+      tableRowClassName
+    }
+  } 
 };
 </script>

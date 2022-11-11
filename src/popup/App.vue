@@ -23,7 +23,7 @@
 
 <script setup>
 import { loadTranscript as load, exportTranscript as exportXLSX, exportTranscriptJSON as exportJSON } from "../contentScripts/index";
-import openTab from '../utils/openTab'
+import openTab from '../utils/openDRC'
 import HelloWorld from '../components/HelloWorld.vue'
 import { ref, onMounted} from 'vue'
 
