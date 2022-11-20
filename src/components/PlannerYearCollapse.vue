@@ -136,7 +136,7 @@ function handleCollapseChange(activeNames) {
 
 const handleAdd = () => {
   showDialog.value = false
-  alert(`in PlannerYearCollapse.vue handleAdd(): ${ dialog.value.targetList.map(i => dialog.value.data[i])}`)
+  // alert(`in PlannerYearCollapse.vue handleAdd(): ${ dialog.value.targetList.map(i => dialog.value.data[i])}`)
   drc.addCourses(dialog.value.targetList.map(i => dialog.value.data[i]), addYear, addQuarter)
 }
 
@@ -176,7 +176,7 @@ function addCourseDialog(year: number, quarter: 0 | 1) {
 }
 
 const deleteCourse = ({ plan_entry_id, year, quarter} ) => {
-  alert(`delete course ${plan_entry_id} ${year} ${quarter}`)
+  // alert(`delete course ${plan_entry_id} ${year} ${quarter}`)
   drc.deleteCourseFromAP(plan_entry_id, year, quarter)
 }
 

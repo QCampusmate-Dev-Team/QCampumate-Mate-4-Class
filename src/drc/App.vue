@@ -1,6 +1,6 @@
 <template>
   <el-container style="height: 100vh;">
-    <el-aside width="350px" style="padding-bottom:8px;border-right:1px solid #eee">
+    <el-aside width="320px" style="padding-bottom:8px;border-right:1px solid #eee">
       <el-header>
         <h2 style="font-size:25px;margin: 10px 0px;">卒業要件チェッカー</h2>
         <!-- <h2>Degree Requirement Checker</h2> -->
@@ -10,8 +10,8 @@
         <el-tag size="small" type="info" color="#f6a3b1" effect="dark" ><b> Info </b>
         </el-tag>&nbsp; -->
       </el-header>
-      <!-- <el-divider></el-divider> -->
-      <Drc-Tree></Drc-Tree>
+      <deg-req-checker style="font-size: 15px">
+      </deg-req-checker>
     </el-aside>
     <el-container>
       <el-header>
@@ -30,7 +30,7 @@
   // import { ELContainer } from 'element-plus'
   import { onMounted, provide } from 'vue'
   import { DRC } from './DRC' 
-  import DrcTree from '@/components/DRCTree.vue'
+  import DegReqChecker from '@/components/DegReqChecker.vue'
   import PlannerYearCollapse from '@/components/PlannerYearCollapse.vue'
 
 

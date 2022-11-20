@@ -1,6 +1,6 @@
 /* This files provides utility functions for synchronization between data in the view model and client storage*/
 /* Execution context is expected to be in a Service Worker context */
-import { PlannerTable, GradeEntry } from '../../lib/types'
+import { PlannerTable, GradeEntry, StudentInfo} from '../../lib/types'
 import { filterBy } from '../drc/DRC'
 
 /** (Think about potential validations needed upon saving..)
@@ -11,7 +11,7 @@ export function savePlannerTable(plannerTable: PlannerTable, currAP: number) {
   chrome.storage.local.get(['PlannerTables'], ({PlannerTables}) => {
     PlannerTables[currAP] = plannerTable
   })
-  chrome.storage.local.set({PlannerTables: plannerTables, currAP}, () => {
+  chrome.storage.local.set({PlannerTables: plannerTable, currAP}, () => {
     chrome.storage.local.get(['PlannerTables', 'currAP'], ({PlannerTables, currAP}) => {
       console.log(`in sync.ts, savePlannerTable(): saved PlannerTables, count: ${PlannerTables.length}, currAP: ${currAP}`)
     })
@@ -56,4 +56,17 @@ export function providePlannerTable(course_grades: GradeEntry[], planner_tables:
   }
   console.log("in sync.ts providePlannerTable():", newPlannerTable)
   planner_tables[index] = newPlannerTable;
+}
+
+export function saveDRCTree(serializedTree: string, cb: (data?: any) => void) {
+  chrome.storage.local.set({ DRCTree: serializedTree }, () => {
+    cb(serializedTree)
+  })
+}
+
+export function saveStudentInfo(studentInfo: StudentInfo, cb: (data?: any) => void) {
+  chrome.storage.local.set({ studentInfo }, () => {
+    console.log('in sync.ts, saveStudentInfo(): saved studentInfo')
+    cb()
+  })
 }
