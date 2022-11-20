@@ -7,7 +7,7 @@ const TabList = document.querySelector("#tabnavigation_list > ul");
 const DRCTab = AllSubTab.cloneNode();
 GPATab.style.borderRight = "none";
 const DRCTabLink = document.createElement("a");
-DRCTabLink.textContent = "卒業要件チェッカー"
+DRCTabLink.textContent = "履修プランナー"
 DRCTabLink.style.cursor = "pointer"
 
 DRCTabLink.addEventListener("click", function() {

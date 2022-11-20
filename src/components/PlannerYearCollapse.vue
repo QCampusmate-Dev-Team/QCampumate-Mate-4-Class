@@ -3,7 +3,7 @@
     <el-collapse-item  v-for="(gpaInYear, year, index) in drc.ap" :name="year" :key="index">
       <!-- collapse item title -->
       <template #title>
-        {{`${parseInt(year)} - ${parseInt(year) + 1}`}} &nbsp;
+        {{`${year} - ${parseInt(year, 10) + 1}`}} &nbsp;
         <span v-for="(item, index) in aggregate({year}, drc.ap)" :key="index">
           {{ ['GPA ', '年間修得単位数 '][index] }}
           <!-- {{ ['gpa', 'annual units'][index] }} -->
@@ -136,7 +136,7 @@ function handleCollapseChange(activeNames) {
 
 const handleAdd = () => {
   showDialog.value = false
-  alert(`in PlannerYearCollapse.vue handleAdd(): ${ dialog.value.targetList.map(i => dialog.value.data[i])}`)
+  // alert(`in PlannerYearCollapse.vue handleAdd(): ${ dialog.value.targetList.map(i => dialog.value.data[i])}`)
   drc.addCourses(dialog.value.targetList.map(i => dialog.value.data[i]), addYear, addQuarter)
 }
 
@@ -176,7 +176,7 @@ function addCourseDialog(year: number, quarter: 0 | 1) {
 }
 
 const deleteCourse = ({ plan_entry_id, year, quarter} ) => {
-  alert(`delete course ${plan_entry_id} ${year} ${quarter}`)
+  // alert(`delete course ${plan_entry_id} ${year} ${quarter}`)
   drc.deleteCourseFromAP(plan_entry_id, year, quarter)
 }
 

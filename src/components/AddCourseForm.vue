@@ -68,8 +68,8 @@ const mockCourseData = () => {
 const data = ref<PlannerTableEntry[]>(mockCourseData())
 const targetList = ref([]) // index of selected data?
 
-const filterMethod = (query: string, item: PlannerTableEntry) => {
-  return item.subject?.indexOf(query) > -1 || item.school?.indexOf(query) || item.quarter?.indexOf(query) > -1 || item.target_year?.indexOf(query) > -1
+const filterMethod= (query: string, item: PlannerTableEntry) => {
+  return (item.subject?.indexOf(query) > -1 || item.school?.indexOf(query) || item.quarter?.indexOf(query) > -1 || item.target_year?.indexOf(query) > -1) as boolean
 }
 
 /*            Event handlers           */

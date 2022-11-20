@@ -4,13 +4,14 @@ export interface DR {
 }
 
 export interface StudentInfo {
-  enrollment: Date;
+  enrollment: string;
   school: School; 
   major: string | undefined;
   field: string | undefined;
   lang1st: string | undefined;
   lang2nd: string | undefined;
   isItrntnlStd: boolean;
+  provData: boolean;
 }
 
 interface Req extends _Req {
@@ -75,6 +76,7 @@ type School =
 'ENG'| //工
 'DES'| //芸工
 'AGR'| //農
+''|
 undefined;
 
 export type numberOrUndefined = number | undefined;

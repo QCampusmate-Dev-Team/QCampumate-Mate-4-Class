@@ -1,5 +1,6 @@
 import { GradeEntry, LetterEvaluation, Quarter, numberOrUndefined, stringOrUndefined } from '../../lib/types'
 import * as XLSX from 'xlsx';
+// import GPAData from "../../locals/grade_report.json";
 
 function exportData(gpaData) {
   const nameMap = gpaData.tHeadNameMap,
@@ -146,10 +147,19 @@ function load(isRandomized: boolean){
     }
   }
   
-  const table = document.querySelector('table.list') as HTMLTableElement,
+  var table, tBody, rows;
+  try{
+    table = document.querySelector('table.list') as HTMLTableElement,
     tBody = table.tBodies[0],
     rows = Array.from(tBody.rows);
-
+    if (!(tBody) || !(rows) || !(rows[0].children && rows[0].children.length === 10)) {
+      throw new Error('Cannot find the table');
+    }
+  } catch (e) {
+    console.error(e)
+    alert('成績情報が検知されていません。成績情報ページに移動してください。→ https://ku-portal.kyushu-u.ac.jp/campusweb/wssrlstr.do');
+    return;
+  }
   // console.log(rows[0].children.length === 10);
 
   const tHeadNameMapping = {},
@@ -212,11 +222,21 @@ function load(isRandomized: boolean){
   
   chrome.storage.local.set({ GPADATA: GPAData }, function() {
     console.log('GPADATA is set.');
-    alert("Course result is loaded. Ready for export.")
+    // alert("Course result is loaded. Ready for export.")
+    alert("成績データをインポートできました！履修プラナーを開けます。")
+    
+    chrome.runtime.sendMessage({msg: "gpaDataImported"}, (res) => {
+      console.log('msg:gpaDataImported\'s request has been processed successfully! Status: ', res.code)
+    })
+
+
+    chrome.runtime.sendMessage({msg: 'putDRCTree'}, (res) => {
+      console.log('msg:putDRCTree\'s request has been processed successfully! Status: ', res.code)
+    })
   });
 
   chrome.runtime.sendMessage({msg: 'updatePlannerTable', data: GPAData.course_grades}, (res) => {
-    console.log('msg:updatePlannerTable\'request is received. Status: ', res.code)
+    console.log('msg:updatePlannerTable\'s request has been processed successfully! Status: ', res.code)
   })
 }
 
