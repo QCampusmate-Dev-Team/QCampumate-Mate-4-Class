@@ -1,0 +1,28 @@
+{
+  "name": "@qcampusmate-mate/utils",
+  "version": "1.0.0",
+  "description": "utility functions for qcampusmate-mate",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "jest"
+  },
+  "keywords": [
+    "typescript",
+    "kyushu-university",
+    "colledge-education-system"
+  ],
+  "author": "nilumbra",
+  "license": "ISC",
+  "dependencies": {
+    "@qcampusmate-mate/types": "*"
+  }
+}

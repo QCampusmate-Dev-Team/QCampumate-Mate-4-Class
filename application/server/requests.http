@@ -1,0 +1,102 @@
+### List all Users
+GET http://localhost:3000/auth/
+
+### List one user by id
+GET http://localhost:3000/auth/6
+
+### List all users with a given email[200]
+GET http://localhost:3000/auth?email=chen.huaxiao.409@s.kyushu-u.ac.jp
+
+### List all users with a given email. Expect empty result [200]
+GET http://localhost:3000/auth?email=chen.huaxiao.409@s.kyushu-u.ac.j
+
+### Create a new user [valid]
+### notice that the admin field will be filtered by our DTO, because we have set whitelist to true
+POST http://localhost:3000/auth/signup
+content-type: application/json
+
+{
+  "email": "chen.huaxiao.409@s.kyushu-u.ac.jp",
+  "password": "123456",
+  "admin": true
+}
+
+### Create a new user [valid]
+POST http://localhost:3000/auth/signup
+content-type: application/json
+
+{
+  "email": "478222482@qq.com",
+  "password": "123456" 
+}
+
+### Create a new user
+POST http://localhost:3000/auth/signup
+content-type: application/json
+
+{
+  "email": "lenachen11221019@gmail.com",
+  "password": "123456"
+}
+
+### Try to sign in a user
+POST http://localhost:3000/auth/signin
+content-type: application/json
+
+{
+  "email": "lenachen11221019@gmail.com",
+  "password": "123456"
+}
+
+### Try to sign in a user
+POST http://localhost:3000/auth/signin
+content-type: application/json
+
+{
+  "email": "478222482@qq.com",
+  "password": "123456"
+}
+
+### Check who is the current user
+GET http://localhost:3000/auth/whoami
+
+
+### Sign out the current user
+POST http://localhost:3000/auth/signout
+
+### Update a user(id=2)'s email [valid]
+PATCH http://localhost:3000/auth/3
+content-type: application/json
+
+{
+  "email": "478222482@qq.com"
+}
+
+### Update a user(id=2)'s password [valid]
+PATCH http://localhost:3000/auth/3
+content-type: application/json
+
+{
+  "password": "chenhuaxiao123"
+}
+
+### Update a non-existent user(id=2)'s password [404]
+PATCH http://localhost:3000/auth/100013
+content-type: application/json
+
+{
+  "password": "chenhuaxiao123"
+}
+
+### Delete a user [400]
+DELETE http://localhost:3000/auth/3
+
+### Delete a non-existent user [404]
+DELETE http://localhost:3000/auth/213
+
+
+### Set a Color 
+GET http://localhost:3000/auth/colors/blud
+
+### Get the Color 
+GET http://localhost:3000/auth/colors

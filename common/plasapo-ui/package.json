@@ -1,0 +1,45 @@
+{
+  "name": "@qcampusmate-mate/plasapo-ui",
+  "version": "1.0.0",
+  "description": "complimentary UI components written in Vue for plasapo",
+  "main": "./dist/plasapo-ui.umd.js",
+  "module": "./dist/plasapo-ui.es.js",
+  "exports": {
+    ".": {
+      "import": "./dist/plasapo-ui.es.js",
+      "require": "./dist/plaspo-ui.umd.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "scripts": {
+    "build": "vite build",
+    "serve": "vite preview",
+    "dev": "vite"
+  },
+  "keywords": [
+    "typescript",
+    "kyushu-university",
+    "colledge-education-system"
+  ],
+  "author": "nilumbra",
+  "license": "ISC",
+  "dependencies": {
+    "@qcampusmate-mate/types": "*",
+    "@qcampusmate-mate/plasapo-core": "*",
+    "vue": "^3.2.40",
+    "element-plus": "^2.2.20"
+  },
+  "devDependencies": {
+    "jest": "^29.3.1",
+    "typescript": "^4.9.4",
+    "@vitejs/plugin-vue": "^1.9.3",
+    "vite": "^2.6.4",
+    "sass": "^1.56.1"
+  }
+}
