@@ -1,0 +1,29 @@
+{
+  "name": "@qcampusmate-mate/types",
+  "version": "1.0.0",
+  "description": "types for qcampusmate-mate",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "npx lerna run build --scope=@qcampusmate-mate/types && jest"
+  },
+  "keywords": [
+    "typescript",
+    "kyushu-university",
+    "colledge-education-system"
+  ],
+  "author": "nilumbra",
+  "license": "ISC",
+  "devDependencies": {
+    "jest": "^29.3.1",
+    "typescript": "^4.9.4"
+  }
+}

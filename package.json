@@ -1,72 +1,12 @@
 {
-  "name": "qcampumate-mate-4-class",
-  "version": "1.0.0",
-  "description": "\"A chrome extension that enhances your experience of checking course results on Kyushu Universtiy Campusmate\"",
-  "directories": {
-    "lib": "lib"
-  },
-  "engines": {
-    "node": "18.x"
-  },
-  "scripts": {
-    "dev": "vite",
-    "build": "vue-tsc --noEmit && vite build",
-    "preview": "vite preview",
-    "test": "vitest",
-    "ge": "node ./nofunc_scripts/trimGradeField.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/QCampusmate-Dev-Team/QCampusmate-Mate-4-Class.git"
-  },
-  "keywords": [
-    "Kyushu University",
-    "Campusmate",
-    "Transcript",
-    "Course",
-    "Chrome Extension",
-    "EMIS"
+  "name": "qcampusmate-mate",
+  "workspaces": [
+    "application/**",
+    "common/**",
+    "fixtures"
   ],
-  "author": "nilumbra",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/QCampusmate-Dev-Team/QCampusmate-Mate-4-Class/issues"
-  },
-  "homepage": "https://github.com/QCampusmate-Dev-Team/QCampusmate-Mate-4-Class#readme",
-  "dependencies": {
-    "@element-plus/icons-vue": "^2.0.10",
-    "axios": "^0.27.2",
-    "element-plus": "^2.2.20",
-    "lodash": "^4.17.21",
-    "vue": "^3.2.40",
-    "vue-router": "^3.5.3",
-    "vuex": "^4.0.2",
-    "xlsx": "https://cdn.sheetjs.com/xlsx-0.18.7/xlsx-0.18.7.tgz"
-  },
   "devDependencies": {
-    "@babel/core": "^7.17.10",
-    "@babel/eslint-parser": "^7.19.1",
-    "@babel/preset-env": "^7.17.10",
-    "@crxjs/vite-plugin": "^1.0.14",
-    "@types/chrome": "^0.0.197",
-    "@types/node": "^18.8.3",
-    "@vitejs/plugin-vue": "^3.1.0",
-    "@vitest/coverage-c8": "^0.24.5",
-    "@vitest/ui": "^0.24.5",
-    "@vue/test-utils": "^2.2.1",
-    "archiver": "^5.3.1",
-    "babel-loader": "^8.2.5",
-    "eslint": "^8.14.0",
-    "eslint-config-standard": "^17.0.0",
-    "eslint-plugin-html": "^6.2.0",
-    "eslint-plugin-import": "^2.26.0",
-    "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^6.0.0",
-    "jsdom": "^20.0.2",
-    "sass": "^1.56.1",
-    "typescript": "^4.6.4",
-    "vite": "^3.1.0",
-    "vitest": "^0.24.5",
-    "vue-tsc": "^0.40.4"
+    "lerna": "^6.3.0",
+    "nx": "15.4.1"
   }
 }

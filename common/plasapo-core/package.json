@@ -1,0 +1,33 @@
+{
+  "name": "@qcampusmate-mate/plasapo-core",
+  "version": "1.0.0",
+  "description": "core degree requirement checking algorithm and its tight-coupled subroutines for plasapo client",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "npx lerna run build --scope=@qcampusmate-mate/plasapo-core jest"
+  },
+  "keywords": [
+    "typescript",
+    "kyushu-university",
+    "colledge-education-system"
+  ],
+  "author": "nilumbra",
+  "license": "ISC",
+  "devDependencies": {
+    "jest": "^29.3.1",
+    "typescript": "^4.9.4"
+  },
+  "dependencies": {
+    "@qcampusmate-mate/types": "*",
+    "@types/chrome": "^0.0.197"
+  }
+}

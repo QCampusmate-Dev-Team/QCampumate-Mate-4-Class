@@ -1,0 +1,39 @@
+{
+  "name": "@qcampusmate-mate/fixtures",
+  "version": "0.0.0",
+  "description": "Test data for @qcampusmate-mate",
+  "keywords": [
+    "qcampusmate-mate"
+  ],
+  "author": "Mike Chen <478222482@qq.com> (HuaXiao)",
+  "homepage": "https://github.com/QCampusmate-Dev-Team/QCampusmate-Mate-4-Class#readme",
+  "license": "ISC",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "dist",
+    "lib"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/QCampusmate-Dev-Team/QCampusmate-Mate-4-Class.git"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "node ./__tests__/@qcampusmate-mate/fixtures.test.js"
+  },
+  "bugs": {
+    "url": "https://github.com/QCampusmate-Dev-Team/QCampusmate-Mate-4-Class/issues"
+  },
+  "devDependencies": {
+    "jest": "^29.3.1",
+    "typescript": "^4.9.4"
+  }
+}
