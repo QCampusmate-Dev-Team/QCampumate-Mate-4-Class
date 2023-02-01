@@ -125,7 +125,7 @@
 
 <script setup lang="ts">
   import { inject, defineEmits, toRaw, onMounted} from 'vue'
-  import { StudentInfo } from '../../../lib/types'
+  import { StudentInfo } from '@qcampusmate-mate/types'
 
   const student = inject<StudentInfo>('studentInfo')
 

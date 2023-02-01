@@ -25,7 +25,7 @@ function exportData(gpaData) {
           const newKey = nameMap[k] || k;
           return { [newKey]: obj[k] }
         });
-      console.log(Object.assign({}, ...keyValues));
+      // console.log(Object.assign({}, ...keyValues));
       return Object.assign({}, ...keyValues);
     }
 
@@ -195,7 +195,7 @@ function load(isRandomized: boolean) {
   // fill the empty DS with grade data
  
   for (let i = 1; i < rows.length; i++) {
-    console.log(i)
+    // console.log(i)
     if (rows[i].className === 'column_even') {
       if (rows[i+1].className === 'column_odd') { // New category
         category = rows[i].cells[0].textContent.trim();
@@ -233,9 +233,9 @@ function load(isRandomized: boolean) {
     } 
   }
   
-  console.log(JSON.stringify(GPAData.course_grades, null, 2))
+  // console.log(JSON.stringify(GPAData.course_grades, null, 2))
   
-  chrome.storage.local.set({ GPADATA: GPAData }, function() {
+  chrome.storage.local.set({ GPADATA: GPAData, records_all: JSON.stringify(GPAData.course_grades) }, function() {
     console.log('GPADATA is set.');
     // alert("Course result is loaded. Ready for export.")
     alert("成績データをインポートできました！履修プラナーを開けます。")

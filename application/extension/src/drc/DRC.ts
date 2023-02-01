@@ -1,5 +1,6 @@
 import * as ftrCompiler from './FilterCompiler'
-import { ref, reactive, Ref, UnwrapNestedRefs, computed, watch } from 'vue'
+import { ref, reactive, computed, watch } from 'vue'
+import type { Ref , UnwrapNestedRefs, ComputedRef } from 'vue'
 import { Course, GradeEntry, GradeFilterOptions, PlannerTable, PlannerTableEntry, _PlannerTableEntry } from '@qcampusmate-mate/types';
 import { savePlannerTable } from '../utils/sync'
 // import store from '../store/index.js'
@@ -16,13 +17,13 @@ interface DRCTreeNode {
 
 class DRC {
   ap: UnwrapNestedRefs<PlannerTable>
-  tree: UnwrapNestedRefs<any>; // the DRC Tree
+  // tree: UnwrapNestedRefs<any>; // the DRC Tree
   drLeaves: any; //DRCTreeNode[]
   currAP: number;
   gpaData: GradeEntry[];
   dr: Object;
   dr_smart: Object;
-  records_all: GradeEntry[]
+  records_all: Ref<GradeEntry[]> //UnwrapNestedRefs<GradeEntry[]>
 
   constructor(gpaData=null, dr={}) {
     console.log("DRC constructor")
@@ -31,9 +32,9 @@ class DRC {
     this.gpaData = gpaData // need type def
     this.dr_smart = {}
     this.dr = dr // need type def
-    this.tree = reactive({
-      data: []
-    })
+    // this.tree = reactive({
+    //   data: []
+    // })
 
     // this.tree = computed(() => {
     //   return DRC.generateDRCTree(this.dr_smart, this.gpaData)
@@ -42,7 +43,7 @@ class DRC {
 
     // Serialize the tree and store it in IndexedDB
     this.ap = reactive({})
-    this.records_all = []
+    this.records_all = ref<GradeEntry[]>([])  
   }
 
   // return leaf requirements
@@ -63,38 +64,51 @@ class DRC {
     // read DR from local DB and create a DRC tree out of it
     // traverse the tree, when see a rconf property, compile the filters according to the filterConf info
     // ftrCompiler.compile(rconf)
+    return new Promise<DRC>((resolve, reject) => {
+      try {
+        chrome.storage.local.get(["PlannerTables", "currAP", "GPADATA", "DR", "records_all"], ({ currAP, PlannerTables, GPADATA, DR, records_all }) => {
+          // console.log(`In DRC.ts, initialize(): ${JSON.stringify(DRCTree)}`)
 
-    chrome.storage.local.get(['DRCTree', "PlannerTables", "currAP", "GPADATA", "DR", "records_all"], ({ DRCTree, currAP, PlannerTables, GPADATA, DR, records_all }) => {
-      // console.log(`In DRC.ts, initialize(): ${JSON.stringify(DRCTree)}`)
-      if (!PlannerTables[currAP]) {
-        // alert(`Unexpected undefined: PlannerTables[${currAP}] is undefined!!`)
-        alert(`成績は見つかりません！！`)
+          if (!PlannerTables[currAP]) {
+            // alert(`Unexpected undefined: PlannerTables[${currAP}] is undefined!!`)
+            alert(`成績は見つかりません！！`)
+          }
+          console.log("in DRC.ts, initialize() ", PlannerTables[currAP])
+    
+          this.dr = DR
+          this.gpaData = GPADATA.course_grades
+          this.records_all.value = JSON.parse(records_all)
+    
+          Object.assign(this.ap, PlannerTables[currAP])
+          // this.tree.data = JSON.parse(DRCTree).data
+          // alert(DRCTree)
+          this.currAP = currAP
+  
+    
+          // TODO:
+          // setting up reactive deps between gpaData -> drcTree
+          watch(() => this.records_all.value.length, (val, oldV) => {
+            console.log('watching!!', val, oldV)
+            // console.log(JSON.stringify(this.ap_test.value, null, 2))
+
+
+            if (val > oldV) {
+              console.log("@DRC.ts, watcher of this.records_all: add courses")
+            } else if (val < oldV) {
+              console.log("@DRC.ts, watcher of this.records_all, coures have been deleted")
+            } 
+            // this.categorize()
+            
+            chrome.storage.local.set({records_all: JSON.stringify(this.records_all.value)})
+          })
+
+          resolve(this)
+        })
+      } catch(e) {
+        console.error('Error in <DRC.initialize()>')
+        reject(e)
       }
-      console.log("in DRC.ts, initialize() ", PlannerTables[currAP])
-
-      this.dr = DR
-      this.gpaData = GPADATA.course_grades
-      this.records_all = records_all
-      // this.ap = computed(() => {
-
-      // })
-
-      Object.assign(this.ap, PlannerTables[currAP])
-      this.tree.data = JSON.parse(DRCTree).data
-      // alert(DRCTree)
-      this.currAP = currAP
-
-
-      // TODO:
-      // setting up reactive deps between gpaData -> drcTree
-      watch(this.records_all, () => {
-        this.categorize()
-      })
-
-
     })
-
-    return this
   }
 
   /**
@@ -124,19 +138,46 @@ class DRC {
    */
   public addCourses(courses: Course[], year: number, quarter: 0 | 1) {
     if ((year in this.ap)) {
-      console.log(`in DRC.ts, addCourses(): add courses to year${year}, quarter ${quarter ? "後期" : "前期"}`)
+      // console.log(`in DRC.ts, addCourses(): add courses to year ${year}, quarter ${quarter ? "後期" : "前期"}`)
+      courses = courses.map( e => {
+        e['year'] = year
+        e['quarter'] = quarter
+        return e
+      })
       // alert(`adding courses:${JSON.stringify(courses, null, 2)}`)
 
+      this.records_all.value.push(...courses)
+      // console.log(JSON.stringify(this.ap, null, 2) )
+      // console.log(courses)
+      // console.log(`@DRC, addCourses()\n: ${JSON.stringify(this.records_all.value, null, 2)}`)
       this.ap[year][quarter].push(...courses)
-      // for (let course of courses)
-      //   this.addCourseToAP(course, year, quarter)
+      
 
-      // savePlannerTable(this.ap, this.currAP)
     } else {
       throw Error(`ERR!! Non-existing year or quarter! Attempt to add courses to ${year}, ${quarter}`)
     }
   }
 
+
+  public deleteCourseFromAP(key: number, year: number, quarter: 0 | 1) {
+    // const i = this.ap.find(courseKey)
+    if((year in this.ap)) {
+      const delIdx = this.records_all.value.findIndex((c:_PlannerTableEntry) => c.plan_entry_id === key)
+      this.records_all.value.splice(delIdx, 1)
+
+      const _delIdx = this.ap[year][quarter].findIndex((c:_PlannerTableEntry) => c.plan_entry_id === key)
+      this.ap[year][quarter].splice(_delIdx, 1)
+    } else {
+      alert(`ERR!! in DRC.ts, deleteCourseFromAP(): ${year} is not a key of this.ap.`)
+    }
+  }
+
+  /**
+   * NOUSE
+   * @param deleteKeys 
+   * @param year 
+   * @param quarter 
+   */
   public deleteCourses(deleteKeys: number[], year: number, quarter: 0 | 1) {
     // delete courses from the AP
     for (let k of deleteKeys) 
@@ -144,29 +185,6 @@ class DRC {
 
     // update PlannerTables in client storage
     savePlannerTable(this.ap, this.currAP)
-  }
-
-  /** Adding a single 
-   * 
-   * @param course 
-   * @param year 
-   * @param quarter 
-   */
-  private addCourseToAP(course: Course, year:number, quarter: 0 | 1) {
-    this.ap[year][quarter].push(course)
-  }
-
-  public deleteCourseFromAP(key: number, year: number, quarter: 0 | 1) {
-    // const i = this.ap.find(courseKey)
-    if((year in this.ap)) {
-      const delIdx = this.ap[year][quarter].findIndex((c:_PlannerTableEntry) => c.plan_entry_id === key)
-      this.ap[year][quarter].splice(delIdx, 1)
-    } else {
-      alert(`ERR!! in DRC.ts, deleteCourseFromAP(): ${year} is not a key of this.ap.`)
-    }
-  }
-
-  public static generateDRCTree(dr_smart, gpaData){
   }
 
 
@@ -207,7 +225,7 @@ class DRC {
    * @params {Object} degree_requirement - see degree_requirement.js
    * @returns { DRC } - fluent API style
    */
-  public initializeRequirementTree(degree_requirement, gpadata): DRC {
+  public initializeRequirementTree(degree_requirement, gpadata) {
     /**
      * 
      * STATUS = {failed: -2, withdraw: -1, ongoing: 0, passed_retakable: 1, passed_unretakable: 2}
@@ -481,37 +499,39 @@ class DRC {
 
 
     const seen = new Set();
-    const course_grades = gpadata.course_grades; // CourseGradeEntry[]
+    const course_grades = gpadata //.course_grades; // CourseGradeEntry[]
+    
     // Copy the value of degree_requirement
     // Changing properties of data[0] won't effect the prototype
     // const j = JSON.stringify(degree_requirement);
     // const clone = JSON.parse(j);
-    const requirements = degree_requirement.requirements;
-
-    this.tree.data[0] = requirements['基幹教育'];
-    this.tree.data[1] = requirements['専攻教育科目'];
+    const requirements = degree_requirement['requirements'];
+    console.log('@initializeRequirementTree():', typeof requirements)
+    const tree = { data: [null, null]}
+    tree.data[0] = requirements['基幹教育'];
+    tree.data[1] = requirements['専攻教育科目'];
 
     // Initialized tree values
-    initializeNode(this.tree.data[0]);
-    initializeNode(this.tree.data[1]);
+    initializeNode(tree.data[0]);
+    initializeNode(tree.data[1]);
 
-    return this
+    return tree
   }
   /**
    * 
    * @returns { DRCTree }
    */
-  public dumpDRCTree(): string {
+  public dumpDRCTree(){
     // send a DUMP_DRC message to service worker
-    return JSON.stringify(this.tree, null, 2) // {"data": []}
+    //return JSON.stringify(this.tree, null, 2) // {"data": []}
   }
 
-  log() {
+  public log() {
   }
 
-  serialize() {
-    JSON.stringify(this.tree)
-  }
+  // serialize() {
+  //   JSON.stringify(this.tree)
+  // }
 }
 
 // function createDRC(): Promise<DRC> {
@@ -579,12 +599,16 @@ function filterBy(course_grades: GradeEntry[], obj: GradeFilterOptions): GradeEn
 function filterQuarter(grade_entry: GradeEntry[] | undefined, quarter: number) {
   if ((typeof grade_entry === 'undefined') || (grade_entry.length === 0)) {
     console.error('Empty input in <filterQuarter(course_grades)>');
+    return grade_entry
   }
 
-  const FIRSTQUARTER = new Set(['前', '夏学期', '前期集中', '春学期']);
-  const SECONDQUARTER = new Set(['後', '秋学期', '後期集中', '冬学期', '通年']);
+  const FIRSTQUARTER = new Set(['前', '夏学期', '前期集中', '春学期', 0]); 
+  const SECONDQUARTER = new Set(['後', '秋学期', '後期集中', '冬学期', '通年', 1]);
   
-  const quarterSelector = typeof quarter === 'undefined' ? null : (quarter === 0 ? ((q:string) => FIRSTQUARTER.has(q)) : ((q:string) => SECONDQUARTER.has(q)));
+  const quarterSelector = typeof quarter === 'undefined' ? null : 
+  (quarter === 0 ? ((q) => FIRSTQUARTER.has(q)) : ((q) => SECONDQUARTER.has(q)));
+
+  console.log(JSON.stringify(grade_entry, null, 2))
 
   return grade_entry.filter(({ quarter }) => quarterSelector(quarter));
 }
@@ -660,6 +684,25 @@ function aggregate(obj:GradeFilterOptions, planner_table: PlannerTable) {
   return [avgGPA, grade_statistics.passed_units.toFixed(1)];
 }
 
+export function getPlannerTable(course_grades: GradeEntry[]) {
+  if (course_grades) {
+    // console.log(filterBy(course_grades, { year: 2023 } ))
+    const thisYear = new Date().getFullYear();
+    const ENROLLMENT = 2019; // temp magic number
+    const newPlannerTable: PlannerTable = {};
+
+    for (let y = ENROLLMENT; y <= thisYear; y++) {
+        const zenki = filterBy(course_grades, { quarter: 0, year: y });
+        // console.log(`${y} 前期:`, zenki)
+
+        const kouki = filterBy(course_grades,{ quarter: 1, year: y });
+        // console.log(zenki);
+        newPlannerTable[y] = [zenki, kouki];
+    }
+
+    return newPlannerTable
+  }
+}
 ///////////////////////// TODO /////////////////////////
 /**
  * @params {Object} obj - expect a CourseData object containing at

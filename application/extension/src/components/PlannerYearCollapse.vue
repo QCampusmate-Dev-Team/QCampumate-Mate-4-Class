@@ -1,12 +1,11 @@
 <template>
   <el-collapse v-model="activeName" @change="handleCollapseChange">
-    <el-collapse-item  v-for="(gpaInYear, year, index) in drc.ap" :name="year" :key="index">
+    <el-collapse-item  v-for="(gpaInYear, year, index) in plannerTable" :name="year" :key="index">
       <!-- collapse item title -->
       <template #title>
         {{`${year} - ${parseInt(year, 10) + 1}`}} &nbsp;
-        <span v-for="(item, index) in aggregate({year}, drc.ap)" :key="index">
+        <span v-for="(item, index) in aggregate({year}, plannerTable)" :key="index">
           {{ ['GPA ', '年間修得単位数 '][index] }}
-          <!-- {{ ['gpa', 'annual units'][index] }} -->
           <el-tag size="small" type="info" color="#428bca" effect="dark" class="unit"><b> {{(item).toString() !== 'NaN' ? item : '-----'}} </b>
           </el-tag> &nbsp;
         </span>       
@@ -24,7 +23,7 @@
                 {{ index ? '後期' : '前期'}}
                 &nbsp;
                 <!-- summary(year, index) -->
-                <template v-for="(item, idx) in aggregate({year, quarter: index}, drc.ap)" :key="idx" > 
+                <template v-for="(item, idx) in aggregate({year, quarter: index}, plannerTable)" :key="idx" > 
                   {{ idx ? '修得単位 ' : 'GPA ' }}
                   <!-- {{ idx ? 'semeter units' : 'gpa' }} -->
                   <el-tag size="small" type="info" color="#f6a3b1" effect="dark" class="unit"><b> {{(item).toString() !== 'NaN' ? item : '-----'}} </b>
@@ -38,7 +37,7 @@
               
               <!-- the button should really belong to academic planner table, but then we need to emit a custom event e.g. `addCourseDialog` to let the parent component know when user clicks the 追加 button-->
               <div style="margin-top: 10px">
-                <el-button v-if="isRegistrationOpen(year, index as 0|1)" @click="addCourseDialog(year, index as 0|1)">
+                <el-button v-if="isRegistrationOpen(year, index as 0|1)" @click="addCourseDialog(parseInt(year), index as 0|1)">
                   追加
                 </el-button>
                 <!-- <el-button v-if="isRegistrationOpen(year, index as 0|1)" @click="">
@@ -93,10 +92,10 @@ import { ElCollapse, ElCollapseItem, ElDialog, ElMessageBox } from 'element-plus
 import { Delete } from '@element-plus/icons-vue'
 import AcademicPlannerTable from './AcademicPlannerTable.vue'
 import AddCourseForm from './AddCourseForm.vue'
-import { ref, inject, onMounted, markRaw } from 'vue'
-import { DRC, aggregate } from '../drc/DRC'
+import { ref, inject, computed, markRaw } from 'vue'
+import { DRC, aggregate, getPlannerTable } from '../drc/DRC'
 
-const drc = inject<DRC>('drc')
+const drc = await inject<Promise<DRC>>('drc')
 const activeName = [`${new Date().getFullYear()}`];
 
 var addYear:number = 0
@@ -106,6 +105,7 @@ var addQuarter: 0 | 1 = 0
 const showDialog = ref(false) // controls the visibility of the add course dialog
 const courseType = ref('自由選択科目')
 const dialog = ref<InstanceType<typeof AddCourseForm> | null>(null)
+const plannerTable = computed(() => getPlannerTable(drc.records_all.value))
 
 /*            CONSTANTS           */
 const options = [
@@ -130,7 +130,7 @@ const options = [
 
 /*            Event handlers           */
 function handleCollapseChange(activeNames) {
-  console.log(activeNames)
+  // console.log(activeNames)
 }
 
 
@@ -138,10 +138,12 @@ const handleAdd = () => {
   showDialog.value = false
   // alert(`in PlannerYearCollapse.vue handleAdd(): ${ dialog.value.targetList.map(i => dialog.value.data[i])}`)
   drc.addCourses(dialog.value.targetList.map(i => dialog.value.data[i]), addYear, addQuarter)
+
+  dialog.value.targetList = []
 }
 
 // Fire when Add Course Dialog closes
-const handleClose = (done: () => void) => {
+const handleClose = (done) => {
   ElMessageBox.confirm(
     '追加リストの講義はまだ保存されていません。本当に閉じますか？',
     '追加キャンセルの確認', 
@@ -170,7 +172,8 @@ const handleClose = (done: () => void) => {
  */
 function addCourseDialog(year: number, quarter: 0 | 1) {
   showDialog.value = true
-  console.log('add course dialog', year, quarter)
+  // console.log('add course dialog', year, quarter)
+  // console.log('@PlannerYearCollapse.vue, addCourseDialog(): type of year:', typeof year)
   addYear = year
   addQuarter = quarter
 }

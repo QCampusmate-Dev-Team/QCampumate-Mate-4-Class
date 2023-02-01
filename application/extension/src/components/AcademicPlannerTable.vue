@@ -9,7 +9,7 @@
   :cell-style="{padding:'5px'}"
   :show-header="false" border>
 
-
+    <!-- Delete button (Conditional) -->
     <el-table-column 
       v-if="editable" 
       prop="plan_entry_id" 
@@ -27,6 +27,8 @@
         <!-- @click="deleteCourse(scope.row.plan_entry_id, scope.row.year, scope.row.quarter)" -->
       </template>
     </el-table-column>
+
+    <!-- Subject name -->
     <el-table-column
       prop="subject"
       label="Subject"

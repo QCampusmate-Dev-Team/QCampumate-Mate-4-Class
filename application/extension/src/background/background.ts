@@ -78,13 +78,13 @@ chrome.runtime.onMessage.addListener(
       case "putDRCTree":
         chrome.storage.local.get(['GPADATA', 'DR'], ({ GPADATA, DR }) => {
           if (GPADATA && DR) {
-            console.log('in background.ts, putDRCTree: generating DRCTree')
-            const drc = new DRC().initializeRequirementTree(DR, GPADATA)
-            const drcTree = drc.dumpDRCTree()
-            saveDRCTree(drcTree /* as DRCTree */, (setTree) => {
-              sendResponse({code:200})
-              console.log("in service worker, event::saveDRCTree: successfully saved DRCTree", setTree)
-            })
+            // console.log('in background.ts, putDRCTree: generating DRCTree')
+            // const drc = new DRC().initializeRequirementTree(DR, GPADATA)
+            // const drcTree = drc.dumpDRCTree()
+            // saveDRCTree(drcTree /* as DRCTree */, (setTree) => {
+            //   sendResponse({code:200})
+            //   console.log("in service worker, event::putDRCTree: successfully saved DRCTree", setTree)
+            // })
           } else {
             throw Error("ERR! in service worker, event::putDRCTree: unable to retrieve GPADATA or DR")
           }

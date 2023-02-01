@@ -41,7 +41,7 @@
 import { ElTransfer } from 'element-plus'
 import { ref, defineEmits } from 'vue'
 import { PlannerTableEntry } from '@qcampusmate-mate/types'
-import { courseData } from '@/fixtures/course_mock'
+import { courseData } from '../fixtures/course_mock'
 
 // defineEmits(['update:modelValue'])
 
@@ -69,7 +69,7 @@ const data = ref<PlannerTableEntry[]>(mockCourseData())
 const targetList = ref([]) // index of selected data?
 
 const filterMethod= (query: string, item: PlannerTableEntry) => {
-  return (item.subject?.indexOf(query) > -1 || item.school?.indexOf(query) || item.quarter?.indexOf(query) > -1 || item.target_year?.indexOf(query) > -1) as boolean
+  return (item.subject?.indexOf(query) > -1 || item.school?.indexOf(query) || item.target_year?.indexOf(query) > -1) as boolean
 }
 
 /*            Event handlers           */

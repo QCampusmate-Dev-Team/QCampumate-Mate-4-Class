@@ -1,7 +1,7 @@
 <template>
   <el-tree
     :indent="6"
-    :data='drc.tree.data'
+    :data='undefined'
     :props="defaultProps"
     :render-content="renderContent"
     >
@@ -12,18 +12,24 @@
 <script lang="ts">
 import { ElTree } from 'element-plus'
 import { DRC } from '../drc/DRC'
-import { inject } from 'vue'
+import { computed, inject } from 'vue'
 
 export default {
-  setup(){
-    const drc = inject<DRC>('drc') 
+  async setup(){
+    const drc = await inject<Promise<DRC>>('drc') 
     const defaultProps = { 
       children: 'children',
       label: 'label'
     }
     // alert(JSON.stringify(drc.tree, null, 2))
+    alert(JSON.stringify(drc.dr, null, 2))
+    // JSON.stringify(drc.dr, null, 2)
+    const drcTree = 
+    computed(() => {
+      return drc.initializeRequirementTree(drc.dr, drc.records_all.value)
+    })
 
-    console.log(`in DeqReqChecker.vue. Q:drc.tree.data is Array? A: ${Array.isArray(drc.tree.data)}`)
+    // console.log(`in DeqReqChecker.vue. Q:drc.tree.data is Array? A: ${Array.isArray(drc.tree.data)}`)
     const renderContent = function(h, {node, data, store}) {
       // console.log(`${data.label} has children ${data.children}`);
       return (generateTreeNodeView(h, data))
@@ -90,6 +96,7 @@ export default {
 
     return {
       drc,
+      drcTree,
       defaultProps,
       renderContent,
       generateTreeNodeView,
