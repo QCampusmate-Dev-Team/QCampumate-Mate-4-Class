@@ -3,6 +3,7 @@ import { ref, reactive, computed, watch } from 'vue'
 import type { Ref , UnwrapNestedRefs, ComputedRef } from 'vue'
 import { Course, GradeEntry, GradeFilterOptions, PlannerTable, PlannerTableEntry, _PlannerTableEntry } from '@qcampusmate-mate/types';
 import { savePlannerTable } from '../utils/sync'
+import { getGlobalThis } from '@vue/shared';
 // import store from '../store/index.js'
 
 const LETTER_TO_GP = {
@@ -16,33 +17,21 @@ interface DRCTreeNode {
 }
 
 class DRC {
-  ap: UnwrapNestedRefs<PlannerTable>
   // tree: UnwrapNestedRefs<any>; // the DRC Tree
+  maxYearInAp: Ref<number>;
   drLeaves: any; //DRCTreeNode[]
-  currAP: number;
   gpaData: GradeEntry[];
   dr: Object;
   dr_smart: Object;
   records_all: Ref<GradeEntry[]> //UnwrapNestedRefs<GradeEntry[]>
 
   constructor(gpaData=null, dr={}) {
-    console.log("DRC constructor")
-    // tree: Object, ap: Array<any>
-
     this.gpaData = gpaData // need type def
     this.dr_smart = {}
-    this.dr = dr // need type def
-    // this.tree = reactive({
-    //   data: []
-    // })
-
-    // this.tree = computed(() => {
-    //   return DRC.generateDRCTree(this.dr_smart, this.gpaData)
-    // })
-
+    this.dr = dr
+    this.maxYearInAp = ref<number>(0)
 
     // Serialize the tree and store it in IndexedDB
-    this.ap = reactive({})
     this.records_all = ref<GradeEntry[]>([])  
   }
 
@@ -66,32 +55,23 @@ class DRC {
     // ftrCompiler.compile(rconf)
     return new Promise<DRC>((resolve, reject) => {
       try {
-        chrome.storage.local.get(["PlannerTables", "currAP", "GPADATA", "DR", "records_all"], ({ currAP, PlannerTables, GPADATA, DR, records_all }) => {
+        chrome.storage.local.get([ "GPADATA", "DR", "records_all", "maxYearInAp"], ({  GPADATA, DR, records_all, maxYearInAp }) => {
           // console.log(`In DRC.ts, initialize(): ${JSON.stringify(DRCTree)}`)
 
-          if (!PlannerTables[currAP]) {
+          if (!records_all) {
             // alert(`Unexpected undefined: PlannerTables[${currAP}] is undefined!!`)
             alert(`成績は見つかりません！！`)
           }
-          console.log("in DRC.ts, initialize() ", PlannerTables[currAP])
+          // console.log("in DRC.ts, initialize() ", PlannerTables[currAP])
     
           this.dr = DR
           this.gpaData = GPADATA.course_grades
           this.records_all.value = JSON.parse(records_all)
-    
-          Object.assign(this.ap, PlannerTables[currAP])
-          // this.tree.data = JSON.parse(DRCTree).data
-          // alert(DRCTree)
-          this.currAP = currAP
+          this.maxYearInAp.value = Math.max(maxYearInAp, getMaxYearInRecords(this.records_all.value))
   
-    
           // TODO:
           // setting up reactive deps between gpaData -> drcTree
           watch(() => this.records_all.value.length, (val, oldV) => {
-            console.log('watching!!', val, oldV)
-            // console.log(JSON.stringify(this.ap_test.value, null, 2))
-
-
             if (val > oldV) {
               console.log("@DRC.ts, watcher of this.records_all: add courses")
             } else if (val < oldV) {
@@ -111,33 +91,17 @@ class DRC {
     })
   }
 
-  /**
-   * Add an empty year table to current plannerTable
-   * @returns void
-   */
-  public addNextYearToAP(): void {
-    const maxYear = this.getMaxYearInAP()
-    this.ap[maxYear+1] = [[], []]
-  }
 
-  /**
-   * @returns {number}the maximum year in the current AP
-   */
-  public getMaxYearInAP(): number {
-    const years = Object.keys(this.ap).map(y => parseInt(y))
-    return Math.max(...years)
-  }
-
-  /** 1. Add multiple courses to the AP, 
-   *  2. Update PlannerTables in client storage 
+  /** 
+   *  Add multiple courses to the records_all, 
    * 
    *  Considerations: keep the number of function calls low, so as to minimize the overhead of background synchronization 
    * @param courses 
    * @param year 
    * @param quarter 
    */
-  public addCourses(courses: Course[], year: number, quarter: 0 | 1) {
-    if ((year in this.ap)) {
+  public addCourses(courses: GradeEntry[], year: number, quarter: 0 | 1) {
+    try {
       // console.log(`in DRC.ts, addCourses(): add courses to year ${year}, quarter ${quarter ? "後期" : "前期"}`)
       courses = courses.map( e => {
         e['year'] = year
@@ -147,44 +111,15 @@ class DRC {
       // alert(`adding courses:${JSON.stringify(courses, null, 2)}`)
 
       this.records_all.value.push(...courses)
-      // console.log(JSON.stringify(this.ap, null, 2) )
-      // console.log(courses)
-      // console.log(`@DRC, addCourses()\n: ${JSON.stringify(this.records_all.value, null, 2)}`)
-      this.ap[year][quarter].push(...courses)
-      
-
-    } else {
-      throw Error(`ERR!! Non-existing year or quarter! Attempt to add courses to ${year}, ${quarter}`)
+    } catch {
+      console.error('ERR!! unexpected error in addCourses()')
     }
   }
 
 
   public deleteCourseFromAP(key: number, year: number, quarter: 0 | 1) {
-    // const i = this.ap.find(courseKey)
-    if((year in this.ap)) {
-      const delIdx = this.records_all.value.findIndex((c:_PlannerTableEntry) => c.plan_entry_id === key)
-      this.records_all.value.splice(delIdx, 1)
-
-      const _delIdx = this.ap[year][quarter].findIndex((c:_PlannerTableEntry) => c.plan_entry_id === key)
-      this.ap[year][quarter].splice(_delIdx, 1)
-    } else {
-      alert(`ERR!! in DRC.ts, deleteCourseFromAP(): ${year} is not a key of this.ap.`)
-    }
-  }
-
-  /**
-   * NOUSE
-   * @param deleteKeys 
-   * @param year 
-   * @param quarter 
-   */
-  public deleteCourses(deleteKeys: number[], year: number, quarter: 0 | 1) {
-    // delete courses from the AP
-    for (let k of deleteKeys) 
-      this.deleteCourseFromAP(k, year, quarter)
-
-    // update PlannerTables in client storage
-    savePlannerTable(this.ap, this.currAP)
+    const delIdx = this.records_all.value.findIndex((c:_PlannerTableEntry) => c.plan_entry_id === key)
+    this.records_all.value.splice(delIdx, 1)
   }
 
 
@@ -534,29 +469,15 @@ class DRC {
   // }
 }
 
-// function createDRC(): Promise<DRC> {
-//   return new Promise((resolve, reject) => {
-//     try {
-//       chrome.storage.local.get(['DRCTree', "AP"], res => {
-//         alert(`In createDRC: ${res.DRCTree} ${res.AP}`)
-//         // resolve(new DRC(res.DRCTree, res.AP))
-//       })
-//     } catch (e) {
-//       reject(e)
-//     }
-//   })
-// }
-
-
 /**
  * @params {Object} obj - expect a filter option object with at
  most four keys: {quarter, year, evaluation, category}
-  * @return { GradeEntry[] } - filtered grade entry
+  * @return { GradeEntry[] } - filtered grade entry, return an empty array if course_grade is empty or 
   */
-function filterBy(course_grades: GradeEntry[], obj: GradeFilterOptions): GradeEntry[] | undefined { // SHOULD BUILD A FILTER FUNCTION INSTEAD OF RETURN A FILTERD OBJECT
-  const { quarter, year, evaluation, category } = obj
+function filterBy(course_grades: GradeEntry[], gradeFilterOptions: GradeFilterOptions): GradeEntry[] | undefined { // SHOULD BUILD A FILTER FUNCTION INSTEAD OF RETURN A FILTERD OBJECT
+  const { quarter, year, evaluation, category } = gradeFilterOptions
 
-  let result: GradeEntry[] = undefined;
+  let result: GradeEntry[] = [];
   console.log("in DRC.ts: filterBy()")
   // console.log(this.gpaData.categories);
   console.log(course_grades);
@@ -617,9 +538,9 @@ function filterQuarter(grade_entry: GradeEntry[] | undefined, quarter: number) {
 /**
  *  
  */
-function aggregate(obj:GradeFilterOptions, planner_table: PlannerTable) {
+function aggregate(gradeFilterOptions:GradeFilterOptions, planner_table: PlannerTable) {
   // - Not including withdrawn
-  const { quarter, year, category } = obj;
+  const { quarter, year, category } = gradeFilterOptions;
   if (!(year)) console.error('Option is missing `year` key');
 
 
@@ -684,20 +605,19 @@ function aggregate(obj:GradeFilterOptions, planner_table: PlannerTable) {
   return [avgGPA, grade_statistics.passed_units.toFixed(1)];
 }
 
-export function getPlannerTable(course_grades: GradeEntry[]) {
+export function getPlannerTable(course_grades: GradeEntry[], maxYearInAp: number) {
   if (course_grades) {
-    // console.log(filterBy(course_grades, { year: 2023 } ))
-    const thisYear = new Date().getFullYear();
     const ENROLLMENT = 2019; // temp magic number
     const newPlannerTable: PlannerTable = {};
 
-    for (let y = ENROLLMENT; y <= thisYear; y++) {
-        const zenki = filterBy(course_grades, { quarter: 0, year: y });
-        // console.log(`${y} 前期:`, zenki)
+    for (let y = ENROLLMENT; y <= maxYearInAp; y++) {
+      console.log(y)
+      const zenki = filterBy(course_grades, { quarter: 0, year: y });
+      // console.log(`${y} 前期:`, zenki)
 
-        const kouki = filterBy(course_grades,{ quarter: 1, year: y });
-        // console.log(zenki);
-        newPlannerTable[y] = [zenki, kouki];
+      const kouki = filterBy(course_grades,{ quarter: 1, year: y });
+      // console.log(zenki);
+      newPlannerTable[y] = [zenki, kouki];
     }
 
     return newPlannerTable
@@ -705,7 +625,7 @@ export function getPlannerTable(course_grades: GradeEntry[]) {
 }
 ///////////////////////// TODO /////////////////////////
 /**
- * @params {Object} obj - expect a CourseData object containing at
+ * @params {Object} gradeFilterOptions - expect a CourseData object containing at
  * least these four keys: {subject, letter_evaluation, unit, gpa}
  * @return {Array<PlannerFormatCourseData>}
  */
@@ -718,6 +638,56 @@ function getPlannerFormatCourseData(data) {
   return data.map((e) => pick(e));
 }
 
+///////////////////////// UTILITY /////////////////////////
+//////////// 
+function sumUnits(ge: GradeEntry[]): number { 
+  return 0
+}
+
+function getMaxYearInRecords(ge: GradeEntry[]): number {
+  return Math.max(...(ge.map(g => g.year || 0 ))) || new Date().getFullYear()
+}
+
+/**
+ * Setting GradeEntry's
+ * - status: a hint for different coloring in DRCTree
+ *  ------------------------
+ *    failed: -2
+ *    withdraw: -1 
+ *    ongoing: 0
+ *    passed_retakable: 1
+ *    passed_unretakable: 2
+ *  ------------------------
+ * - label: the name of the GradeEntry, also the rendered text in DRCTree
+ * 
+ * @params {GradeEntry} ge - the course_node whose status is undetermined yet 
+ * @returns {number} status - the set status of the course node
+ */
+function setDRCTreeNodeProperties(ge:GradeEntry) {
+  ge['label'] = ge.subject
+
+  /* Decide status based on LETTER_EVALUATION */
+  // Passed/Not passed detection
+  if (ge.letter_evaluation === 'F') {
+    // If 'F', don't increment the passed unit
+    ge.status = -2;
+  } else if (['A', 'B', 'C', 'D', 'R'] // 'A', 'B', 'C', 'D', 'R'
+    .includes(ge.letter_evaluation)) {
+    if (ge.letter_evaluation === 'D') {
+      // Mark 'D' courses as retakable;
+      ge.status = 1;
+    } else {
+      ge.status = 2;
+    }
+  } else if (ge.letter_evaluation === 'W') { // W
+    ge.status = -1;
+  } else if (!ge.unit && !ge.last_updated){ // ongoing course
+    ge.status = 0;
+  }
+
+  return ge
+}
+
 /**
  *  
  */
@@ -725,4 +695,4 @@ function pickSatisfyingMinUnits(matchedCourses: Course[]): Course[] {
   return []
 }
 
-export { DRC, filterBy, aggregate }
+export { DRC, filterBy, aggregate, setDRCTreeNodeProperties, getMaxYearInRecords }

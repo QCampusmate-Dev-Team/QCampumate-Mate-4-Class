@@ -1,6 +1,5 @@
 import { resolve } from 'path'
 import { fileURLToPath, URL } from 'node:url'
-
 import path from 'path'
 import { defineConfig } from 'vitest/config'
 import vue from '@vitejs/plugin-vue'
@@ -26,7 +25,9 @@ export default defineConfig({
         popup: resolve(__dirname, "index.html"),
         drc: resolve(__dirname, "/src/drc/index.html")
       }
-    }
+    },
+    outDir: resolve(__dirname, process.env.NODE_ENV === 'production'? "build" : "dist"),
+    emptyOutDir: true
   },
   css: {
     preprocessorOptions: {

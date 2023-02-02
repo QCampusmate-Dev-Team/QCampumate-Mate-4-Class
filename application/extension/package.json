@@ -11,7 +11,7 @@
   "scripts": {
     "dev": "vite",
     "check": "vue-tsc --noEmit",
-    "build": "vite build",
+    "build": "NODE_ENV=production vite build",
     "preview": "vite preview",
     "test": "vitest",
     "ge": "node ./nofunc_scripts/trimGradeField.js"

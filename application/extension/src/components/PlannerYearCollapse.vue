@@ -50,9 +50,9 @@
             <!-- Course Grade Card -->
         </el-col>
       </el-row >
-      <el-row v-if="year == drc.getMaxYearInAP()" >
+      <el-row v-if="year == drc.maxYearInAp.value" >
         <el-divider></el-divider>
-         <el-button @click="drc.addNextYearToAP()">次年度の履修計画を追加する</el-button> 
+         <el-button @click="drc.maxYearInAp.value++">次年度の履修計画を追加する</el-button> 
       </el-row>
 
     </el-collapse-item>
@@ -105,7 +105,11 @@ var addQuarter: 0 | 1 = 0
 const showDialog = ref(false) // controls the visibility of the add course dialog
 const courseType = ref('自由選択科目')
 const dialog = ref<InstanceType<typeof AddCourseForm> | null>(null)
-const plannerTable = computed(() => getPlannerTable(drc.records_all.value))
+const plannerTable = computed(() => {
+  console.log(JSON.stringify(getPlannerTable(drc.records_all.value, drc.maxYearInAp.value), null, 2))
+  return getPlannerTable(drc.records_all.value, drc.maxYearInAp.value)
+})
+
 
 /*            CONSTANTS           */
 const options = [
