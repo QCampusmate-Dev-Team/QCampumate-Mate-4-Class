@@ -21,8 +21,9 @@ export default {
       children: 'children',
       label: 'label'
     }
-    console.log("what the fuck")
-    // alert(JSON.stringify(drc.dr, null, 2))
+    // alert(JSON.stringify(drc.tree, null, 2))
+    alert(JSON.stringify(drc.dr, null, 2))
+    // JSON.stringify(drc.dr, null, 2)
     const drcTree = 
     computed(() => {
       return drc.initializeRequirementTree(drc.dr, drc.records_all.value)

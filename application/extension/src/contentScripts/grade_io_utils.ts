@@ -5,6 +5,7 @@
  *  Reference:
  *    https://blog.holyblue.jp/entry/2022/07/10/182137 
  */
+import { GradeEntry, LETTER_EVALUATION, QUARTER, numberOrUndefined, stringOrUndefined } from '@qcampusmate-mate/types'
 import * as XLSX from 'xlsx';
 
 // import GPAData from "../../locals/grade_report.json";
@@ -234,28 +235,23 @@ function load(isRandomized: boolean) {
   
   // console.log(JSON.stringify(GPAData.course_grades, null, 2))
   
-  chrome.runtime.sendMessage({msg: "saveImportedGradeRecords", data: GPAData}, () => {
+  chrome.storage.local.set({ GPADATA: GPAData, records_all: JSON.stringify(GPAData.course_grades) }, function() {
+    console.log('GPADATA is set.');
+    // alert("Course result is loaded. Ready for export.")
     alert("成績データをインポートできました！履修プラナーを開けます。")
-    // alert("`saveImportedGradeRecords` is commited successfully.")
-  })
-
-  // chrome.storage.local.set({ GPADATA: GPAData, records_all: JSON.stringify(GPAData.course_grades) }, function() {
-  //   console.log('GPADATA is set.');
-  //   // alert("Course result is loaded. Ready for export.")
-  //   alert("成績データをインポートできました！履修プラナーを開けます。")
     
-  //   chrome.runtime.sendMessage({msg: "gpaDataImported"}, (res) => {
-  //     console.log('msg:gpaDataImported\'s request has been processed successfully! Status: ', res.code)
-  //   })
+    chrome.runtime.sendMessage({msg: "gpaDataImported"}, (res) => {
+      console.log('msg:gpaDataImported\'s request has been processed successfully! Status: ', res.code)
+    })
 
 
-  //   chrome.runtime.sendMessage({msg: 'putDRCTree'}, (res) => {
-  //     console.log('msg:putDRCTree\'s request has been processed successfully! Status: ', res.code)
-  //   })
-  // });
+    chrome.runtime.sendMessage({msg: 'putDRCTree'}, (res) => {
+      console.log('msg:putDRCTree\'s request has been processed successfully! Status: ', res.code)
+    })
+  });
 
-  // chrome.runtime.sendMessage({msg: 'updatePlannerTable', data: GPAData.course_grades}, (res) => {
-  //   console.log('msg:updatePlannerTable\'s request has been processed successfully! Status: ', res.code)
-  // })
+  chrome.runtime.sendMessage({msg: 'updatePlannerTable', data: GPAData.course_grades}, (res) => {
+    console.log('msg:updatePlannerTable\'s request has been processed successfully! Status: ', res.code)
+  })
 }
 

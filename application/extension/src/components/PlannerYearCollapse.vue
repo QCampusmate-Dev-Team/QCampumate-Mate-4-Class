@@ -88,7 +88,7 @@
 </template>
 
 <script setup lang="ts">
-import { ElMessageBox } from 'element-plus'
+import { ElCollapse, ElCollapseItem, ElDialog, ElMessageBox } from 'element-plus'
 import { Delete } from '@element-plus/icons-vue'
 import AcademicPlannerTable from './AcademicPlannerTable.vue'
 import AddCourseForm from './AddCourseForm.vue'
@@ -106,7 +106,7 @@ const showDialog = ref(false) // controls the visibility of the add course dialo
 const courseType = ref('自由選択科目')
 const dialog = ref<InstanceType<typeof AddCourseForm> | null>(null)
 const plannerTable = computed(() => getPlannerTable(drc.records_all.value))
-console.log('plannerYearCollapse', plannerTable)
+
 /*            CONSTANTS           */
 const options = [
   {

@@ -1,5 +1,6 @@
 import openTab from '../utils/openDRC'
-import { updatePlannerTables, saveDRCTree, saveStudentInfo, saveImportedGradeRecord} from '../utils/sync' 
+import { DRC } from '../drc/DRC'
+import { updatePlannerTables, saveDRCTree, saveStudentInfo} from '../utils/sync' 
 import { StudentInfo, GradeEntry } from '@qcampusmate-mate/types'
 import DR_LET from '../fixtures/dr_mock.json'
 // import { DR_LET } from '@qcampusmate-mate/fixtures'
@@ -14,8 +15,10 @@ chrome.runtime.onInstalled.addListener(() => {
   // })
   const DRCTree = null;
   const DR = DR_LET;
+  const PlannerTables = [] //: PlannerTable[]
+  const currAP: number = 0;
   const studentInfo: StudentInfo = {
-      enrollment: 2020,
+      enrollment: '',
       school: '', 
       major: '',
       field: '',
@@ -26,8 +29,8 @@ chrome.runtime.onInstalled.addListener(() => {
   }
   
   const records_all: GradeEntry[] = []
-  chrome.storage.local.set({ DRCTree, DR, studentInfo, records_all }, function () {
-    // console.log(`in background.ts, onInstalled: setting DR ${JSON.stringify(DR, null, 2)}`)
+  chrome.storage.local.set({ DRCTree, DR, PlannerTables, currAP, studentInfo, records_all }, function () {
+    console.log(`in background.ts, onInstalled: setting DR ${JSON.stringify(DR, null, 2)}`)
     console.log("in background.ts, onInstalled: setting DRCTree & AP's initial value")
   })
 })
@@ -54,14 +57,6 @@ chrome.runtime.onMessage.addListener(
           console.log("in service worker, event::saveStudentInfo: successfully saved studentInfo")
         })
         sendResponse({ code: 200})
-      break
-      case "saveImportedGradeRecords": 
-        console.log("saveImportedGradeRecords")
-        saveImportedGradeRecord(request.data)
-        .then(() => {console.log('in service worker, event::saveImportedGradeRecords: successfully saved imported grade records')})
-        .catch(e => { console.error(e)})
-
-        
       break
       case "fetchTree":
         console.log('fetching DRCTree from indexedDB')
