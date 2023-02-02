@@ -133,18 +133,18 @@ function load(isRandomized: boolean) {
   ////// Data Structure for holding a course's gpa and its administrative information
 
   // implements GradeEntry
-  class CourseGradeEntry  {
-    category: string;
-    subject: string;
-    unit: numberOrUndefined;
-    letter_evaluation: LETTER_EVALUATION;
-    gpa: numberOrUndefined;
-    year: numberOrUndefined;
-    quarter: QUARTER;
-    subject_number: stringOrUndefined;
-    course_id: numberOrUndefined;
-    prinstructor: stringOrUndefined;
-    last_updated: Date | undefined;
+  // class CourseGradeEntry  {
+  //   category: string;
+  //   subject: string;
+  //   unit: numberOrUndefined;
+  //   letter_evaluation: LETTER_EVALUATION;
+  //   gpa: numberOrUndefined;
+  //   year: numberOrUndefined;
+  //   quarter: QUARTER;
+  //   subject_number: stringOrUndefined;
+  //   course_id: numberOrUndefined;
+  //   prinstructor: stringOrUndefined;
+  //   last_updated: Date | undefined;
 
     // constructor(category='', subject='', unit=undefined, letter_evaluation: LETTER_EVALUATION='', gpa=undefined, year=undefined, quarter=undefined, subject_number=undefined, course_id=undefined, prinstructor='', last_updated=undefined) {
     //   this.category = category;
@@ -159,7 +159,7 @@ function load(isRandomized: boolean) {
     //   this.prinstructor = prinstructor;
     //   this.last_updated = last_updated;
     // }
-  }
+  // }
   
   var table, tBody, rows;
   try{
@@ -202,7 +202,7 @@ function load(isRandomized: boolean) {
         GPAData.categories.push(category);    
       }
     } else if (rows[i].className === 'column_odd') {
-      let courseRecord = new CourseGradeEntry()
+      let courseRecord = {} // new CourseGradeEntry()
       courseRecord['category'] = category;
 
       // for each row, generate a CourseGradeEntry
