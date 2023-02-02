@@ -89,8 +89,6 @@
   // }
 </style>
 <script>
-import { ElTable, ElTag, ElTableColumn} from 'element-plus';
-import { Delete } from '@element-plus/icons-vue';
 export default {
   name: 'AcadedmicPlannerTable',
   props: ['grades', 'editable', 'year', 'quarter'],
