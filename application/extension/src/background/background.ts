@@ -1,5 +1,5 @@
 import openTab from '../utils/openDRC'
-import { updatePlannerTables, saveStudentInfo, saveImportedGradeRecord } from '../utils/sync' 
+import { saveStudentInfo, saveImportedGradeRecord } from '../utils/sync' 
 import { StudentInfo, GradeEntry } from '@qcampusmate-mate/types'
 import DR_LET from '../fixtures/dr_mock.json'
 // import { DR_LET } from '@qcampusmate-mate/fixtures'
@@ -27,8 +27,7 @@ chrome.runtime.onInstalled.addListener(() => {
   
   const records_all: GradeEntry[] = []
   const maxYearInAp: number = 0
-  chrome.storage.local.set({ DRCTree, DR, /*PlannerTables, currAP,*/ studentInfo, records_all, maxYearInAp }, function () {
-    // console.log(`in background.ts, onInstalled: setting DR ${JSON.stringify(DR, null, 2)}`)
+  chrome.storage.local.set({ DRCTree, DR, studentInfo, records_all, maxYearInAp }, function () {
     console.log("in background.ts, onInstalled: setting DRCTree & AP's initial value")
   })
 })
@@ -62,23 +61,11 @@ chrome.runtime.onMessage.addListener(
         .then(() => {console.log('in service worker, event::saveImportedGradeRecords: successfully saved imported grade records')})
         .catch(e => { console.error(e)})
       break
-      case "fetchTree":
-        console.log('fetching DRCTree from indexedDB')
-        sendResponse({ tree: "drcTree", grade: [1, 2, 3] })
-      break
       case "openDRC":
         console.log("")
         openTab()
         sendResponse({ code: 200 })
       break
-      // case "updatePlannerTable":
-      //   if(!request.data) {
-      //     throw Error("in service worker, event::updatePlannerTable: request.data is undefined")
-      //   }
-      //   console.log("in service worker, event::updatePlannerTable: request received")
-      //   updatePlannerTables(request.data)
-      //   sendResponse({ code: 200 })
-      // break
       case "putDRCTree":
         chrome.storage.local.get(['GPADATA', 'DR'], ({ GPADATA, DR }) => {
           if (GPADATA && DR) {

@@ -1,23 +1,28 @@
-import { SCHOOL, LETTER_EVALUATION } from './Constants';
-import { StudentInfo } from './StudentInfo';
-import { Course } from './Course';
+import type { SCHOOL, LETTER_EVALUATION } from './Constants';
+import type { StudentInfo } from './StudentInfo';
+import type { Course } from './Course';
+import type { CompiledLeafReqInterface } from './DRC';
 export interface DegreeRequirementBase {
-    meta: StudentInfo;
-    req: Req[];
+    meta?: StudentInfo;
+    req: {
+        keg: Req;
+        school: Req;
+    };
 }
-interface Req extends _Req {
-    school: SCHOOL;
-    minFirstYear?: number;
-}
-export interface LeafReq extends _Req {
-    major: string | string[] | undefined;
-    matchOptions: MatchOptions;
-}
-interface _Req {
+export interface Tree {
     label: string;
+    children?: Tree[];
+}
+export interface Req extends Tree {
     minUnit: number;
-    children?: _Req[];
+    passed_units: number;
+    minFirstYear?: number;
     elecComp?: 1 | 2 | 3;
+    children?: (Req | LeafReq)[] | CompiledLeafReqInterface[];
+}
+export interface LeafReq extends Req {
+    major?: string | string[] | undefined;
+    matchOptions: MatchOptions;
 }
 export interface MatchOptions {
     mustHas?: MustHasOptions;
@@ -27,10 +32,10 @@ export interface MatchOptions {
 interface MustHasOptions {
     courses?: Course[];
     majors?: string[];
-    like?: RegExp;
+    like?: RegExp | string;
 }
 interface ExIncludeOptions {
-    like?: RegExp;
+    like?: RegExp | string;
     courses?: Course[];
     schools?: SCHOOL[];
     majors?: string[];

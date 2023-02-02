@@ -1,7 +1,7 @@
-import * as ftrCompiler from './FilterCompiler'
+import { compile } from './FilterCompiler'
 import { ref, reactive, computed, watch } from 'vue'
 import type { Ref , UnwrapNestedRefs, ComputedRef } from 'vue'
-import { Course, GradeEntry, GradeFilterOptions, PlannerTable, PlannerTableEntry, _PlannerTableEntry } from '@qcampusmate-mate/types';
+import type { Course, GradeEntry, GradeFilterOptions, PlannerTable, PlannerTableEntry, _PlannerTableEntry, DegreeRequirementBase, LeafReq, Req, MatchFunctionType, CompiledLeafReqInterface } from '@qcampusmate-mate/types';
 import { savePlannerTable } from '../utils/sync'
 import { getGlobalThis } from '@vue/shared';
 // import store from '../store/index.js'
@@ -16,28 +16,80 @@ interface DRCTree {
 interface DRCTreeNode {
 }
 
+class CompiledLeafReq implements CompiledLeafReqInterface{
+  label: string;
+  minUnit: number;
+  matchFunction: MatchFunctionType;
+  children: UnwrapNestedRefs<GradeEntry[]>;
+  minFirstYear?: number;
+  passed_units: ComputedRef<number>;
+  elecComp?: 1 | 2 | 3 ;
+
+  constructor(leafReq: LeafReq) {
+    this.label = leafReq.label
+    this.minUnit = leafReq.minUnit
+    this.matchFunction = compileMatchOptions(leafReq.matchOptions)
+    this.children = reactive<GradeEntry[]>([])
+    this.passed_units = computed(() => {
+      return sumUnits(this.children)
+    })
+    this.elecComp = leafReq.elecComp
+    
+  }
+}
+
 class DRC {
-  // tree: UnwrapNestedRefs<any>; // the DRC Tree
   maxYearInAp: Ref<number>;
   drLeaves: any; //DRCTreeNode[]
   gpaData: GradeEntry[];
-  dr: Object;
+  dr: DegreeRequirementBase;
   dr_smart: Object;
   records_all: Ref<GradeEntry[]> //UnwrapNestedRefs<GradeEntry[]>
 
-  constructor(gpaData=null, dr={}) {
+  constructor(gpaData=null) {
     this.gpaData = gpaData // need type def
     this.dr_smart = {}
-    this.dr = dr
     this.maxYearInAp = ref<number>(0)
 
     // Serialize the tree and store it in IndexedDB
     this.records_all = ref<GradeEntry[]>([])  
   }
 
+   /**
+   * Traverse the DR, get the reference to each leaf node, sort by priority and store these in `drLeaves`
+   */
   // return leaf requirements
-  private pickLeafRequirements() {
+  public pickLeafRequirements() {
+    let leaves = []
+    function traverse(tree: Req | LeafReq) {
+      // console.log(tree.label)
+      if (tree) {
+        if (tree.children && (tree.children.length > 0)) {
+          for (const [idx, subtree] of tree.children.entries()) {
+            if (subtree.children && (subtree.children.length > 0))
+              traverse(subtree as Req)
+            else {
+              const smartLeaf = new CompiledLeafReq(tree as LeafReq)
+              tree.children[idx] = smartLeaf
+              leaves.push(smartLeaf)
+            } 
+          }
+        }
+      } 
+    }
+    
+    for (const [key, req] of Object.entries(this.dr.req)) {
+      traverse(req)
+    }
+    
+    // in case the node does not have a `elecComp` key
+    for (let node of leaves) 
+      if (!node.elecComp) node['elecComp'] = 1
 
+    leaves.sort((e1, e2) => e2['elecComp'] - e1['elecComp'])
+
+    // sort by priority and store
+    this.drLeaves.push(...leaves)
   }
 
   /**
@@ -50,19 +102,14 @@ class DRC {
    *    - RESTAPI
    */
   public initialize() {
-    // read DR from local DB and create a DRC tree out of it
-    // traverse the tree, when see a rconf property, compile the filters according to the filterConf info
-    // ftrCompiler.compile(rconf)
     return new Promise<DRC>((resolve, reject) => {
       try {
-        chrome.storage.local.get([ "GPADATA", "DR", "records_all", "maxYearInAp"], ({  GPADATA, DR, records_all, maxYearInAp }) => {
+        chrome.storage.local.get(["GPADATA", "DR", "records_all", "maxYearInAp"], ({ GPADATA, DR, records_all, maxYearInAp }) => {
           // console.log(`In DRC.ts, initialize(): ${JSON.stringify(DRCTree)}`)
 
           if (!records_all) {
-            // alert(`Unexpected undefined: PlannerTables[${currAP}] is undefined!!`)
             alert(`成績は見つかりません！！`)
           }
-          // console.log("in DRC.ts, initialize() ", PlannerTables[currAP])
     
           this.dr = DR
           this.gpaData = GPADATA.course_grades
@@ -108,7 +155,6 @@ class DRC {
         e['quarter'] = quarter
         return e
       })
-      // alert(`adding courses:${JSON.stringify(courses, null, 2)}`)
 
       this.records_all.value.push(...courses)
     } catch {
@@ -605,7 +651,9 @@ function aggregate(gradeFilterOptions:GradeFilterOptions, planner_table: Planner
   return [avgGPA, grade_statistics.passed_units.toFixed(1)];
 }
 
-export function getPlannerTable(course_grades: GradeEntry[], maxYearInAp: number) {
+///////////////////////// Subroutines ///////////////////////
+//////////// 
+function getPlannerTable(course_grades: GradeEntry[], maxYearInAp: number) {
   if (course_grades) {
     const ENROLLMENT = 2019; // temp magic number
     const newPlannerTable: PlannerTable = {};
@@ -613,16 +661,14 @@ export function getPlannerTable(course_grades: GradeEntry[], maxYearInAp: number
     for (let y = ENROLLMENT; y <= maxYearInAp; y++) {
       console.log(y)
       const zenki = filterBy(course_grades, { quarter: 0, year: y });
-      // console.log(`${y} 前期:`, zenki)
-
       const kouki = filterBy(course_grades,{ quarter: 1, year: y });
-      // console.log(zenki);
       newPlannerTable[y] = [zenki, kouki];
     }
 
     return newPlannerTable
   }
 }
+
 ///////////////////////// TODO /////////////////////////
 /**
  * @params {Object} gradeFilterOptions - expect a CourseData object containing at
@@ -695,4 +741,4 @@ function pickSatisfyingMinUnits(matchedCourses: Course[]): Course[] {
   return []
 }
 
-export { DRC, filterBy, aggregate, setDRCTreeNodeProperties, getMaxYearInRecords }
+export { DRC, filterBy, aggregate, setDRCTreeNodeProperties, getMaxYearInRecords, getPlannerTable }

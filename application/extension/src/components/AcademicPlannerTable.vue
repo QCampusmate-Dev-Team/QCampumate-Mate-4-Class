@@ -94,9 +94,6 @@ export default {
   props: ['grades', 'editable', 'year', 'quarter'],
   setup(props) {
     const subjectCellFormatter = (row, column, cellValue, rowIndex) => {
-      // console.log(`${row}:${column}:${cellValue}:${index}`);
-      // console.log(`in AcademicPlannerTable.vue, subjectCellFormatter(): ${JSON.stringify(props.grades[rowIndex], null, 2)}`)
-
       const isPNPorW = ['R', 'W'].includes(props.grades[rowIndex].letter_evaluation)
       const isPlanOrInProgress = props.grades[rowIndex].isPlan || row.unit === ''
 
@@ -109,15 +106,8 @@ export default {
       } else {
         return `${cellValue}(${row.gpa})`
       }
-
-      // return `${cellValue}${row.unit === '' ? '' : `(${ isPNPorW ? '*' :row.gpa })`}`;
-      // Number.isNaN(parseFloat(row.gpa))
-
     }
     const tableRowClassName = ({ row, rowIndex }) => {
-      // console.log(`in AcademicPlannerTable.vue, tableRowClassName(): ${JSON.stringify(props.grades[rowIndex], null, 2)}`)
-      // console.log(`in AcademicPlannerTable.vue, tableRowClassName():${parseInt(row.gpa) === 0 ? 'failed-course' : ''}`)
-
       switch(props.grades[rowIndex].letter_evaluation) {
         case 'F': 
           return 'failed-course'
@@ -125,7 +115,6 @@ export default {
         default:
           return ''
       }
-      // return parseInt(row.gpa) === 0 ? 'failed-course' : '';
     }
 
     return {

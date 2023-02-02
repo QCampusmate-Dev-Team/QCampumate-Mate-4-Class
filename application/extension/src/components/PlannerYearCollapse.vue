@@ -88,7 +88,7 @@
 </template>
 
 <script setup lang="ts">
-import { ElCollapse, ElCollapseItem, ElDialog, ElMessageBox } from 'element-plus'
+import { ElMessageBox } from 'element-plus'
 import { Delete } from '@element-plus/icons-vue'
 import AcademicPlannerTable from './AcademicPlannerTable.vue'
 import AddCourseForm from './AddCourseForm.vue'
@@ -96,7 +96,7 @@ import { ref, inject, computed, markRaw } from 'vue'
 import { DRC, aggregate, getPlannerTable } from '../drc/DRC'
 
 const drc = await inject<Promise<DRC>>('drc')
-const activeName = [`${new Date().getFullYear()}`];
+const activeName = ref[`${new Date().getFullYear()}`];
 
 var addYear:number = 0
 var addQuarter: 0 | 1 = 0
@@ -136,7 +136,6 @@ const options = [
 function handleCollapseChange(activeNames) {
   // console.log(activeNames)
 }
-
 
 const handleAdd = () => {
   showDialog.value = false

@@ -17,24 +17,29 @@
   
 </template>
 <style scoped>
-  /* .edit_dev >>> .el-transfer {
-    padding: 0 150px;
-  } */
-  .edit_dev >>> .el-transfer:first-child {
-    margin-left:10px;
-  }
+/** 
+ * >>> and ::v-deep() 
+ * https://vue-loader-v14.vuejs.org/en/features/scoped-css.html
+ */
 
-  /* .edit_dev >>> .el-transfer:last-child {
-    margin-right:50px;
-  } */
+/* .edit_dev >>> .el-transfer {
+  padding: 0 150px;
+} */
+.edit_dev :deep(.el-transfer:first-child) {
+  margin-left:10px;
+}
 
-  .edit_dev >>> .el-transfer-panel{
-    width: 43%;
-  }
+/* .edit_dev >>> .el-transfer:last-child {
+  margin-right:50px;
+} */
 
-  .edit_dev >>> .el-transfer-panel__filter{
-    width:485px;
-  }
+.edit_dev :deep(.el-transfer-panel){
+  width: 43%;
+}
+
+.edit_dev :deep(.el-transfer-panel__filter){
+  width:485px;
+}
 </style>
 
 <script lang="ts" setup>
