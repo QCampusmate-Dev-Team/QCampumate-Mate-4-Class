@@ -1,7 +1,7 @@
 /* This files provides utility functions for synchronization between data in the view model and client storage*/
 /* Execution context is expected to be in a Service Worker context */
 import { PlannerTable, GradeEntry, StudentInfo} from '@qcampusmate-mate/types'
-import { filterBy } from '../drc/DRC'
+import { filterBy, setDRCTreeNodeProperties } from '../drc/DRC'
 
 /** (Think about potential validations needed upon saving..)
  *  Save <currAP> along side
@@ -68,5 +68,35 @@ export function saveStudentInfo(studentInfo: StudentInfo, cb: (data?: any) => vo
   chrome.storage.local.set({ studentInfo }, () => {
     console.log('in sync.ts, saveStudentInfo(): saved studentInfo')
     cb()
+  })
+}
+
+/**
+ * gpaData is of following type
+ * 
+ * {
+    tHeadNameMap: tHeadNameMapping,
+    categories: [],
+    course_grades: [],
+    } 
+ * 
+ *   
+ */
+export function saveImportedGradeRecord(GPAData) {
+  return new Promise((resolve, reject) => {
+    try {
+      chrome.storage.local.set({ 
+        GPADATA: GPAData, 
+        records_all: JSON.stringify((GPAData.course_grades as GradeEntry[])
+        .map(ge => setDRCTreeNodeProperties(ge)))
+      }, 
+        () => { 
+          // console.log(JSON.stringify((GPAData.course_grades as GradeEntry[]).map(ge => setDRCTreeNodeProperties(ge))), null, 2)
+          resolve(GPAData.course_grades.length)
+        }
+      )
+    } catch {
+      reject()
+    }
   })
 }

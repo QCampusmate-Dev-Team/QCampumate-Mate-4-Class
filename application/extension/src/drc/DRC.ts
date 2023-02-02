@@ -1,7 +1,7 @@
-import * as ftrCompiler from './FilterCompiler'
+import { compileMatchOptions } from './FilterCompiler'
 import { ref, reactive, computed, watch } from 'vue'
 import type { Ref , UnwrapNestedRefs, ComputedRef } from 'vue'
-import { Course, GradeEntry, GradeFilterOptions, PlannerTable, PlannerTableEntry, _PlannerTableEntry } from '@qcampusmate-mate/types';
+import type { Course, GradeEntry, GradeFilterOptions, PlannerTable, PlannerTableEntry, _PlannerTableEntry, DegreeRequirementBase, LeafReq, Req, MatchFunctionType, CompiledLeafReqInterface } from '@qcampusmate-mate/types';
 import { savePlannerTable } from '../utils/sync'
 // import store from '../store/index.js'
 
@@ -15,23 +15,45 @@ interface DRCTree {
 interface DRCTreeNode {
 }
 
+
+class CompiledLeafReq implements CompiledLeafReqInterface{
+  label: string;
+  minUnit: number;
+  matchFunction: MatchFunctionType;
+  children: UnwrapNestedRefs<GradeEntry[]>;
+  minFirstYear?: number;
+  passed_units: ComputedRef<number>;
+  elecComp?: 1 | 2 | 3 ;
+
+  constructor(leafReq: LeafReq) {
+    this.label = leafReq.label
+    this.minUnit = leafReq.minUnit
+    this.matchFunction = compileMatchOptions(leafReq.matchOptions)
+    this.children = reactive<GradeEntry[]>([])
+    this.passed_units = computed(() => {
+      return sumUnits(this.children)
+    })
+    this.elecComp = leafReq.elecComp
+    
+  }
+}
+
+
 class DRC {
   ap: UnwrapNestedRefs<PlannerTable>
   // tree: UnwrapNestedRefs<any>; // the DRC Tree
-  drLeaves: any; //DRCTreeNode[]
+  drLeaves: LeafReq[]; //DRCTreeNode[]
   currAP: number;
   gpaData: GradeEntry[];
-  dr: Object;
+  dr: DegreeRequirementBase;
   dr_smart: Object;
   records_all: Ref<GradeEntry[]> //UnwrapNestedRefs<GradeEntry[]>
 
-  constructor(gpaData=null, dr={}) {
-    console.log("DRC constructor")
-    // tree: Object, ap: Array<any>
+  constructor(gpaData=null) {
 
     this.gpaData = gpaData // need type def
     this.dr_smart = {}
-    this.dr = dr // need type def
+    this.drLeaves = []
     // this.tree = reactive({
     //   data: []
     // })
@@ -46,10 +68,43 @@ class DRC {
     this.records_all = ref<GradeEntry[]>([])  
   }
 
+  /**
+   * Traverse the DR, get the reference to each leaf node, sort by priority and store these in `drLeaves`
+   */
   // return leaf requirements
-  private pickLeafRequirements() {
+  public pickLeafRequirements() {
+    let leaves = []
+    function traverse(tree: Req | LeafReq) {
+      // console.log(tree.label)
+      if (tree) {
+        if (tree.children && (tree.children.length > 0)) {
+          for (const [idx, subtree] of tree.children.entries()) {
+            if (subtree.children && (subtree.children.length > 0))
+              traverse(subtree as Req)
+            else {
+              const smartLeaf = new CompiledLeafReq(tree as LeafReq)
+              tree.children[idx] = smartLeaf
+              leaves.push(smartLeaf)
+            } 
+          }
+        }
+      } 
+    }
+    
+    for (const [key, req] of Object.entries(this.dr.req)) {
+      traverse(req)
+    }
+    
+    // in case the node does not have a `elecComp` key
+    for (let node of leaves) 
+      if (!node.elecComp) node['elecComp'] = 1
 
+    leaves.sort((e1, e2) => e2['elecComp'] - e1['elecComp'])
+
+    // sort by priority and store
+    this.drLeaves.push(...leaves)
   }
+
 
   /**
    *  Initialize DRC according to different persistente layers.
@@ -66,32 +121,21 @@ class DRC {
     // ftrCompiler.compile(rconf)
     return new Promise<DRC>((resolve, reject) => {
       try {
-        chrome.storage.local.get(["PlannerTables", "currAP", "GPADATA", "DR", "records_all"], ({ currAP, PlannerTables, GPADATA, DR, records_all }) => {
-          // console.log(`In DRC.ts, initialize(): ${JSON.stringify(DRCTree)}`)
-
-          if (!PlannerTables[currAP]) {
-            // alert(`Unexpected undefined: PlannerTables[${currAP}] is undefined!!`)
-            alert(`成績は見つかりません！！`)
-          }
-          console.log("in DRC.ts, initialize() ", PlannerTables[currAP])
-    
+        chrome.storage.local.get(["GPADATA", "DR", "records_all"], ({ GPADATA, DR, records_all }) => {
           this.dr = DR
           this.gpaData = GPADATA.course_grades
           this.records_all.value = JSON.parse(records_all)
-    
-          Object.assign(this.ap, PlannerTables[currAP])
-          // this.tree.data = JSON.parse(DRCTree).data
-          // alert(DRCTree)
-          this.currAP = currAP
-  
+          
+          if (!this.records_all.value) {
+            // alert(`Unexpected undefined: PlannerTables[${currAP}] is undefined!!`)
+            alert(`成績は見つかりません！！`)
+          } else {
+            // alert(JSON.stringify(this.records_all.value, null, 2))
+          }
     
           // TODO:
           // setting up reactive deps between gpaData -> drcTree
           watch(() => this.records_all.value.length, (val, oldV) => {
-            console.log('watching!!', val, oldV)
-            // console.log(JSON.stringify(this.ap_test.value, null, 2))
-
-
             if (val > oldV) {
               console.log("@DRC.ts, watcher of this.records_all: add courses")
             } else if (val < oldV) {
@@ -99,6 +143,7 @@ class DRC {
             } 
             // this.categorize()
             
+
             chrome.storage.local.set({records_all: JSON.stringify(this.records_all.value)})
           })
 
@@ -718,6 +763,52 @@ function getPlannerFormatCourseData(data) {
   return data.map((e) => pick(e));
 }
 
+///////////////////////// UTILITY /////////////////////////
+//////////// 
+function sumUnits(ge: GradeEntry[]): number { 
+  return 0
+}
+
+/**
+ * Setting GradeEntry's
+ * - status: a hint for different coloring in DRCTree
+ *  ------------------------
+ *    failed: -2
+ *    withdraw: -1 
+ *    ongoing: 0
+ *    passed_retakable: 1
+ *    passed_unretakable: 2
+ *  ------------------------
+ * - label: the name of the GradeEntry, also the rendered text in DRCTree
+ * 
+ * @params {GradeEntry} ge - the course_node whose status is undetermined yet 
+ * @returns {number} status - the set status of the course node
+ */
+function setDRCTreeNodeProperties(ge:GradeEntry) {
+  ge['label'] = ge.subject
+
+  /* Decide status based on LETTER_EVALUATION */
+  // Passed/Not passed detection
+  if (ge.letter_evaluation === 'F') {
+    // If 'F', don't increment the passed unit
+    ge.status = -2;
+  } else if (['A', 'B', 'C', 'D', 'R'] // 'A', 'B', 'C', 'D', 'R'
+    .includes(ge.letter_evaluation)) {
+    if (ge.letter_evaluation === 'D') {
+      // Mark 'D' courses as retakable;
+      ge.status = 1;
+    } else {
+      ge.status = 2;
+    }
+  } else if (ge.letter_evaluation === 'W') { // W
+    ge.status = -1;
+  } else if (!ge.unit && !ge.last_updated){ // ongoing course
+    ge.status = 0;
+  }
+
+  return ge
+}
+
 /**
  *  
  */
@@ -725,4 +816,4 @@ function pickSatisfyingMinUnits(matchedCourses: Course[]): Course[] {
   return []
 }
 
-export { DRC, filterBy, aggregate }
+export { DRC, filterBy, aggregate, setDRCTreeNodeProperties }
