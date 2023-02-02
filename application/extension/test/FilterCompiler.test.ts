@@ -1,4 +1,4 @@
-import { compile } from '../src/drc/FilterCompiler'
+import { compileMatchOptions } from '../src/drc/FilterCompiler'
 import { expect, it } from 'vitest'
 import { GradeEntry, MatchOptions} from '@qcampusmate-mate/types'
 
@@ -24,20 +24,20 @@ describe('must has one course', () => {
   } 
 
   it('mustHas 基幹教育セミナー (matchOpt: Course[], in 0 grade entries)', () => {
-    const testFn = compile(matchKisemiMustHasCourses)
+    const testFn = compileMatchOptions(matchKisemiMustHasCourses)
     expect(G0_Empty).toHaveLength(0)
     expect(G0_Empty.map((e: GradeEntry) => testFn(e))).toEqual([])
   })
 
   it('mustHas 基幹教育セミナー (matchOpt: Course[], in 1 grade entries)', () => {
-    const testFn = compile(matchKisemiMustHasCourses)
+    const testFn = compileMatchOptions(matchKisemiMustHasCourses)
     expect(G1_only_kisemi_0).toHaveLength(1)
     expect(G1_only_kisemi_0.map((e: GradeEntry) => testFn(e))).toEqual([true])
     expect(G1_only_kyougaku_1.map((e: GradeEntry) => testFn(e))).toEqual([false])
   })
 
   it('mustHas 基幹教育セミナー (matchOpt: Course[], in 2 grade entries)', () => {
-    const testFn = compile(matchKisemiMustHasCourses)
+    const testFn = compileMatchOptions(matchKisemiMustHasCourses)
     const G2_0_local = [...G2_0];
     expect(G2_0_local).toHaveLength(2)
     expect(G2_0_local.map((e: GradeEntry) => testFn(e))).toEqual([true, false])
@@ -45,7 +45,7 @@ describe('must has one course', () => {
   })
 
   it('mustHas 基幹教育セミナー (matchOpt: Course[], in 5 grade entries)', () => {
-    const testFn = compile(matchKisemiMustHasCourses)
+    const testFn = compileMatchOptions(matchKisemiMustHasCourses)
     const G5_0_local = Array.from(G5_0);
     expect(G5_0_local).toHaveLength(5)
     expect(G5_0_local.map((e: GradeEntry) => testFn(e))).toEqual([false, true, false, false, false])
@@ -53,13 +53,13 @@ describe('must has one course', () => {
   })
 
   it('mustHas 課題協学科目 (matchOpt: like, in 0 grade entries)', () => {
-    const testFn = compile(matchColearnMustHasLike)
+    const testFn = compileMatchOptions(matchColearnMustHasLike)
     expect(G0_Empty).toHaveLength(0)
     expect(G0_Empty.map((e: GradeEntry) => testFn(e))).toEqual([])
   })
 
   it('mustHas 課題協学科目 (matchOpt: like, in 1 grade entry', () => {
-    const testFn = compile(matchColearnMustHasLike)
+    const testFn = compileMatchOptions(matchColearnMustHasLike)
     expect(G1_only_kisemi_0).toHaveLength(1)
     expect(G1_only_kyougaku_1).toHaveLength(1)
     expect(G1_only_kisemi_0.map((e: GradeEntry) => testFn(e))).toEqual([false])
@@ -67,7 +67,7 @@ describe('must has one course', () => {
   })
 
   it('mustHas 課題協学科目 (matchOpt: like, in 5 grade entry', () => {
-    const testFn = compile(matchColearnMustHasLike)
+    const testFn = compileMatchOptions(matchColearnMustHasLike)
     const G5_0_local = Array.from(G5_0);
 
     expect(G5_0_local).toHaveLength(5)
@@ -134,20 +134,20 @@ describe("include multiple courses", () => {
   }
 
   it('include 韓国語 (matchOpt: Course[], in 0 grade entries)', () => {
-    const testFn = compile(matchKoreanIncludeCourses)
+    const testFn = compileMatchOptions(matchKoreanIncludeCourses)
     expect(G0_Empty).toHaveLength(0)
     expect(G0_Empty.map((e: GradeEntry) => testFn(e))).toEqual([])
   })
 
   it('include 韓国語 (matchOpt: Course[], in 1 grade entry)', () => {
-    const testFn = compile(matchKoreanIncludeCourses)
+    const testFn = compileMatchOptions(matchKoreanIncludeCourses)
     expect(G1_only_korean).toHaveLength(1)
     expect(G1_only_korean.map((e: GradeEntry) => testFn(e))).toEqual([true])
     expect(G1_only_kyougaku_1.map((e: GradeEntry) => testFn(e))).toEqual([false])
   })
 
   it('include 韓国語 (matchOpt: Course[], in 2 grade entries)', () => {
-    const testFn = compile(matchKoreanIncludeCourses)
+    const testFn = compileMatchOptions(matchKoreanIncludeCourses)
     const G2_0_local = [...G2_0];
     expect(G2_0_local).toHaveLength(2)
     expect(G2_0_local.map((e: GradeEntry) => testFn(e))).toEqual([false, true])
@@ -155,7 +155,7 @@ describe("include multiple courses", () => {
   })
 
   it('include 韓国語 (matchOpt: Course[], in 5 grade entries)', () => {
-    const testFn = compile(matchKoreanIncludeCourses)
+    const testFn = compileMatchOptions(matchKoreanIncludeCourses)
     const G5_0_local = Array.from(G5_0);
     expect(G5_0_local).toHaveLength(5)
     expect(G5_0_local.map((e: GradeEntry) => testFn(e))).toEqual([false, false, true, true, false])
@@ -163,7 +163,7 @@ describe("include multiple courses", () => {
   })
 
   it('include 韓国語, match all true(matchOpt: Course[], in 5 grade entries)', () => {
-    const testFn = compile(matchKoreanIncludeCourses)
+    const testFn = compileMatchOptions(matchKoreanIncludeCourses)
     const G5_all_korean_1_local = Array.from(G5_all_korean_1);
     expect(G5_all_korean_1_local).toHaveLength(5)
     expect(G5_all_korean_1_local.map((e: GradeEntry) => testFn(e))).toEqual([true, true, true, true, true])
@@ -177,7 +177,7 @@ describe("include multiple courses", () => {
   }
 
   it("include 総合科目 (matchOpt: majors:[GES], in 10 grade entries)", () => {
-    const testFn = compile(matchSougouIncludeMajors)
+    const testFn = compileMatchOptions(matchSougouIncludeMajors)
     const G10_some_GES_0_local = [...G10_some_GES_0]
 
     expect(G10_some_GES_0_local).toHaveLength(10)
@@ -200,7 +200,7 @@ describe("include multiple courses", () => {
   }
 
   it("include 理系ディシプリン科目 (matchOpt: majors: [SMA, SPH, SCH, SBI, SGS, SKD, SIS, SLE], in 20 grade entries)", () => {
-    const testFn = compile(matchKikanSciIncludeMajors)
+    const testFn = compileMatchOptions(matchKikanSciIncludeMajors)
     const G10_some_GES_0_local = [...G10_some_GES_0]
     const G10_some_SCIKIKAN_1_local = [...G10_some_SCIKIKAN_1]
     // No courses in G10_some_GES_0_local includes any 理系ディシ科目
@@ -230,7 +230,7 @@ describe.todo("exclude and include multiple courses", () => {
   }
 
   it("exclude 東洋史学 (matchOpt: majors:[HUM], like: 東洋史学, in 5 grade entries)", () => { 
-    const testFn = compile(matchTouyoushiExcludeLike) 
+    const testFn = compileMatchOptions(matchTouyoushiExcludeLike) 
 
     const G5_some_history_2_local = [...G5_some_history_2] 
 

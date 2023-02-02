@@ -1,17 +1,17 @@
 export type SCHOOL = 
-'KED'| //基幹・大学院基幹
-'HUM'| 
-'ISI'| //共創
-'EDU'| //教育学部・教職課程
-'LAW'| //法学
-'ECO'| //経済
-'MED'| //医学部医学科・医学部生命科学科・医学部保健学科
-'DEN'| //歯
-'PHS'| //薬
-'ENG'| //工
-'DES'| //芸工
-'AGR'| //農
-''|
+"KED"| //基幹・大学院基幹
+"LET"| // 文 
+"ISI"| //共創
+"EDU"| //教育学部・教職課程
+"LAW"| //法学
+"ECO"| //経済
+"MED"| //医学部医学科・医学部生命科学科・医学部保健学科
+"DEN"| //歯
+"PHS"| //薬
+"ENG"| //工
+"DES"| //芸工
+"AGR"| //農
+""|
 undefined;
 
 export type LETTER_EVALUATION = 'S' | 'A' | 'B' | 'C' | 'D' | 'F' | 'W' | 'R' | '' | undefined; // change this to enum and get rid of gpa?

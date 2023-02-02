@@ -1,7 +1,7 @@
 import { SCHOOL } from './Constants'
 
 export interface StudentInfo {
-  enrollment: string;
+  enrollment: number;
   school: SCHOOL; 
   major: string | undefined;
   field: string | undefined;

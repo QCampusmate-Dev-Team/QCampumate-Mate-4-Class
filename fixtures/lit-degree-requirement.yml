@@ -6,7 +6,8 @@ meta:
   lang1st: Korean
   lang2nd: English
   isItrntnlStd: true
-requirements:
+  provData: true
+req:
   keg:
     label: 基幹教育
     minUnit: 48
@@ -318,29 +319,29 @@ requirements:
             minUnit: 4
             matchOptions: 
               is: 
-               - subject: 人文学 I
-                school: LET
-                major: HUM
-                subjectCode: 2011J
-                unit: 2
+                - subject: 人文学 I
+                  school: LET
+                  major: HUM
+                  subjectCode: 2011J
+                  unit: 2
 
-               - subject: 人文学 II
-                school: LET
-                major: HUM
-                subjectCode: 2012J
-                unit: 2
+                - subject: 人文学 II
+                  school: LET
+                  major: HUM
+                  subjectCode: 2012J
+                  unit: 2
 
-               - subject: 人文学 III
-                school: LET
-                major: HUM
-                subjectCode: 3011J
-                unit: 2
+                - subject: 人文学 III
+                  school: LET
+                  major: HUM
+                  subjectCode: 3011J
+                  unit: 2
 
-               - subject: 人文学 IV
-                school: LET
-                major: HUM
-                subjectCode: 3012J
-                unit: 2
+                - subject: 人文学 IV
+                  school: LET
+                  major: HUM
+                  subjectCode: 3012J
+                  unit: 2
 
           - label: 古典語および外国語科目   #葉
             elecComp: 2
