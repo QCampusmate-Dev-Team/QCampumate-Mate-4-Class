@@ -108,25 +108,21 @@ class DRC {
    */
   public pickLeafRequirements(): void {
     let leaves = []
-    function traverse(tree: Req | LeafReq) {
-      // console.log(tree.label)
-      if (tree) {
-        if (tree.children && (tree.children.length > 0)) {
-          for (const [idx, subtree] of tree.children.entries()) {
-            if (subtree.children && (subtree.children.length > 0))
-              traverse(subtree as Req)
-            else {
-              const smartLeaf = new CompiledLeafReq(tree as LeafReq)
-              tree.children[idx] = smartLeaf
-              leaves.push(smartLeaf)
-            } 
-          }
+    function traverse(tree: Req | LeafReq, parent: Req, idx: number) {
+      if (!('matchOptions' in tree)) {
+        for (const [idx, subtree] of tree.children.entries()) {
+          // if (subtree.children && (!subtree.children.hasOwnProperty('matchOptions')))
+          traverse(subtree as Req, tree, idx)
         }
+      } else { // if is leaf req
+        const smartLeaf = new CompiledLeafReq(tree as LeafReq)
+        parent.children[idx] = smartLeaf
+        leaves.push(smartLeaf)
       } 
     }
     
     for (const [key, req] of Object.entries(this.drcTree.req)) {
-      traverse(req)
+      traverse(req, null, -1)
     }
     
     // in case the node does not have a `elecComp` key
@@ -145,7 +141,27 @@ class DRC {
    *  
    */
   public setUpPassedUnitsDeps(): void {
+    function r(req: Req) {
+      if (!req.hasOwnProperty('matchFunction')) {
+        for (let child of req.children)
+          r(child as Req)
+        
+        req['passed_units'] = computed(() => 
+          (req.children as Req[]).reduce(
+            (acc: number, child: Req) => acc + (child.passed_units as ComputedRef<number>).value,
+          0)
+        )
+      } 
+    }
 
+    for (const [key, req] of Object.entries(this.drcTree.req)) {
+      r(req)
+      req['passed_units'] = computed(() => 
+        (req.children as Req[]).reduce(
+          (acc: number, child: Req) => acc + (child.passed_units as ComputedRef<number>).value,
+        0)
+      )
+    }
   }
   /** 
    *  Add multiple courses to the records_all, 
@@ -206,7 +222,29 @@ class DRC {
     }
   }
 
+  /**
+   * {
+   *  "label": "基幹教育",
+      "minUnit": 48,
+      "passed_units": 1
+      "children": [
+        {
+          "label": "基幹教育セミナー",
+          "minUnit": 1,
+          "passed_units": 1
+          "children": [
+            ...
+          ]
+        }
+      ]
+   * }
+   */
+  public generateDRReportPassedUnitsJSON(key?: string) {
+    // this.drcTree['']
+  }
 
+  public log() {
+  }
   /**
    * Assume at the invokation, the function will be provided
    * with a context <this> whose `meta` and `data` properties are expected to be initialized as specified in 卒業要件データ定義
@@ -515,8 +553,6 @@ class DRC {
     //return JSON.stringify(this.tree, null, 2) // {"data": []}
   }
 
-  public log() {
-  }
 
   // serialize() {
   //   JSON.stringify(this.tree)
@@ -695,7 +731,7 @@ function getPlannerFormatCourseData(data) {
 ///////////////////////// UTILITY /////////////////////////
 //////////// 
 function sumUnits(ge: GradeEntry[]): number { 
-  if (!ge || !ge.length){
+  if (!ge || typeof ge.length === 'undefined'){
     console.error("@DRC.ts, sumUnits(): unexpected arg type, expecting `GradeEntry[]`")
     return 0
   }
