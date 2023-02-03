@@ -15,7 +15,7 @@ export interface Tree {
 }
 export interface Req extends Tree {
     minUnit: number;
-    passed_units: number;
+    passed_units?: number;
     minFirstYear?: number;
     elecComp?: 1 | 2 | 3;
     children?: (Req | LeafReq)[] | CompiledLeafReqInterface[];

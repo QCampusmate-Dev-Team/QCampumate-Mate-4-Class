@@ -26,13 +26,11 @@
       </el-container>
     </el-container>
     <template #fallback>
-      <div class="loading">
-        <el-loading
-          :test="'loading'"
-          :spinner-size="30"
-          :fullscreen="true"
-        ></el-loading>
-      </div>
+      <el-container>
+        <el-icon class="is-loading" style="position: absolute; top: 50%; left: 50%">
+          <Loading style="transform: scale(5);"/>
+        </el-icon>
+      </el-container>
     </template>
   </Suspense>
 </template>

@@ -20,7 +20,7 @@
   /* .edit_dev >>> .el-transfer {
     padding: 0 150px;
   } */
-  .edit_dev >>> .el-transfer:first-child {
+  .edit_dev :deep(.el-transfer:first-child) {
     margin-left:10px;
   }
 
@@ -28,17 +28,17 @@
     margin-right:50px;
   } */
 
-  .edit_dev >>> .el-transfer-panel{
+  .edit_dev :deep(.el-transfer-panel){
     width: 43%;
   }
 
-  .edit_dev >>> .el-transfer-panel__filter{
+  .edit_dev :deep(.el-transfer-panel__filter){
     width:485px;
   }
 </style>
 
 <script lang="ts" setup>
-import { ElTransfer } from 'element-plus'
+// import { ElTransfer } from 'element-plus'
 import { ref, defineEmits } from 'vue'
 import { PlannerTableEntry } from '@qcampusmate-mate/types'
 import { courseData } from '../fixtures/course_mock'

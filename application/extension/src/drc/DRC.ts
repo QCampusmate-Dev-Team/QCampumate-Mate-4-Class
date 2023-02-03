@@ -1,4 +1,4 @@
-import { compile } from './FilterCompiler'
+import { compileMatchOptions } from './FilterCompiler'
 import { ref, reactive, computed, watch } from 'vue'
 import type { Ref , UnwrapNestedRefs, ComputedRef } from 'vue'
 import type { Course, GradeEntry, GradeFilterOptions, PlannerTable, PlannerTableEntry, _PlannerTableEntry, DegreeRequirementBase, LeafReq, Req, MatchFunctionType, CompiledLeafReqInterface } from '@qcampusmate-mate/types';
@@ -34,62 +34,23 @@ class CompiledLeafReq implements CompiledLeafReqInterface{
       return sumUnits(this.children)
     })
     this.elecComp = leafReq.elecComp
-    
   }
 }
 
 class DRC {
   maxYearInAp: Ref<number>;
-  drLeaves: any; //DRCTreeNode[]
+  drLeaves: CompiledLeafReq[]; 
   gpaData: GradeEntry[];
-  dr: DegreeRequirementBase;
-  dr_smart: Object;
+  drcTree: DegreeRequirementBase;
   records_all: Ref<GradeEntry[]> //UnwrapNestedRefs<GradeEntry[]>
 
   constructor(gpaData=null) {
     this.gpaData = gpaData // need type def
-    this.dr_smart = {}
+    this.drLeaves = []
     this.maxYearInAp = ref<number>(0)
 
     // Serialize the tree and store it in IndexedDB
     this.records_all = ref<GradeEntry[]>([])  
-  }
-
-   /**
-   * Traverse the DR, get the reference to each leaf node, sort by priority and store these in `drLeaves`
-   */
-  // return leaf requirements
-  public pickLeafRequirements() {
-    let leaves = []
-    function traverse(tree: Req | LeafReq) {
-      // console.log(tree.label)
-      if (tree) {
-        if (tree.children && (tree.children.length > 0)) {
-          for (const [idx, subtree] of tree.children.entries()) {
-            if (subtree.children && (subtree.children.length > 0))
-              traverse(subtree as Req)
-            else {
-              const smartLeaf = new CompiledLeafReq(tree as LeafReq)
-              tree.children[idx] = smartLeaf
-              leaves.push(smartLeaf)
-            } 
-          }
-        }
-      } 
-    }
-    
-    for (const [key, req] of Object.entries(this.dr.req)) {
-      traverse(req)
-    }
-    
-    // in case the node does not have a `elecComp` key
-    for (let node of leaves) 
-      if (!node.elecComp) node['elecComp'] = 1
-
-    leaves.sort((e1, e2) => e2['elecComp'] - e1['elecComp'])
-
-    // sort by priority and store
-    this.drLeaves.push(...leaves)
   }
 
   /**
@@ -111,7 +72,7 @@ class DRC {
             alert(`成績は見つかりません！！`)
           }
     
-          this.dr = DR
+          this.drcTree = DR
           this.gpaData = GPADATA.course_grades
           this.records_all.value = JSON.parse(records_all)
           this.maxYearInAp.value = Math.max(maxYearInAp, getMaxYearInRecords(this.records_all.value))
@@ -138,7 +99,54 @@ class DRC {
     })
   }
 
+  /**
+   *  This method mutates `drLeaves` property. The mutation involves the following steps:
+   * 
+   * 1. Traverse the DR tree, obtain the reference to each leaf node
+   * 2. Convert each leaf to a `CompiledLeafReq`
+   * 3. sort leaves so that higher `priority` come first and store these in `drLeaves`
+   */
+  public pickLeafRequirements(): void {
+    let leaves = []
+    function traverse(tree: Req | LeafReq) {
+      // console.log(tree.label)
+      if (tree) {
+        if (tree.children && (tree.children.length > 0)) {
+          for (const [idx, subtree] of tree.children.entries()) {
+            if (subtree.children && (subtree.children.length > 0))
+              traverse(subtree as Req)
+            else {
+              const smartLeaf = new CompiledLeafReq(tree as LeafReq)
+              tree.children[idx] = smartLeaf
+              leaves.push(smartLeaf)
+            } 
+          }
+        }
+      } 
+    }
+    
+    for (const [key, req] of Object.entries(this.drcTree.req)) {
+      traverse(req)
+    }
+    
+    // in case the node does not have a `elecComp` key
+    for (let node of leaves) 
+      if (!node.elecComp) node['elecComp'] = 1
 
+    leaves.sort((e1, e2) => e2['elecComp'] - e1['elecComp'])
+
+    // sort by priority and store
+    this.drLeaves.push(...leaves)
+  }
+
+  /**
+   *  This method mutates `drcTree` property
+   * 
+   *  
+   */
+  public setUpPassedUnitsDeps(): void {
+
+  }
   /** 
    *  Add multiple courses to the records_all, 
    * 
@@ -170,7 +178,7 @@ class DRC {
 
 
   /**
-   *  Sort gpaData into baskets as specified by dr_smart
+   *  Sort gpaData into baskets as specified by drcTree
    */
   public categorize() {
     var a = Array(5).fill(1).map(e=>({'label': Math.floor(Math.random()*10), 'children': []}))
@@ -687,7 +695,14 @@ function getPlannerFormatCourseData(data) {
 ///////////////////////// UTILITY /////////////////////////
 //////////// 
 function sumUnits(ge: GradeEntry[]): number { 
-  return 0
+  if (!ge || !ge.length){
+    console.error("@DRC.ts, sumUnits(): unexpected arg type, expecting `GradeEntry[]`")
+    return 0
+  }
+    
+  return ge.reduce((acc: number, g:GradeEntry) => {
+    return acc + ((g.unit)&&(g.status > 0) ? g.unit : 0)
+  }, 0)
 }
 
 function getMaxYearInRecords(ge: GradeEntry[]): number {
@@ -741,4 +756,7 @@ function pickSatisfyingMinUnits(matchedCourses: Course[]): Course[] {
   return []
 }
 
-export { DRC, filterBy, aggregate, setDRCTreeNodeProperties, getMaxYearInRecords, getPlannerTable }
+export { 
+  DRC, CompiledLeafReq,
+  filterBy, aggregate, setDRCTreeNodeProperties, getMaxYearInRecords, getPlannerTable, sumUnits 
+}
