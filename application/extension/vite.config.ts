@@ -1,6 +1,5 @@
 import { resolve } from 'path'
 import { fileURLToPath, URL } from 'node:url'
-import path from 'path'
 import { defineConfig } from 'vitest/config'
 import vue from '@vitejs/plugin-vue'
 import { crx } from '@crxjs/vite-plugin'
@@ -14,10 +13,20 @@ import manifest from './src/extension/manifest.json' assert { type: 'json' }
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  plugins: [
+    vue(),
+    crx({ manifest }),
+  ],
+  
+  optimizeDeps: {
+    include: ['@qcampusmate-mate/plasapo-core', '@qcampusmate-mate/plasapo-ui', 'element-plus'],
+  },
   build: {
     sourcemap: true,
     chunkSizeWarningLimit: 1000,
     commonjsOptions: {
+      include: [/@qcampusmate-mate*/, /element-plus/, /node_modules/],
+      // esmExternals: true,
       transformMixedEsModules: true
     },
     rollupOptions: {
@@ -36,10 +45,7 @@ export default defineConfig({
       },
     },
   },
-  plugins: [
-    vue(),
-    crx({ manifest }),
-  ],
+
   resolve: {
     alias: {
       '@':  fileURLToPath(new URL('./src', import.meta.url))
