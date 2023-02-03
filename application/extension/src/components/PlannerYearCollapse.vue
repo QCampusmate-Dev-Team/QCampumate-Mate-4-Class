@@ -88,6 +88,7 @@
 </template>
 
 <script setup lang="ts">
+import { GradeEntry } from '@qcampusmate-mate/types'
 import { ElMessageBox } from 'element-plus'
 import { Delete } from '@element-plus/icons-vue'
 import AcademicPlannerTable from './AcademicPlannerTable.vue'
@@ -140,7 +141,7 @@ function handleCollapseChange(activeNames) {
 const handleAdd = () => {
   showDialog.value = false
   // alert(`in PlannerYearCollapse.vue handleAdd(): ${ dialog.value.targetList.map(i => dialog.value.data[i])}`)
-  drc.addCourses(dialog.value.targetList.map(i => dialog.value.data[i]), addYear, addQuarter)
+  drc.addCourses((dialog.value.targetList.map(i => dialog.value.data[i]) as GradeEntry[]), addYear, addQuarter)
 
   dialog.value.targetList = []
 }

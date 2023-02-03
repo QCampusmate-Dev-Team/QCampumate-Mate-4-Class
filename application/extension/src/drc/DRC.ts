@@ -2,19 +2,11 @@ import { compileMatchOptions } from './FilterCompiler'
 import { ref, reactive, computed, watch } from 'vue'
 import type { Ref , UnwrapNestedRefs, ComputedRef } from 'vue'
 import type { Course, GradeEntry, GradeFilterOptions, PlannerTable, PlannerTableEntry, _PlannerTableEntry, DegreeRequirementBase, LeafReq, Req, MatchFunctionType, CompiledLeafReqInterface } from '@qcampusmate-mate/types';
-import { savePlannerTable } from '../utils/sync'
-import { getGlobalThis } from '@vue/shared';
 // import store from '../store/index.js'
 
 const LETTER_TO_GP = {
   'A': 4, 'B': 3, 'C': 2, 'D': 1, 'F': 0,
 };
-
-interface DRCTree {
-}
-
-interface DRCTreeNode {
-}
 
 class CompiledLeafReq implements CompiledLeafReqInterface{
   label: string;
@@ -57,9 +49,10 @@ class DRC {
    *  Initialize DRC according to different persistente layers.
    *  Currently supports:
    *    - Chrome Storage API
-   *    - Indexed DB 
+   *    
    *  
    *  Considering to add:
+   *    - Indexed DB 
    *    - RESTAPI
    */
   public initialize() {
@@ -86,7 +79,7 @@ class DRC {
               console.log("@DRC.ts, watcher of this.records_all, coures have been deleted")
             } 
             // this.categorize()
-            
+
             chrome.storage.local.set({records_all: JSON.stringify(this.records_all.value)})
           })
 
@@ -108,25 +101,21 @@ class DRC {
    */
   public pickLeafRequirements(): void {
     let leaves = []
-    function traverse(tree: Req | LeafReq) {
-      // console.log(tree.label)
-      if (tree) {
-        if (tree.children && (tree.children.length > 0)) {
-          for (const [idx, subtree] of tree.children.entries()) {
-            if (subtree.children && (subtree.children.length > 0))
-              traverse(subtree as Req)
-            else {
-              const smartLeaf = new CompiledLeafReq(tree as LeafReq)
-              tree.children[idx] = smartLeaf
-              leaves.push(smartLeaf)
-            } 
-          }
+    function traverse(tree: Req | LeafReq, parent: Req, idx: number) {
+      if (!('matchOptions' in tree)) {
+        for (const [idx, subtree] of tree.children.entries()) {
+          // if (subtree.children && (!subtree.children.hasOwnProperty('matchOptions')))
+          traverse(subtree as Req, tree, idx)
         }
+      } else { // if is leaf req
+        const smartLeaf = new CompiledLeafReq(tree as LeafReq)
+        parent.children[idx] = smartLeaf
+        leaves.push(smartLeaf)
       } 
     }
     
     for (const [key, req] of Object.entries(this.drcTree.req)) {
-      traverse(req)
+      traverse(req, null, -1)
     }
     
     // in case the node does not have a `elecComp` key
@@ -140,13 +129,39 @@ class DRC {
   }
 
   /**
-   *  This method mutates `drcTree` property
+   *  This method mutates `drcTree` property such that each non-leaf's 
+   *  `passed_units` becomes an observer of and sums up its direct children's *  `passed_units`. Current implementation uses `computed` from Vue Reactive *  Core API.
    * 
-   *  
+   *  Note that the current implementation assumes all leaves of `drcTree` must
+   *  be a computed property as well. In this way, it also entails that
+   *  transformations(`DRC.pickLeafRequirements()`) on leaves nodes must be done
+   *  first.
    */
   public setUpPassedUnitsDeps(): void {
+    function r(req: Req) {
+      if (!req.hasOwnProperty('matchFunction')) {
+        for (let child of req.children)
+          r(child as Req)
+        
+        req['passed_units'] = computed(() => 
+          (req.children as Req[]).reduce(
+            (acc: number, child: Req) => acc + (child.passed_units as ComputedRef<number>).value,
+          0)
+        )
+      } 
+    }
 
+    for (const [key, req] of Object.entries(this.drcTree.req)) {
+      r(req)
+      req['passed_units'] = computed(() => 
+        (req.children as Req[]).reduce(
+          (acc: number, child: Req) => acc + (child.passed_units as ComputedRef<number>).value,
+        0)
+      )
+    }
   }
+
+
   /** 
    *  Add multiple courses to the records_all, 
    * 
@@ -206,7 +221,29 @@ class DRC {
     }
   }
 
+  /**
+   * {
+   *  "label": "基幹教育",
+      "minUnit": 48,
+      "passed_units": 1
+      "children": [
+        {
+          "label": "基幹教育セミナー",
+          "minUnit": 1,
+          "passed_units": 1
+          "children": [
+            ...
+          ]
+        }
+      ]
+   * }
+   */
+  public generateDRReportPassedUnitsJSON(key?: string) {
+    // this.drcTree['']
+  }
 
+  public log() {
+  }
   /**
    * Assume at the invokation, the function will be provided
    * with a context <this> whose `meta` and `data` properties are expected to be initialized as specified in 卒業要件データ定義
@@ -515,8 +552,6 @@ class DRC {
     //return JSON.stringify(this.tree, null, 2) // {"data": []}
   }
 
-  public log() {
-  }
 
   // serialize() {
   //   JSON.stringify(this.tree)
@@ -695,7 +730,7 @@ function getPlannerFormatCourseData(data) {
 ///////////////////////// UTILITY /////////////////////////
 //////////// 
 function sumUnits(ge: GradeEntry[]): number { 
-  if (!ge || !ge.length){
+  if (!ge || typeof ge.length === 'undefined'){
     console.error("@DRC.ts, sumUnits(): unexpected arg type, expecting `GradeEntry[]`")
     return 0
   }

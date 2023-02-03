@@ -1,3 +1,4 @@
+import type { ComputedRef } from 'vue'
 import type { SCHOOL, LETTER_EVALUATION, QUARTER } from './Constants' 
 import type { StudentInfo } from './StudentInfo' 
 import type { Course, GradeEntry } from './Course'
@@ -21,7 +22,7 @@ export interface Tree {
 // A minimal tree structure for consistency with Element Plus UI
 export interface Req extends Tree {
   minUnit: number;
-  passed_units?: number;
+  passed_units?: number | ComputedRef<number>;
   minFirstYear?: number;
   elecComp?: 1 | 2 | 3 ;
   children?: (Req | LeafReq)[] | CompiledLeafReqInterface[]

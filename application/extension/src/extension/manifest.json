@@ -26,5 +26,9 @@
     "tabs",
     "scripting",
     "unlimitedStorage"
-  ]
+  ],
+  "web_accessible_resources": [{
+    "resources": ["src/drc/index.html"],
+    "matches": ["<all_urls>"]
+  }]
 }
