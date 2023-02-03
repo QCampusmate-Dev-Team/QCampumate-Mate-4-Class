@@ -2,19 +2,11 @@ import { compileMatchOptions } from './FilterCompiler'
 import { ref, reactive, computed, watch } from 'vue'
 import type { Ref , UnwrapNestedRefs, ComputedRef } from 'vue'
 import type { Course, GradeEntry, GradeFilterOptions, PlannerTable, PlannerTableEntry, _PlannerTableEntry, DegreeRequirementBase, LeafReq, Req, MatchFunctionType, CompiledLeafReqInterface } from '@qcampusmate-mate/types';
-import { savePlannerTable } from '../utils/sync'
-import { getGlobalThis } from '@vue/shared';
 // import store from '../store/index.js'
 
 const LETTER_TO_GP = {
   'A': 4, 'B': 3, 'C': 2, 'D': 1, 'F': 0,
 };
-
-interface DRCTree {
-}
-
-interface DRCTreeNode {
-}
 
 class CompiledLeafReq implements CompiledLeafReqInterface{
   label: string;
@@ -57,9 +49,10 @@ class DRC {
    *  Initialize DRC according to different persistente layers.
    *  Currently supports:
    *    - Chrome Storage API
-   *    - Indexed DB 
+   *    
    *  
    *  Considering to add:
+   *    - Indexed DB 
    *    - RESTAPI
    */
   public initialize() {
@@ -86,7 +79,7 @@ class DRC {
               console.log("@DRC.ts, watcher of this.records_all, coures have been deleted")
             } 
             // this.categorize()
-            
+
             chrome.storage.local.set({records_all: JSON.stringify(this.records_all.value)})
           })
 
@@ -136,9 +129,13 @@ class DRC {
   }
 
   /**
-   *  This method mutates `drcTree` property
+   *  This method mutates `drcTree` property such that each non-leaf's 
+   *  `passed_units` becomes an observer of and sums up its direct children's *  `passed_units`. Current implementation uses `computed` from Vue Reactive *  Core API.
    * 
-   *  
+   *  Note that the current implementation assumes all leaves of `drcTree` must
+   *  be a computed property as well. In this way, it also entails that
+   *  transformations(`DRC.pickLeafRequirements()`) on leaves nodes must be done
+   *  first.
    */
   public setUpPassedUnitsDeps(): void {
     function r(req: Req) {
@@ -163,6 +160,8 @@ class DRC {
       )
     }
   }
+
+
   /** 
    *  Add multiple courses to the records_all, 
    * 

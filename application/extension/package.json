@@ -36,16 +36,16 @@
   "homepage": "https://github.com/QCampusmate-Dev-Team/QCampusmate-Mate-4-Class#readme",
   "dependencies": {
     "@element-plus/icons-vue": "^2.0.10",
+    "@qcampusmate-mate/fixtures": "*",
+    "@qcampusmate-mate/plasapo-core": "*",
+    "@qcampusmate-mate/types": "*",
     "axios": "^0.27.2",
     "element-plus": "^2.2.20",
     "lodash": "^4.17.21",
     "vue": "^3.2.40",
     "vue-router": "^3.5.3",
     "vuex": "^4.0.2",
-    "xlsx": "https://cdn.sheetjs.com/xlsx-0.18.7/xlsx-0.18.7.tgz",
-    "@qcampusmate-mate/types": "*",
-    "@qcampusmate-mate/fixtures": "*",
-    "@qcampusmate-mate/plasapo-core": "*"
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.18.7/xlsx-0.18.7.tgz"
   },
   "devDependencies": {
     "@babel/core": "^7.17.10",
