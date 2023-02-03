@@ -17,10 +17,11 @@ export interface Tree {
 }
 
 // 非葉要件
+// Represents a requirement node in 
 // A minimal tree structure for consistency with Element Plus UI
-export interface Req extends Tree{
+export interface Req extends Tree {
   minUnit: number;
-  passed_units: number;
+  passed_units?: number;
   minFirstYear?: number;
   elecComp?: 1 | 2 | 3 ;
   children?: (Req | LeafReq)[] | CompiledLeafReqInterface[]

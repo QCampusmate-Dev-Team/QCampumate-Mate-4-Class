@@ -1,6 +1,4 @@
-import { MatchOptions, Course, GradeEntry } from '@qcampusmate-mate/types'
-
-type testFn = (e: GradeEntry) => boolean;
+import type { MatchOptions, Course, GradeEntry, MatchFunctionType } from '@qcampusmate-mate/types'
 
 ////////////////Helper functions//////////////////
 //////////////////////////////////////////////////
@@ -31,9 +29,7 @@ const numberLinkToSmc = (ge: GradeEntry) => {
 }
 
 ////////////////////////Test/////////////////////
-export function compile (filterConf: MatchOptions): testFn {
-  const { mustHas, include, exclude } = filterConf
-
+export function compileMatchOptions (matchOptions: MatchOptions): MatchFunctionType {
   /**
    * Boolean function instantiating the set of MatchOptions specified on a Degree Requirement Leaf
    * 
@@ -54,7 +50,8 @@ export function compile (filterConf: MatchOptions): testFn {
 
     // if exclude is specified,
     //   exclude, i.e, return false if the course satisfes all the specified exclude matchOptions
-    if (exclude) {
+    if (matchOptions.exclude) {
+      const exclude = matchOptions.exclude
       var excludeCourse = false,
           excludeSchool = false, 
           excludeMajor = false,
@@ -73,7 +70,7 @@ export function compile (filterConf: MatchOptions): testFn {
       }
 
       if(exclude && exclude.like) {
-        excludeLike = exclude.like.test(g.subject)
+        excludeLike = new RegExp(exclude.like, 'i').test(g.subject)
       }
       
       if (excludeCourse &&
@@ -83,19 +80,21 @@ export function compile (filterConf: MatchOptions): testFn {
         return false
     }
 
-    if (mustHas) {
+    if (matchOptions.mustHas) {
+      const mustHas = matchOptions.mustHas
       if (mustHas.courses && 
         mustHas.courses.some((crs: Course) => smcToNumberLink(crs) === g.numberlink)) 
           return true  
       
       if (mustHas.like && 
-        mustHas.like.test(g.subject))
+        new RegExp(mustHas.like, 'i').test(g.subject))
         return true
     }
 
     // if include is specified
     //    return true if the course satisfes all the specified include matchOptions. Otherwise, return false
-    if(include) {
+    if(matchOptions.include) {
+      const include = matchOptions.include
       var includeCourse = true, 
           includeSchool = true,
           includeMajor = true,
@@ -114,7 +113,7 @@ export function compile (filterConf: MatchOptions): testFn {
       }
 
       if(include && include.like) {
-        includeLike = include.like.test(g.subject)
+        includeLike = new RegExp(include.like, 'i').test(g.subject)
       }
 
       includeFinal = includeCourse && includeSchool && includeMajor && includeLike
