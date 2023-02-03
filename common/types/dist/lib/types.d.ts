@@ -16,13 +16,14 @@ export interface Tree {
 }
 export interface Req extends Tree {
     minUnit: number;
+    category?: string | string[] | undefined;
+    major?: string | string[] | undefined;
     passed_units?: number | ComputedRef<number>;
     minFirstYear?: number;
     elecComp?: 1 | 2 | 3;
     children?: (Req | LeafReq)[] | CompiledLeafReqInterface[];
 }
 export interface LeafReq extends Req {
-    major?: string | string[] | undefined;
     matchOptions: MatchOptions;
 }
 export interface MatchOptions {
