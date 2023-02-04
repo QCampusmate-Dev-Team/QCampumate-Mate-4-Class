@@ -57,7 +57,12 @@ export function compileMatchOptions (matchOptions: MatchOptions): MatchFunctionT
       mustHasLike: boolean  // mustHas like
 
       if (mustHas.courses) {
-        mustHasCourse = mustHas.courses.some((crs: Course) => smcToNumberLink(crs) === g.numberlink)
+        // 1. Exact match with numberlink
+        // 2. or if grade entry's numberlink is empty, we fall back to match the course with (school, name)
+        mustHasCourse =  mustHas.courses.some((crs: Course) => (
+          smcToNumberLink(crs) === g.numberlink) || 
+          (!g.numberlink && crs.school === g.school && crs.subject === g.subject))
+        if (mustHasCourse) return true
       } 
       
       if(mustHas.majors && g.numberlink){ 
@@ -107,11 +112,18 @@ export function compileMatchOptions (matchOptions: MatchOptions): MatchFunctionT
         // console.log(include.like, includeLike, g.subject)
       }
 
+      /** TODO: consider next two blocks, can we do better? */
+
+      // If some specified match key does not exist on the course, try match others
       includeFinal = undefinedIsTrue(includeCourse) &&  
         undefinedIsTrue(includeSchool) && 
         undefinedIsTrue(includeMajor) && 
         undefinedIsTrue(includeLike)
 
+      // If every match check misses, we cannot let the course be a match either!
+      if ([includeCourse, includeSchool, includeMajor, includeLike].every(e => typeof e === 'undefined'))
+        return false
+      
       if (includeFinal) 
         return true
     }

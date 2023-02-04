@@ -34,7 +34,9 @@ const dr: DegreeRequirementBase = {
               ]
             }
           }
-        }
+        },
+
+        
       ]
     },
     "school": {

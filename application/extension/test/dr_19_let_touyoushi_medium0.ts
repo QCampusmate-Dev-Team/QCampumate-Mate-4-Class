@@ -1,4 +1,6 @@
-{
+import type { DegreeRequirementBase, Req, LeafReq } from "@qcampusmate-mate/types"
+
+const dr: DegreeRequirementBase = {
   "meta": {
     "enrollment": 2019,
     "school": "LET",
@@ -30,25 +32,6 @@
                   "unit": 1
                 }
               ]
-            }
-          }
-        },
-        {
-          "label": "課題協学科目",
-          "elecComp": 3,
-          "major": "ICL",
-          "minUnit": 2.5,
-          "matchOptions": {
-            "mustHas": {
-              "courses": [
-                {
-                  "subject": "課題協学科目",
-                  "school": "KED",
-                  "major": "ICL",
-                  "unit": 2.5
-                }
-              ],
-              "like": "課題協学科目"
             }
           }
         },
@@ -335,151 +318,17 @@
             }
           ]
         },
-        {
-          "label": "理系ディシプリン科目",
-          "elecComp": 2,
-          "minUnit": 5,
-          "matchOptions": {
-            "include": {
-              "majors": [
-                "SMA",
-                "SPH",
-                "SCH",
-                "SBI",
-                "SGS",
-                "SKD",
-                "SIS",
-                "SLE"
-              ]
-            }
-          }
-        },
-        {
-          "label": "健康・スポーツ科目",
-          "elecComp": 3,
-          "major": "HSP",
-          "minUnit": 1,
-          "matchOptions": {
-            "mustHas": {
-              "courses": [
-                {
-                  "subject": "健康・スポーツ科学演習",
-                  "school": "KED",
-                  "major": "HSP",
-                  "subjectCode": "1211J",
-                  "unit": 1
-                }
-              ]
-            }
-          }
-        },
-        {
-          "label": "サイバーセキュリティ科目",
-          "elecComp": 3,
-          "category": "CSC",
-          "minUnit": 1,
-          "matchOptions": {
-            "mustHas": {
-              "courses": [
-                {
-                  "subject": "サイバーセキュリティ基礎論",
-                  "school": "KED",
-                  "major": "CSC",
-                  "subjectCode": "1111J",
-                  "unit": 1
-                }
-              ]
-            }
-          }
-        },
-        {
-          "label": "総合科目",
-          "elecComp": 2,
-          "minUnit": 1,
-          "matchOptions": {
-            "include": {
-              "majors": [
-                "GES"
-              ]
-            }
-          }
-        },
-        {
-          "label": "高年次基幹教育科目",
-          "elecComp": 2,
-          "minUnit": 2,
-          "matchOptions": {
-            "include": {
-              "majors": [
-                "ASC",
-                "ASD"
-              ]
-            }
-          }
-        },
-        {
-          "label": "その他",
-          "elecComp": 0,
-          "minUnit": 12.5,
-          "matchOptions": {
-            "include": {
-              "majors": [
-                "LCB",
-                "LCF",
-                "LCC",
-                "HSS",
-                "SMA",
-                "SPH",
-                "SCH",
-                "SBI",
-                "SGS",
-                "SKD",
-                "SIS",
-                "SLE",
-                "HSP",
-                "GES",
-                "ASC",
-                "ASD"
-              ]
-            }
-          }
-        }
+        
       ]
     },
     "school": {
       "label": "専攻教育科目",
-      "category": "LET",
       "minUnit": 80,
       "children": [
         {
           "label": "文学部コア科目",
           "minUnit": 9,
           "children": [
-            {
-              "label": "人文学科基礎科目",
-              "elecComp": 3,
-              "minUnit": 4,
-              "matchOptions": {
-                "mustHas": {
-                  "courses": [
-                    {
-                      "subject": "人文学基礎Ⅰ",
-                      "school": "LET",
-                      "major": "HUM",
-                      "subjectCode": "1011J",
-                      "unit": 2
-                    },
-                    {
-                      "subject": "人文学基礎Ⅱ",
-                      "school": "LET",
-                      "major": "HUM",
-                      "subjectCode": "1012J",
-                      "unit": 2
-                    }
-                  ]
-                }
-              }
-            },
             {
               "label": "人文学科共通科目",
               "elecComp": 2,
@@ -555,7 +404,7 @@
                 },
                 {
                   "label": "その他",
-                  "elecComp": 3,
+                  "elecComp": 2,
                   "major": "HUM",
                   "minUnit": 1,
                   "matchOptions": {
@@ -563,122 +412,17 @@
                       "majors": [
                         "HUM"
                       ],
-                      "like": "中国語|英語|ラテン語|ドイツ語|朝鮮語|アラビア語|漢文|ギリシヤ語"
+                      "like": "[中国語|英語|古典語|ドイツ語|朝鮮語|アラビア語]"
                     }
                   }
                 }
               ]
             }
           ]
-        },
-        {
-          "label": "コース共通科目",
-          "category": "HUM",
-          "minUnit": 8,
-          "matchOptions": {
-            "mustHas": {
-              "courses":[
-                {
-                  "subject": "史学概論",
-                  "school": "LET",
-                  "major": "HUM",
-                  "subjectCode": "2301J",
-                  "unit": 2
-                }
-              ]
-            },
-            "include": {
-              "majors": ["HUM"],
-              "like": "日本史学|朝鮮史学|朝鮮歴史文化論|考古学|ヨーロッパ史学|イスラム史学"
-            },
-            "exclude": {
-              "majors": [
-                "HUM"
-              ],
-              "like": "東洋史学"
-            }
-          }
-        },
-        {
-          "label": "専門分野科目",
-          "category": "HUM",
-          "minUnit": 26,
-          "children": [
-            {
-              "label": "東洋史学講義",
-              "elecComp": 2,
-              "category": "HUM",
-              "minUnit": 10,
-              "matchOptions": {
-                "mustHas": {
-                  "majors": [
-                    "HUM"
-                  ],
-                  "like": "東洋史学講義"
-                }
-              }
-            },
-            {
-              "label": "東洋史学演習",
-              "elecComp": 2,
-              "category": "HUM",
-              "minUnit": 16,
-              "matchOptions": {
-                "mustHas": {
-                  "majors": [
-                    "HUM"
-                  ],
-                  "like": "東洋史学演習"
-                }
-              }
-            }
-          ]
-        },
-        {
-          "label": "自由選択科目",
-          "elecComp": 1,
-          "category": "HUM",
-          "minUnit": 27,
-          "matchOptions": {
-            "include": {
-              "schools": [
-                "LET",
-                "ISI",
-                "EDU",
-                "LAW",
-                "ECO",
-                "SCI",
-                "MED",
-                "DEN",
-                "PHS",
-                "ENG",
-                "DES",
-                "AGR",
-                "21P"
-              ]
-            },
-            "exclude": {
-              "schools": ["KED"]
-            }
-          }
-        },
-        {
-          "label": "卒業論文",
-          "major": "HUM",
-          "minUnit": 10,
-          "elecComp": 3,
-          "matchOptions": {
-            "mustHas": {
-              "courses": [
-                {
-                  "subject": "卒業論文",
-                  "unit": 10
-                }
-              ]
-            }
-          }
         }
       ]
     }
   }
 }
+
+export default dr 

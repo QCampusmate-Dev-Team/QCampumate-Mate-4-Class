@@ -2,7 +2,7 @@ import type { DegreeRequirementBase, StudentInfo, LeafReq, Req, GradeEntry } fro
 import { expect, it } from 'vitest'
 import type { ComputedRef } from 'vue'
 import * as _ from 'lodash'
-import { DRC, CompiledLeafReq,  sumUnits } from '../src/drc/DRC'
+import { DRC, CompiledLeafReq, sumUnits, getMinPartialSumSubset, pickSatisfyingMinUnits } from '../src/drc/DRC'
 import dr_19_let_touyoushi_sm from './dr_19_let_touyoushi_small'
 // All subsets are disjoint
 import dr_19_let_touyoushi_sm0 from './dr_19_let_touyoushi_small0'
@@ -35,7 +35,7 @@ describe('test pickLeafRequirements', () => {
   it('all MatchOptions on leaf nodes should be converted into Match Functions', () => {
     drc.drcTree = _.cloneDeep(dr_19_let_touyoushi_sm0)
     drc.pickLeafRequirements()
-    
+
     expect(drc.drLeaves.every(
       node => typeof node.matchFunction === 'function'
     )).toBe(true)
@@ -44,6 +44,9 @@ describe('test pickLeafRequirements', () => {
   it('right after the execution of DRC.pickLeafRequirements, \nevery leaf should have a `children` property of length 0 array', () => {
     drc.drcTree = _.cloneDeep(dr_19_let_touyoushi_sm0)
     drc.pickLeafRequirements()
+
+    // .map(e => e.label).join('\n')
+    // console.log(drc.drLeaves)
 
     expect(drc.drLeaves.every(
       node => (node.children) && (node.children.length === 0)
@@ -160,6 +163,70 @@ describe('helper functions', () => {
       { label: 'd', subject: 'd', unit: 2.5, status: 1 },
     ]
     expect(sumUnits(ge)).toStrictEqual(4.5)
+  })
+
+  describe('test subset sum algorithm', () => {
+    it('T=6, A=[2, 2.5, 2, 1.5, 2], sum only', () => {
+      const A = [2, 2.5, 2, 1.5, 2]
+      const T = 6
+      expect(getMinPartialSumSubset(A, T)).toStrictEqual([6, [1, 2, 3]])
+    })
+
+    it('T=6, A=[2, 2.5, 2, 2.5]', () => {
+      const A = [2, 2.5, 2, 2.5]
+      const T = 6
+      expect(getMinPartialSumSubset(A, T)).toStrictEqual([6.5, [0, 1, 2]])
+    })
+
+    it('T=10, A=[2, 2.5, 2, 2.5], can\'t sum up to `T`', () => {
+      const A = [2, 2.5, 2, 2.5]
+      const T = 10
+      expect(getMinPartialSumSubset(A, T)).toStrictEqual([-1, []])
+    })
+
+    it('T=0, A=[], null case', () => {
+      const A = []
+      const T = 0
+      expect(getMinPartialSumSubset(A, T)).toStrictEqual([0, []])
+    })
+
+    it('T=1, A=[2], array of one element', () => {
+      const A = [2]
+      const T = 1
+      expect(getMinPartialSumSubset(A, T)).toStrictEqual([2, [0]])
+    })
+
+    it('T=2, A=[1, 0, 0, 0, 1], include 0 indices, surprise!!', () => {
+      const A = [1, 0, 0, 0, 1]
+      const T = 2
+      expect(getMinPartialSumSubset(A, T)).toStrictEqual([2, [0, 1, 2, 3, 4]])
+    })
+  
+    it('T=2.5, A=[1, 0, 0, 0, 1, 1.5], include 0 indices, surprise!! Why!?', () => {
+      const A = [1, 0, 0, 0, 1, 1.5]
+      const T = 2.5
+      expect(getMinPartialSumSubset(A, T)).toStrictEqual([2.5, [4, 5]])
+    })
+  })
+
+  describe('test select minimum set of courses satisfying minUnit', () => {
+    it('select exact with nulls', () => {
+      const ge: Partial<GradeEntry>[] = [
+        {label: 'a', unit: 1},
+        {label: 'b', unit: 1.5},
+        {label: 'c' },
+        {label: 'd', unit: 3},
+        {label: 'e', unit: 2},
+      ]
+  
+      const minUnit = 5
+      expect(pickSatisfyingMinUnits(ge as GradeEntry[], minUnit).map(({label}) => label)).toEqual(['c', 'd', 'e'])
+    })
+
+    it('empty', () => {
+      const minUnit = 5
+      expect(pickSatisfyingMinUnits([], minUnit).map(({label}) => label)).toEqual([])
+    })
   })
 })
 // it.skip('DRC', () => {

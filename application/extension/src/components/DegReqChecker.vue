@@ -1,7 +1,7 @@
 <template>
   <el-tree
     :indent="6"
-    :data='undefined'
+    :data='drcTree'
     :props="defaultProps"
     :render-content="renderContent"
     >
@@ -11,16 +11,16 @@
 
 <script lang="ts">
 import { ElTree } from 'element-plus'
-import { DRC } from '../drc/DRC'
+import { DRC, CompiledLeafReq } from '../drc/DRC'
 import { computed, inject } from 'vue'
+import { Tree, GradeEntry, Req } from '@qcampusmate-mate/types'
 
 export default {
   async setup(){
     const drc = await inject<Promise<DRC>>('drc') 
-    const drcTree = 
-    computed(() => {
-      return drc.initializeRequirementTree(drc.dr, drc.records_all.value)
-    })
+    const drcTree = computed(() => {
+            return [drc.drcTree.req.keg, drc.drcTree.req.school] 
+          })
 
     /* Component properties */
     const defaultProps = { 
@@ -39,7 +39,7 @@ export default {
      * @params {Function} h - render function h
      * @returns {Function} render function h - 
      */
-     const generateTreeNodeView = function(h, treenode) {
+     const generateTreeNodeView = function(h, treenode: Tree) {
       var labelSpan, 
           labelTag,
           labelOpt;
@@ -48,13 +48,13 @@ export default {
       labelTag = treenode.label;
       labelOpt = {};
 
-      if (typeof treenode.status !== 'undefined') { // A leaf course node
+      if (typeof treenode.children === 'undefined') { // A leaf course node
         // const letterTag = h('span', {style: {color: "#67C23A ", position: "absolute", left:"-10px", "align-items": "center"}}, treenode.children ? "" : "A");
         //
         // h('el-tag', {class:"grade", effect: "dark", size: "mini", props: {type: 'success'}, style: {"border-style": "none"}}, "A"),
         // h(`el-badge`, {props:{value: "A" } }, [])
 
-        switch (treenode.status) {
+        switch ((treenode as GradeEntry).status) {
           case -2:
             labelOpt['style'] = {color: "#F56C6C"}; //danger = failed
             break;
@@ -76,7 +76,7 @@ export default {
             break;
         }
       } else {
-        childNodes.unshift(h('span', {}, `${treenode.passed_units}/${treenode.units}`));
+        childNodes.unshift(h('span', {}, `${(treenode as (Req | CompiledLeafReq)).passed_units}/${(treenode as (Req | CompiledLeafReq)).minUnit}`));
       }
 
       // Common parts
@@ -92,7 +92,6 @@ export default {
     }
 
     return {
-      drc,
       drcTree,
       defaultProps,
       renderContent,
