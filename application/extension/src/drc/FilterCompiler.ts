@@ -57,7 +57,12 @@ export function compileMatchOptions (matchOptions: MatchOptions): MatchFunctionT
       mustHasLike: boolean  // mustHas like
 
       if (mustHas.courses) {
-        mustHasCourse = mustHas.courses.some((crs: Course) => smcToNumberLink(crs) === g.numberlink)
+        // 1. Exact match with numberlink
+        // 2. or if grade entry's numberlink is empty, we fall back to match the course with (school, name)
+        mustHasCourse =  mustHas.courses.some((crs: Course) => (
+          smcToNumberLink(crs) === g.numberlink) || 
+          (!g.numberlink && crs.school === g.school && crs.subject === g.subject))
+        if (mustHasCourse) return true
       } 
       
       if(mustHas.majors && g.numberlink){ 

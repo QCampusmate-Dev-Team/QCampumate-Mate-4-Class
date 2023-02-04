@@ -33,6 +33,7 @@ export class GradeEntry implements Course, Tree{
   course_id?: number | undefined;
   prinstructor?: stringOrUndefined;
   last_updated?: Date | string | undefined;
+  matched?: Boolean;
 
   constructor(label: string, subject: string) {
     this.label = label

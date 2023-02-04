@@ -1,7 +1,8 @@
 import { compileMatchOptions } from './FilterCompiler'
 import { ref, reactive, computed, watch } from 'vue'
 import type { Ref , UnwrapNestedRefs, ComputedRef } from 'vue'
-import type { Course, GradeEntry, GradeFilterOptions, PlannerTable, PlannerTableEntry, _PlannerTableEntry, DegreeRequirementBase, LeafReq, Req, MatchFunctionType, CompiledLeafReqInterface } from '@qcampusmate-mate/types';
+import * as _ from 'lodash'
+import type { Course, GradeEntry, GradeFilterOptions, PlannerTable, PlannerTableEntry, _PlannerTableEntry, DegreeRequirementBase, LeafReq, Req, MatchFunctionType, CompiledLeafReqInterface, Tree} from '@qcampusmate-mate/types';
 // import store from '../store/index.js'
 
 const LETTER_TO_GP = {
@@ -69,7 +70,12 @@ class DRC {
           this.gpaData = GPADATA.course_grades
           this.records_all.value = JSON.parse(records_all)
           this.maxYearInAp.value = Math.max(maxYearInAp, getMaxYearInRecords(this.records_all.value))
-  
+
+          if (!this.drcTree.req) alert(JSON.stringify(reactive(this.drcTree), null, 2))
+          this.pickLeafRequirements()
+          this.setUpPassedUnitsDeps()
+          this.categorize()
+
           // TODO:
           // setting up reactive deps between gpaData -> drcTree
           watch(() => this.records_all.value.length, (val, oldV) => {
@@ -78,7 +84,7 @@ class DRC {
             } else if (val < oldV) {
               console.log("@DRC.ts, watcher of this.records_all, coures have been deleted")
             } 
-            // this.categorize()
+            this.categorize()
 
             chrome.storage.local.set({records_all: JSON.stringify(this.records_all.value)})
           })
@@ -196,54 +202,42 @@ class DRC {
    *  Sort gpaData into baskets as specified by drcTree
    */
   public categorize() {
-    var a = Array(5).fill(1).map(e=>({'label': Math.floor(Math.random()*10), 'children': []}))
-    for (let el of a) {
-      el['children'].push(el['label'] * 3)
-    }
-
-    const _gpaData = this.gpaData.map(e => { 
-      e.matched = false
+    const grade_records = this.records_all.value.map((e, i) => { 
+      e['matched'] = false
+      e['id'] = i
       return e
     })
 
-    // get the reference to the leaf nodes, sort by their priority
+    // var idxMap = new Map()
+
+    // get the reference to the leaf nodes, which are sorted by priority key 'elecComp'
     for (let req of this.drLeaves) {
-      // get the unmarked, matched courses
-      let matchedCourses = _gpaData
+      // console.log(req.label)
+      // Prepare to add yet-to-match courses
+      let matchedCourses = grade_records
         .filter(e => !e.matched)
         .filter(req.matchFunction)   
+      
+      // TODO 
+      /* 
+        - Set up idxMap currentIndex => original_index
+        - make pickSatisfyingMinUnits return an array of indices `matchedIds` with reference to `matchedCourses`
+        - Iterate through idxMap set grade_records[currentIndex].matched=true where currentIndex is in `matchedIds`
+      */
 
-      // calculated the units
+
+      // calculated the sum of units
       let passed_units = matchedCourses.reduce((sum, course) => sum + course.unit, 0)
 
       // if the total units of the matched records are above the required units, pick the unmarked, satisfying minimum 
-      req.children = passed_units <= req.minimum ? matchedCourses : pickSatisfyingMinUnits(matchedCourses)
+      req.children.length = 0
+      // console.log((passed_units <= req.minUnit ? matchedCourses : pickSatisfyingMinUnits(matchedCourses, req.minUnit)))
+
+      req.children.push(...(passed_units <= req.minUnit ? matchedCourses : pickSatisfyingMinUnits(matchedCourses, req.minUnit)))
     }
   }
 
-  /**
-   * {
-   *  "label": "基幹教育",
-      "minUnit": 48,
-      "passed_units": 1
-      "children": [
-        {
-          "label": "基幹教育セミナー",
-          "minUnit": 1,
-          "passed_units": 1
-          "children": [
-            ...
-          ]
-        }
-      ]
-   * }
-   */
-  public generateDRReportPassedUnitsJSON(key?: string) {
-    // this.drcTree['']
-  }
 
-  public log() {
-  }
   /**
    * Assume at the invokation, the function will be provided
    * with a context <this> whose `meta` and `data` properties are expected to be initialized as specified in 卒業要件データ定義
@@ -543,13 +537,14 @@ class DRC {
 
     return tree
   }
+
   /**
    * 
    * @returns { DRCTree }
    */
   public dumpDRCTree(){
     // send a DUMP_DRC message to service worker
-    //return JSON.stringify(this.tree, null, 2) // {"data": []}
+    //return JSON.stringify(this.drcTree, null, 2) // {"data": []}
   }
 
 
@@ -708,20 +703,19 @@ function getPlannerTable(course_grades: GradeEntry[], maxYearInAp?: number) {
   }
 }
 
-///////////////////////// TODO /////////////////////////
+///////////////////////// Composables /////////////////////////
+//////////// 
 /**
- * @params {Object} gradeFilterOptions - expect a CourseData object containing at
- * least these four keys: {subject, letter_evaluation, unit, gpa}
- * @return {Array<PlannerFormatCourseData>}
+ * 
+ * @param drcTreeReference 
+ * @returns 
  */
-function getPlannerFormatCourseData(data) {
-  const pick = ({
-    subject, unit, letter_evaluation, gpa,
-  }) => ({
-    subject, letter_evaluation, unit, gpa,
-  });
-  return data.map((e) => pick(e));
+function useDRCTreeComputed(drcTreeReference): ComputedRef<Array<Req>> {
+  return computed(() => {
+    return []
+  })
 }
+
 
 ///////////////////////// UTILITY /////////////////////////
 //////////// 
@@ -781,13 +775,102 @@ function setDRCTreeNodeProperties(ge:GradeEntry) {
 }
 
 /**
+ * This function finds the minimum PSS using dynamic programming
+ * 
+ * If `sum(units)` < `target`, or `units` is undefined or not an array, 
+ *   return [-1, []]
+ * If `target == 0`, return [0, []],
+ * In other cases, return the minimum sum of `units` above `target` and the indices of the elements of that sum in `units`
+ * 
+ * @param units 
+ * @param target 
+ * @returns [the min sum, the indices of elements of that sum]
+ */
+function getMinPartialSumSubset(units: number[], target: number): [number, Array<number>] {
+  if(target === 0) return [0, []]
+  if(!units || !units.length) return [-1, []]
+  const m = target * 2 + 1 + (7) // leave a 3.5 margin should be enough
+  const n = units.length + 1
+  
+  const dp = Array(m+1).fill(false).map(a => Array(n).fill(false))
+  dp[0].fill(true)
+  const idx_subset_table: Array<Array<Array<number>>> = Array(m+1).fill(false).map(a => Array(n).fill([]))
+
+  for (let i = 1; i <= m; i++) {
+    for (let j = 1; j <= n; j++) {
+      let prev = (i * .5 - units[j - 1]) * 2
+      // if prev is negative then skip, as it is an index
+      try {
+        if (prev >= 0) dp[i][j] = dp[prev][j-1]
+        if (dp[i][j]) {
+          idx_subset_table[i][j] = idx_subset_table[prev][j-1].concat([j-1])
+        }
+      } catch(e) { // unnecessary debug block, should clean up later
+        console.log(e)
+        console.log(`Trying to set dp[${i}][${j}] to be dp[${prev}][${j-1}](=${dp[prev][j-1]}), dim = ${m}x${n}`)
+        return [-1, []]
+      }
+      
+      if (i / 2 >= target && dp[i][j]) {
+        // console.log(idx_subset_table[i][j])
+        return [i / 2, idx_subset_table[i][j]]
+      }
+    }
+  }
+
+  // should never reach here considering the calling context, 
+  // but this means given `units` it is unable to produce any sum
+  // greater than `target`
+  return [-1, []]
+}
+
+/**
+ *  [Destructive]
+ *  Include all courses s.t. `!course.unit` evaluates to true.
  *  
  */
-function pickSatisfyingMinUnits(matchedCourses: Course[]): Course[] {
-  return []
+function pickSatisfyingMinUnits(matchedCourses: GradeEntry[], minUnit:number): GradeEntry[] {
+  try {
+    const res: Set<number> = new Set()
+    matchedCourses = matchedCourses.map((c, i) => {
+      if (!c.unit) {
+        c.unit = 0 // make sure unit is 0, since this operates on a copy of the original, this is not destructive
+        res.add(i)
+      }
+      return c
+    })
+
+    const units = matchedCourses.map(({unit}) => unit)
+    const [sum, selected] = getMinPartialSumSubset(units, minUnit)
+
+    selected.forEach(i => res.add(i))
+    return Array.from(res).map(i => matchedCourses[i])
+  } catch (e) {
+    console.error('@DRC.ts, pickSatisfyingMinUnits()', e)
+    return []
+  }
+}
+
+function fullWidthToHalf(x: string): string {
+  return x.replace(
+    /[\uff01-\uff5e]/g,
+    function(ch) { return String.fromCharCode(ch.charCodeAt(0) - 0xfee0); }
+    )
+} 
+
+function reportDRCTreeNode(node: CompiledLeafReq) {
+  return(
+`
+--------------------------------
+${node.label}
+  passed_unit: ${node.passed_units.value}
+  children:
+${(node.children.map(ge => {
+  return `    ${_.padEnd(fullWidthToHalf(ge.label)+' ', 30,'*')}  ${ge.unit}単位  ${ge.letter_evaluation}`
+})).join("\n")}`)
 }
 
 export { 
   DRC, CompiledLeafReq,
-  filterBy, aggregate, setDRCTreeNodeProperties, getMaxYearInRecords, getPlannerTable, sumUnits 
+  filterBy, aggregate, setDRCTreeNodeProperties, getMaxYearInRecords, getPlannerTable, sumUnits, getMinPartialSumSubset, pickSatisfyingMinUnits, reportDRCTreeNode
 }
