@@ -2,7 +2,7 @@ import { compileMatchOptions } from '../src/drc/FilterCompiler'
 import { expect, it } from 'vitest'
 import { GradeEntry, MatchOptions} from '@qcampusmate-mate/types'
 import * as _ from 'lodash'
-import let_ge_complete from './grade_entry/grade_entry_large00.json'
+import { course_grades as let_ge_complete } from './grade_entry/grade_entry_large01.json'
 
 describe('must has one course', () => {
   const matchKisemiMustHasCourses:MatchOptions = {
@@ -279,7 +279,6 @@ describe("exclude and include multiple courses", () => {
 
 })
 
-
 describe.todo("mustHas.courses and include.courses", () => {
   it("")
 })
@@ -423,6 +422,302 @@ describe("test all", () => {
   
     const matchFunc = compileMatchOptions(mo)
     expect(ge.filter(e => matchFunc(e as GradeEntry)).length).toStrictEqual(8)
+  })
+
+  it("文系ディシプリン科目>選択必修①", () => {
+    const mo: MatchOptions = {
+      "include": {
+        "courses": [
+          {
+            "subject": "哲学・思想入門",
+            "school": "KED",
+            "major": "HSS",
+            "subjectCode": "1111J",
+            "unit": 2
+          },
+          {
+            "subject": "社会思想史",
+            "school": "KED",
+            "major": "HSS",
+            "subjectCode": "1211J",
+            "unit": 2
+          },
+          {
+            "subject": "先史学入門",
+            "school": "KED",
+            "major": "HSS",
+            "subjectCode": "1121J",
+            "unit": 2
+          },
+          {
+            "subject": "歴史学入門",
+            "school": "KED",
+            "major": "HSS",
+            "subjectCode": "1131J",
+            "unit": 2
+          },
+          {
+            "subject": "文学・言語学入門",
+            "school": "KED",
+            "major": "HSS",
+            "subjectCode": "1141J",
+            "unit": 2
+          },
+          {
+            "subject": "芸術学入門",
+            "school": "KED",
+            "major": "HSS",
+            "subjectCode": "1151J",
+            "unit": 2
+          },
+          {
+            "subject": "文化人類学入門",
+            "school": "KED",
+            "major": "HSS",
+            "subjectCode": "1221J",
+            "unit": 2
+          },
+          {
+            "subject": "地理学入門",
+            "school": "KED",
+            "major": "HSS",
+            "subjectCode": "1231J",
+            "unit": 2
+          },
+          {
+            "subject": "社会学入門",
+            "school": "KED",
+            "major": "HSS",
+            "subjectCode": "1241J",
+            "unit": 2
+          },
+          {
+            "subject": "心理学入門",
+            "school": "KED",
+            "major": "HSS",
+            "subjectCode": "1311J",
+            "unit": 2
+          }
+        ]
+      }
+    }
+
+    const matchFunc = compileMatchOptions(mo)
+    // console.log(ge.filter(e => matchFunc(e as GradeEntry)).map(e=>e.subject))
+    expect(ge.filter(e => matchFunc(e as GradeEntry)).length).toStrictEqual(6)
+    
+  })
+
+  it("文系ディシプリン科目>選択必修②", () => {
+    const mo: MatchOptions = {
+      "include": {
+        "courses": [
+          {
+            "subject": "現代教育学入門",
+            "school": "KED",
+            "major": "HSS",
+            "subjectCode": "1341J",
+            "unit": 1
+          },
+          {
+            "subject": "教育基礎学入門",
+            "school": "KED",
+            "major": "HSS",
+            "subjectCode": "1351J",
+            "unit": 1
+          },
+          {
+            "subject": "法学入門",
+            "school": "KED",
+            "major": "HSS",
+            "subjectCode": "1411J",
+            "unit": 2
+          },
+          {
+            "subject": "政治学入門",
+            "school": "KED",
+            "major": "HSS",
+            "subjectCode": "1421J",
+            "unit": 2
+          },
+          {
+            "subject": "経済史入門",
+            "school": "KED",
+            "major": "HSS",
+            "subjectCode": "1521J",
+            "unit": 2
+          },
+          {
+            "subject": "The Law and Politics of International Society",
+            "school": "KED",
+            "major": "HSS",
+            "subjectCode": "1431E",
+            "unit": 2
+          }
+        ]
+      }
+    }
+    const matchFunc = compileMatchOptions(mo)
+    // console.log(ge.filter(e => matchFunc(e as GradeEntry)).map(e=>e.subject))
+    expect(ge.filter(e => matchFunc(e as GradeEntry)).length).toStrictEqual(4)
+  })
+
+  it("理系ディシプリン科目", () => {
+    const mo: MatchOptions = {
+      "include": {
+        "majors": [
+          "SMA",
+          "SPH",
+          "SCH",
+          "SBI",
+          "SGS",
+          "SKD",
+          "SIS",
+          "SLE"
+        ]
+      }
+    }
+    const matchFunc = compileMatchOptions(mo)
+    // console.log(ge.filter(e => matchFunc(e as GradeEntry)).map( ({ subject, school, major, numberlink }) => ({subject, school,major, numberlink })))
+    expect(ge.filter(e => matchFunc(e as GradeEntry)).length).toStrictEqual(8)
+  })
+
+  it("健康・スポーツ科目", () => {
+    const mo: MatchOptions = {
+      "mustHas": {
+        "courses": [
+          {
+            "subject": "健康・スポーツ科学演習",
+            "school": "KED",
+            "major": "HSP",
+            "subjectCode": "1211J",
+            "unit": 1
+          }
+        ]
+      }
+    }
+    const matchFunc = compileMatchOptions(mo)
+    // console.log(ge.filter(e => matchFunc(e as GradeEntry)).map( ({ subject, school, major, numberlink }) => ({subject, school,major, numberlink })))
+    expect(ge.filter(e => matchFunc(e as GradeEntry)).length).toStrictEqual(1)
+  })
+
+  it("総合科目", () => {
+    const mo: MatchOptions = {
+      "include": {
+        "majors": [
+          "GES"
+        ]
+      }
+    }
+    const matchFunc = compileMatchOptions(mo)
+    expect(ge.filter(e => matchFunc(e as GradeEntry)).length).toStrictEqual(7)
+  })
+
+  it("高年次基幹教育科目", () => {
+    const mo: MatchOptions = {
+      "include": {
+        "majors": [
+          "ASC",
+          "ASD"
+        ]
+      }
+    }
+    const matchFunc = compileMatchOptions(mo)
+    expect(ge.filter(e => matchFunc(e as GradeEntry)).length).toStrictEqual(2)
+  })
+
+  it("人文学科基礎科目", () => {
+    const mo: MatchOptions = {
+      "mustHas": {
+        "courses": [
+          {
+            "subject": "人文学基礎Ⅰ",
+            "school": "LET",
+            "major": "HUM",
+            "subjectCode": "1011J",
+            "unit": 2
+          },
+          {
+            "subject": "人文学基礎Ⅱ",
+            "school": "LET",
+            "major": "HUM",
+            "subjectCode": "1012J",
+            "unit": 2
+          }
+        ]
+      }
+    }
+    const matchFunc = compileMatchOptions(mo)
+    expect(ge.filter(e => matchFunc(e as GradeEntry)).length).toStrictEqual(3)
+  })
+
+  it("人文学科共通科目", () => {
+    const mo: MatchOptions = {
+      "include": {
+        "courses": [
+          {
+            "subject": "人文学 I",
+            "school": "LET",
+            "major": "HUM",
+            "subjectCode": "2011J",
+            "unit": 2
+          },
+          {
+            "subject": "人文学 II",
+            "school": "LET",
+            "major": "HUM",
+            "subjectCode": "2012J",
+            "unit": 2
+          },
+          {
+            "subject": "人文学 III",
+            "school": "LET",
+            "major": "HUM",
+            "subjectCode": "3011J",
+            "unit": 2
+          },
+          {
+            "subject": "人文学 IV",
+            "school": "LET",
+            "major": "HUM",
+            "subjectCode": "3012J",
+            "unit": 2
+          }
+        ]
+      }
+    }
+
+    const matchFunc = compileMatchOptions(mo)
+    expect(ge.filter(e => matchFunc(e as GradeEntry)).length).toStrictEqual(0)
+  })
+
+  it("コース共通科目", () => {
+    const mo: MatchOptions = {
+      "mustHas": {
+        "courses":[
+          {
+            "subject": "史学概論",
+            "school": "LET",
+            "major": "HUM",
+            "subjectCode": "2301J",
+            "unit": 2
+          }
+        ]
+      },
+      "include": {
+        "majors": ["HUM"],
+        "like": "日本史学|朝鮮史学|朝鮮歴史文化論|考古学|ヨーロッパ史学|イスラム史学"
+      },
+      "exclude": {
+        "majors": [
+          "HUM"
+        ],
+        "like": "東洋史学"
+      }
+    }
+
+    const matchFunc = compileMatchOptions(mo)
+    expect(ge.filter(e => matchFunc(e as GradeEntry)).length).toStrictEqual(3)
   })
 
 
@@ -846,5 +1141,3 @@ const G10_some_SCIKIKAN_1: GradeEntry[] = [
     numberlink: 'SCI-INF3571J'
   }
 ]
-
-

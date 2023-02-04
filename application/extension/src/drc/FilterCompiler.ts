@@ -107,11 +107,18 @@ export function compileMatchOptions (matchOptions: MatchOptions): MatchFunctionT
         // console.log(include.like, includeLike, g.subject)
       }
 
+      /** TODO: consider next two blocks, can we do better? */
+
+      // If some specified match key does not exist on the course, try match others
       includeFinal = undefinedIsTrue(includeCourse) &&  
         undefinedIsTrue(includeSchool) && 
         undefinedIsTrue(includeMajor) && 
         undefinedIsTrue(includeLike)
 
+      // If every match check misses, we cannot let the course be a match either!
+      if ([includeCourse, includeSchool, includeMajor, includeLike].every(e => typeof e === 'undefined'))
+        return false
+      
       if (includeFinal) 
         return true
     }

@@ -1,29 +1,27 @@
-import { DRC } from '../src/drc/DRC'
+import { DRC, getPlannerTable } from '../src/drc/DRC'
 import { beforeEach } from 'vitest'
-import { toRaw } from 'vue'
 
 let drc: DRC
 beforeEach(() => {
   drc = new DRC()
-  
 })
 
-describe.todo("Change of `drc.records_all.value.length` should trigger re-computation of `drc.ap`", () => {
+describe("Change in `drc.records_all.value` changes the computed value of plannerTable", () => {
   it("Add 0 course should not change anything", () => {
-    const ap_before = JSON.stringify(toRaw(drc.ap))
+    const ap_before = JSON.stringify(getPlannerTable(drc.records_all.value))
     drc.addCourses([], 2019, 0)
 
-    const ap_after = JSON.stringify(toRaw(drc.ap))
+    const ap_after = JSON.stringify(getPlannerTable(drc.records_all.value))
 
     expect(ap_before == ap_after).toEqual(true)
   })
 
-  it.todo("Add 1 course ", () => {
-    const ap_before = JSON.stringify(drc.ap)
-    drc.addCourses([], 2019, 0)
+  // it.todo("Add 1 course ", () => {
+  //   const ap_before = JSON.stringify(drc.ap)
+  //   drc.addCourses([], 2019, 0)
 
-    const ap_after = JSON.stringify(drc.ap)
+  //   const ap_after = JSON.stringify(drc.ap)
 
-    expect(ap_before == ap_after).toEqual(true)
-  })
+  //   expect(ap_before == ap_after).toEqual(true)
+  // })
 })

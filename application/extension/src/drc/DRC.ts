@@ -567,20 +567,16 @@ function filterBy(course_grades: GradeEntry[], gradeFilterOptions: GradeFilterOp
   const { quarter, year, evaluation, category } = gradeFilterOptions
 
   let result: GradeEntry[] = [];
-  console.log("in DRC.ts: filterBy()")
-  // console.log(this.gpaData.categories);
-  // console.log(course_grades);
+  // console.log("in DRC.ts: filterBy()")
+
   if (typeof quarter !== 'undefined') {
     // console.log(`Filtering by quarter... ${quarter ? '後期':'前期'}`);
-    // console.log(typeof(this.gpaData.course_grades));
     result = filterQuarter(course_grades, quarter);
-    // console.log(result)
   }
 
   if (year) {
     // console.log(`Filtering by year... ${year}`);
     result = result.filter((e: GradeEntry) => e.year === year);
-    // console.log(result);
   }
 
   if (evaluation) {
@@ -635,7 +631,6 @@ function aggregate(gradeFilterOptions:GradeFilterOptions, planner_table: Planner
 
   const plannerTable = typeof quarter === 'undefined' ? planner_table[year].flat() : planner_table[year][quarter];
   // console.log(plannerTable, quarter, year, category);
-
 
   
   const grade_statistics = plannerTable
@@ -696,10 +691,11 @@ function aggregate(gradeFilterOptions:GradeFilterOptions, planner_table: Planner
 
 ///////////////////////// Subroutines ///////////////////////
 //////////// 
-function getPlannerTable(course_grades: GradeEntry[], maxYearInAp: number) {
+function getPlannerTable(course_grades: GradeEntry[], maxYearInAp?: number) {
   if (course_grades) {
     const ENROLLMENT = 2019; // temp magic number
     const newPlannerTable: PlannerTable = {};
+    maxYearInAp = maxYearInAp || new Date().getFullYear()
 
     for (let y = ENROLLMENT; y <= maxYearInAp; y++) {
       // console.log(y)
