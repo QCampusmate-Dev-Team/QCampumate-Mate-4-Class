@@ -1,7 +1,7 @@
 import type { ComputedRef } from 'vue'
 import type { SCHOOL, LETTER_EVALUATION, QUARTER } from './Constants' 
 import type { StudentInfo } from './StudentInfo' 
-import type { Course, GradeEntry } from './Course'
+import type { Course } from './Course'
 import type { CompiledLeafReqInterface } from './DRC'
 
 export interface DegreeRequirementBase {
@@ -22,15 +22,16 @@ export interface Tree {
 // A minimal tree structure for consistency with Element Plus UI
 export interface Req extends Tree {
   minUnit: number;
+  category?: string | string[] | undefined;
+  major?: string | string[] | undefined;
   passed_units?: number | ComputedRef<number>;
   minFirstYear?: number;
   elecComp?: 1 | 2 | 3 ;
   children?: (Req | LeafReq)[] | CompiledLeafReqInterface[]
 }
-
+// 
 // 葉要件
 export interface LeafReq extends Req{
-  major?: string | string[] | undefined;
   matchOptions: MatchOptions;
 }
 

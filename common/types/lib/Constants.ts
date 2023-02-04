@@ -5,12 +5,14 @@ export type SCHOOL =
 "EDU"| //教育学部・教職課程
 "LAW"| //法学
 "ECO"| //経済
+"SCI"| // 理学部
 "MED"| //医学部医学科・医学部生命科学科・医学部保健学科
 "DEN"| //歯
 "PHS"| //薬
 "ENG"| //工
 "DES"| //芸工
 "AGR"| //農
+"21P"| //???
 ""|
 undefined;
 
