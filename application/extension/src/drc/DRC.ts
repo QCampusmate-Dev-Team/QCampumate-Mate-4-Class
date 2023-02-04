@@ -569,18 +569,18 @@ function filterBy(course_grades: GradeEntry[], gradeFilterOptions: GradeFilterOp
   let result: GradeEntry[] = [];
   console.log("in DRC.ts: filterBy()")
   // console.log(this.gpaData.categories);
-  console.log(course_grades);
+  // console.log(course_grades);
   if (typeof quarter !== 'undefined') {
-    console.log(`Filtering by quarter... ${quarter ? '後期':'前期'}`);
+    // console.log(`Filtering by quarter... ${quarter ? '後期':'前期'}`);
     // console.log(typeof(this.gpaData.course_grades));
     result = filterQuarter(course_grades, quarter);
-    console.log(result)
+    // console.log(result)
   }
 
   if (year) {
-    console.log(`Filtering by year... ${year}`);
+    // console.log(`Filtering by year... ${year}`);
     result = result.filter((e: GradeEntry) => e.year === year);
-    console.log(result);
+    // console.log(result);
   }
 
   if (evaluation) {
@@ -618,7 +618,7 @@ function filterQuarter(grade_entry: GradeEntry[] | undefined, quarter: number) {
   const quarterSelector = typeof quarter === 'undefined' ? null : 
   (quarter === 0 ? ((q) => FIRSTQUARTER.has(q)) : ((q) => SECONDQUARTER.has(q)));
 
-  console.log(JSON.stringify(grade_entry, null, 2))
+  // console.log(JSON.stringify(grade_entry, null, 2))
 
   return grade_entry.filter(({ quarter }) => quarterSelector(quarter));
 }
@@ -702,7 +702,7 @@ function getPlannerTable(course_grades: GradeEntry[], maxYearInAp: number) {
     const newPlannerTable: PlannerTable = {};
 
     for (let y = ENROLLMENT; y <= maxYearInAp; y++) {
-      console.log(y)
+      // console.log(y)
       const zenki = filterBy(course_grades, { quarter: 0, year: y });
       const kouki = filterBy(course_grades,{ quarter: 1, year: y });
       newPlannerTable[y] = [zenki, kouki];

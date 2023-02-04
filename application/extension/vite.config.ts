@@ -19,7 +19,7 @@ export default defineConfig({
   ],
   
   optimizeDeps: {
-    include: ['@qcampusmate-mate/plasapo-core', '@qcampusmate-mate/plasapo-ui', 'element-plus'],
+    include: ['@qcampusmate-mate/types', '@qcampusmate-mate/plasapo-core', '@qcampusmate-mate/plasapo-ui', 'element-plus'],
   },
   build: {
     sourcemap: true,

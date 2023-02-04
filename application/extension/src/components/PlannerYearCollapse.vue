@@ -107,7 +107,7 @@ const showDialog = ref(false) // controls the visibility of the add course dialo
 const courseType = ref('自由選択科目')
 const dialog = ref<InstanceType<typeof AddCourseForm> | null>(null)
 const plannerTable = computed(() => {
-  console.log(JSON.stringify(getPlannerTable(drc.records_all.value, drc.maxYearInAp.value), null, 2))
+  // console.log(JSON.stringify(getPlannerTable(drc.records_all.value, drc.maxYearInAp.value), null, 2))
   return getPlannerTable(drc.records_all.value, drc.maxYearInAp.value)
 })
 
