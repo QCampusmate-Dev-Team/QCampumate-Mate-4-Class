@@ -1,4 +1,6 @@
-{
+import { DegreeRequirementBase} from '@qcampusmate-mate/types'
+
+const dr: DegreeRequirementBase = {
   "meta": {
     "enrollment": 2019,
     "school": "LET",
@@ -47,8 +49,7 @@
                   "major": "ICL",
                   "unit": 2.5
                 }
-              ],
-              "like": "課題協学科目"
+              ]
             }
           }
         },
@@ -216,7 +217,7 @@
                       "subject": "社会思想史",
                       "school": "KED",
                       "major": "HSS",
-                      "subjectCode": "1211J",
+                      "subjectCode": "1111J",
                       "unit": 2
                     },
                     {
@@ -333,7 +334,7 @@
                 }
               }
             }
-          ]
+          ],
         },
         {
           "label": "理系ディシプリン科目",
@@ -419,7 +420,7 @@
         },
         {
           "label": "その他",
-          "elecComp": 0,
+          "elecComp": 1,
           "minUnit": 12.5,
           "matchOptions": {
             "include": {
@@ -563,7 +564,7 @@
                       "majors": [
                         "HUM"
                       ],
-                      "like": "中国語|英語|ラテン語|ドイツ語|朝鮮語|アラビア語|漢文|ギリシヤ語"
+                      "like": "[中国語|英語|古典語|ドイツ語|朝鮮語|アラビア語]"
                     }
                   }
                 }
@@ -575,6 +576,7 @@
           "label": "コース共通科目",
           "category": "HUM",
           "minUnit": 8,
+          "elecComp": 2,
           "matchOptions": {
             "mustHas": {
               "courses":[
@@ -585,11 +587,11 @@
                   "subjectCode": "2301J",
                   "unit": 2
                 }
-              ]
+              ],
             },
             "include": {
               "majors": ["HUM"],
-              "like": "日本史学|朝鮮史学|朝鮮歴史文化論|考古学|ヨーロッパ史学|イスラム史学"
+              "like": "[日本史学|朝鮮史学|朝鮮歴史文化論|考古学|ヨーロッパ史学|イスラム史学]"
             },
             "exclude": {
               "majors": [
@@ -612,7 +614,7 @@
               "matchOptions": {
                 "mustHas": {
                   "majors": [
-                    "HUM"
+                    "LET"
                   ],
                   "like": "東洋史学講義"
                 }
@@ -626,59 +628,61 @@
               "matchOptions": {
                 "mustHas": {
                   "majors": [
-                    "HUM"
+                    "LET"
                   ],
                   "like": "東洋史学演習"
                 }
               }
+            },
+            {
+              "label": "自由選択科目",
+              "elecComp": 1,
+              "category": "HUM",
+              "minUnit": 27,
+              "matchOptions": {
+                "include": {
+                  "schools": [
+                    "LET",
+                    "ISI",
+                    "EDU",
+                    "LAW",
+                    "ECO",
+                    "SCI",
+                    "MED",
+                    "DEN",
+                    "PHS",
+                    "ENG",
+                    "DES",
+                    "AGR",
+                    "21P"
+                  ]
+                },
+                "exclude": {
+                  "schools": ["KED"]
+                }
+              }
+            },
+            {
+              "label": "卒業論文",
+              "major": "HUM",
+              "minUnit": 10,
+              "elecComp": 3,
+              "matchOptions": {
+                "mustHas": {
+                  "courses": [
+                    {
+                      "subject": "卒業論文",
+                      "unit": 10
+                    }
+                  ]
+                }
+              }
             }
           ]
-        },
-        {
-          "label": "自由選択科目",
-          "elecComp": 1,
-          "category": "HUM",
-          "minUnit": 27,
-          "matchOptions": {
-            "include": {
-              "schools": [
-                "LET",
-                "ISI",
-                "EDU",
-                "LAW",
-                "ECO",
-                "SCI",
-                "MED",
-                "DEN",
-                "PHS",
-                "ENG",
-                "DES",
-                "AGR",
-                "21P"
-              ]
-            },
-            "exclude": {
-              "schools": ["KED"]
-            }
-          }
-        },
-        {
-          "label": "卒業論文",
-          "major": "HUM",
-          "minUnit": 10,
-          "elecComp": 3,
-          "matchOptions": {
-            "mustHas": {
-              "courses": [
-                {
-                  "subject": "卒業論文",
-                  "unit": 10
-                }
-              ]
-            }
-          }
         }
       ]
     }
   }
 }
+
+export { dr as default } 

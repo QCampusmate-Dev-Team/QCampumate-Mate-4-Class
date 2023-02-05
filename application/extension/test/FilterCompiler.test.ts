@@ -1,6 +1,6 @@
 import { compileMatchOptions } from '../src/drc/FilterCompiler'
 import { expect, it } from 'vitest'
-import { GradeEntry, MatchOptions} from '@qcampusmate-mate/types'
+import { GradeEntry, MatchFunctionType, MatchOptions} from '@qcampusmate-mate/types'
 import * as _ from 'lodash'
 import { course_grades as let_ge_complete } from './grade_entry/grade_entry_large01.json'
 
@@ -235,8 +235,8 @@ describe("mastHas majors and like", () => {
     }
 
     const ge = _.cloneDeep(let_ge_complete) as Array<Partial<GradeEntry>>
-  
     const matchFunc = compileMatchOptions(leaf.matchOptions)
+    // console.log(ge.filter(e => matchFunc(e as GradeEntry)))
     expect(ge.filter(e => matchFunc(e as GradeEntry)).length).toStrictEqual(5)
   })
 })
@@ -284,9 +284,9 @@ describe.todo("mustHas.courses and include.courses", () => {
 })
 
 describe("test all", () => {
-  let ge
+  let ge: GradeEntry[]
   beforeEach(() => {
-    ge = _.cloneDeep(let_ge_complete) as Array<Partial<GradeEntry>>
+    ge = _.cloneDeep(let_ge_complete) as Array<GradeEntry>
   })
 
   it("第一外国語 韓国語", () => {
@@ -794,7 +794,124 @@ describe("test all", () => {
     })
   })
 
-  
+  it("自由選択", () => {
+    const others: GradeEntry[] =  [{
+      category: '（文）専攻教育科目',
+      course_id: 20054103,
+      gpa: 4,
+      label: '現代史入門Ⅰ',
+      last_updated: '2020/10/12',
+      letter_evaluation: 'A',
+      major: 'HUM',
+      numberlink: '',
+      prinstructor: '国分　航士',
+      quarter: '前',
+      school: 'LET',
+      status: 2,
+      subject: '現代史入門Ⅰ',
+      unit: 2,
+      year: 2020,
+      matched: false,
+      id: 48
+    },
+    {
+      category: '（経）専攻教育科目',
+      course_id: 21170085,
+      gpa: 4,
+      label: '経済工学演習①',
+      last_updated: '2022/02/18',
+      letter_evaluation: 'A',
+      numberlink: '',
+      prinstructor: '北原　知就',
+      quarter: '通年',
+      school: 'ECO',
+      status: 2,
+      subject: '経済工学演習①',
+      unit: 4,
+      year: 2021,
+      matched: false,
+      id: 70
+    },
+    {
+      category: '（経）専攻教育科目',
+      course_id: 20171103,
+      gpa: 4,
+      label: 'マクロ経済学Ⅰ',
+      last_updated: '2020/08/21',
+      letter_evaluation: 'A',
+      numberlink: '',
+      prinstructor: '村尾　徹士',
+      quarter: '前',
+      school: 'ECO',
+      status: 2,
+      subject: 'マクロ経済学Ⅰ',
+      unit: 2,
+      year: 2020,
+      matched: false,
+      id: 71
+    },
+    {
+      category: '（工）専攻教育科目',
+      course_id: 20254209,
+      gpa: 2,
+      label: 'コンピュータアーキテクチャⅠ',
+      last_updated: '2020/09/01',
+      letter_evaluation: 'C',
+      numberlink: '',
+      prinstructor: '久住　憲嗣',
+      quarter: '夏学期',
+      school: 'ENG',
+      status: 2,
+      subject: 'コンピュータアーキテクチャⅠ',
+      unit: 2,
+      year: 2020,
+      matched: false,
+      id: 79
+    },
+    {
+      category: '（工）専攻教育科目',
+      course_id: 22256002,
+      gpa: null,
+      label: 'オペレーティングシステム',
+      last_updated: '',
+      letter_evaluation: '',
+      numberlink: '',
+      prinstructor: '',
+      quarter: '後',
+      school: 'ENG',
+      status: 0,
+      subject: 'オペレーティングシステム',
+      year: 2022,
+      matched: false,
+      id: 80
+    }]
+
+    const 自由選択科目: MatchOptions = {
+      "include": {
+        "schools": [
+          "LET",
+          "ISI",
+          "EDU",
+          "LAW",
+          "ECO",
+          "SCI",
+          "MED",
+          "DEN",
+          "PHS",
+          "ENG",
+          "DES",
+          "AGR",
+          "21P"
+        ]
+      },
+      "exclude": {
+        "schools": ["KED"]
+      }
+    }
+
+    const matchFunc:MatchFunctionType = compileMatchOptions(自由選択科目)
+    expect(others.filter(matchFunc).length).toStrictEqual(others.length)
+  })
 })
 
 const G0_Empty: GradeEntry[] = []

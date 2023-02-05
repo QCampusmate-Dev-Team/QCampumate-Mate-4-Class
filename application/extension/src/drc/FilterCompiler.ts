@@ -103,8 +103,8 @@ export function compileMatchOptions (matchOptions: MatchOptions): MatchFunctionT
         includeMajor = include.majors.some(major => major === numberLinkToSmc(g)['major'])
       }
 
-      if(include.schools){
-        includeSchool = include.schools.some(school => school === numberLinkToSmc(g)['school'])
+      if(include.schools && g.school){
+        includeSchool = include.schools.some(school => school === g.school)
       }
 
       if(include && include.like) {
