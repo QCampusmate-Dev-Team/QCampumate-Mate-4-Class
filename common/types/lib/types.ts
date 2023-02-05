@@ -20,13 +20,23 @@ export interface Tree {
 // 非葉要件
 // Represents a requirement node in 
 // A minimal tree structure for consistency with Element Plus UI
+/**
+ * elecComp: 
+ * ================
+ *  3 : 必修
+ *  2 : 選択必修
+ *  1 : 専攻教育自由選択
+ *  0 : 基幹教育>その他
+ * -1 : 未定  
+ * ================
+ */
 export interface Req extends Tree {
   minUnit: number;
   category?: string | string[] | undefined;
   major?: string | string[] | undefined;
   passed_units?: number | ComputedRef<number>;
   minFirstYear?: number;
-  elecComp?: 1 | 2 | 3 ;
+  elecComp?: -1 | 0 | 1 | 2 | 3; 
   children?: (Req | LeafReq)[] | CompiledLeafReqInterface[]
 }
 // 

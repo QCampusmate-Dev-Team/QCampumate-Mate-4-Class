@@ -2,7 +2,6 @@ import type { SCHOOL, QUARTER, LETTER_EVALUATION } from './Constants'
 import type { stringOrUndefined } from './utils'
 import type { Tree } from './types'
 
-export type CourseCategory = stringOrUndefined; 
 
 export interface Course {
   subject: string;
@@ -15,7 +14,6 @@ export interface Course {
   quarter?: QUARTER;
 }
 
-
 export class GradeEntry implements Course, Tree{
   label: string;
   subject: string;
@@ -24,7 +22,7 @@ export class GradeEntry implements Course, Tree{
   major?: stringOrUndefined;
   subjectCode?: stringOrUndefined;
   unit?: number;
-  category?: CourseCategory;
+  category?: stringOrUndefined;
   letter_evaluation?: LETTER_EVALUATION;
   gpa?: number | undefined;
   year?: number | undefined;
@@ -33,6 +31,8 @@ export class GradeEntry implements Course, Tree{
   course_id?: number | undefined;
   prinstructor?: stringOrUndefined;
   last_updated?: Date | string | undefined;
+
+  id?: number;
   matched?: Boolean;
 
   constructor(label: string, subject: string) {
@@ -42,5 +42,4 @@ export class GradeEntry implements Course, Tree{
 }
 
 export interface CourseMeta {
-
 }

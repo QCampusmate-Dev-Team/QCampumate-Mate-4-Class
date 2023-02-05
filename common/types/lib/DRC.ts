@@ -25,5 +25,5 @@ export interface CompiledLeafReqInterface extends Tree {
   children: UnwrapNestedRefs<GradeEntry[]>;
   minFirstYear?: number;
   passed_units: ComputedRef<number>;
-  elecComp?: 1 | 2 | 3 ;
+  elecComp?: -1 | 0 | 1 | 2 | 3; 
 }

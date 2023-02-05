@@ -1,8 +1,7 @@
 import openTab from '../utils/openDRC'
 import { saveStudentInfo, saveImportedGradeRecord } from '../utils/sync' 
 import { StudentInfo, GradeEntry } from '@qcampusmate-mate/types'
-import DR_LET from '../../test/dr_19_let_touyoushi_large0.json' //'../fixtures/dr_mock.json'
-// import { DR_LET } from '@qcampusmate-mate/fixtures'
+import DR_LET from '../../test/dr/dr_19_let_touyoushi_large0.json' 
 
 /*global chrome */
 /*eslint no-undef: "error"*/
