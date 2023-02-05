@@ -17,9 +17,7 @@ export interface Tree {
   children?: Tree[]
 }
 
-// 非葉要件
-// Represents a requirement node in 
-// A minimal tree structure for consistency with Element Plus UI
+
 /**
  * elecComp: 
  * ================
@@ -30,6 +28,9 @@ export interface Tree {
  * -1 : 未定  
  * ================
  */
+// 非葉要件
+// Represents a requirement node in 
+// A minimal tree structure for consistency with Element Plus UI
 export interface Req extends Tree {
   minUnit: number;
   category?: string | string[] | undefined;

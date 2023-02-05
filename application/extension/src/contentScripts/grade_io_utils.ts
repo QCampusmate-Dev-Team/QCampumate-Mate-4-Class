@@ -81,7 +81,6 @@ export const exportTranscriptJSON = () => {
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-    // XLSX.writeFile(result.GPADATA, 'grade_report.json');
   });
 }
 
@@ -210,42 +209,6 @@ function load(isRandomized: boolean) {
 
   var category = "" 
 
-  function categoryToSchool(category: string): string | undefined {
-    const categoriesMap = [
-      [['基幹教育セミナー', '課題協学科目', '言語文化基礎科目', '文系ディシプリン科目', '理系ディシプリン科目', '健康・スポーツ科目', '総合科目', 'フロンティア科目', '高年次基幹教育科目', 'サイバーセキュリティ科目', ], 'KED'],
-      [['（文）専攻教育科目', '（文）低年次専攻教育科目'], 'LET'],
-      [['（経）専攻教育科目', ], 'ECO'],
-      [['（理）専攻教育科目', ], 'SCI'],
-      [['（工）専攻教育科目', ], 'ENG'],
-      [['（農）コース必修科目', '農）コース選択必修科目', '（農）分野選択必修科目', '（農）分野選択必修科目・実験', '（農）コース概要科目', '（農）共通基礎科目'], 'AGR'], 
-    ]
-
-    for (const [cats, school] of categoriesMap) {
-      if ((cats as string[]).some(c => c === category)) {
-        return school as string
-      }
-    }
-  }
-  
-  function categoryToMajor(category: string): string | undefined {
-    const categoriesMap = [
-      [['基幹教育セミナー'], 'KES'],
-      [['課題協学科目'], 'ICL'],
-      [['言語文化基礎科目'], 'LCB'],  
-      [['文系ディシプリン科目'], 'HSS'],    
-      [['健康・スポーツ科目'], 'HSP'],  
-      [['総合科目', 'フロンティア科目'], 'GES'],  
-      [['高年次基幹教育科目'], 'ASC'],  
-      [['サイバーセキュリティ科目'], 'CSC'], 
-      [['（文）専攻教育科目', '（文）低年次専攻教育科目'], 'HUM']
-    ]
-
-    for (const [cats, major] of categoriesMap) {
-      if ((cats as string[]).some(c => c === category)) {
-        return major as string
-      }
-    }
-  }
   console.log('Randomized: ', isRandomized ? 'Yes' : 'No');
   // fill the empty DS with grade data
  
@@ -259,8 +222,6 @@ function load(isRandomized: boolean) {
     } else if (rows[i].className === 'column_odd') {
       let courseRecord = {} as GradeEntry // new CourseGradeEntry()
       courseRecord['category'] = category;
-      courseRecord['school'] = categoryToSchool(category);
-      courseRecord['major'] = categoryToMajor(category);
       // for each row, generate a CourseGradeEntry
       [...rows[i].cells].forEach((item, index) => {
         // convert all non-empty gp string to half-size

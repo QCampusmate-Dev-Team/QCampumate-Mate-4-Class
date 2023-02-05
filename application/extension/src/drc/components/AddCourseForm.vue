@@ -41,7 +41,7 @@
 // import { ElTransfer } from 'element-plus'
 import { ref, defineEmits } from 'vue'
 import { PlannerTableEntry } from '@qcampusmate-mate/types'
-import { courseData } from '../fixtures/course_mock'
+import { courseData } from '../../fixtures/course_mock'
 
 // defineEmits(['update:modelValue'])
 

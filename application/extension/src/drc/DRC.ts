@@ -2,13 +2,12 @@ import { compileMatchOptions } from './FilterCompiler'
 import { ref, reactive, computed, watch } from 'vue'
 import type { Ref , UnwrapNestedRefs, ComputedRef } from 'vue'
 import * as _ from 'lodash'
-import type { Course, GradeEntry, GradeFilterOptions, PlannerTable, PlannerTableEntry, _PlannerTableEntry, DegreeRequirementBase, LeafReq, Req, MatchFunctionType, CompiledLeafReqInterface, Tree} from '@qcampusmate-mate/types';
+import type { Course, GradeEntry, GradeFilterOptions, PlannerTable, PlannerTableEntry, _PlannerTableEntry, DegreeRequirementBase, LeafReq, Req, MatchFunctionType, CompiledLeafReqInterface, Tree, SCHOOL} from '@qcampusmate-mate/types';
 // import store from '../store/index.js'
 
 const LETTER_TO_GP = {
   'A': 4, 'B': 3, 'C': 2, 'D': 1, 'F': 0,
 };
-
 
 class CompiledLeafReq implements CompiledLeafReqInterface{
   label: string;
@@ -70,6 +69,7 @@ class DRC {
         break
       case undefined:
         console.info('@DRC, initialized(): use deafult data source:', this.dataSource['name'])
+        break
       default:
         console.error('@DRC, initialized(): specified data source is not currently supported.')
     }
@@ -77,14 +77,16 @@ class DRC {
     return new Promise<DRC>((resolve, reject) => {
       try {
         chrome.storage.local.get(["GPADATA", "DR", "records_all", "maxYearInAp"], ({ GPADATA, DR, records_all, maxYearInAp }) => {
-          // console.log(`In DRC.ts, initialize(): ${JSON.stringify(DRCTree)}`)
-
+          // console.log(`@DRC.ts initialize(): , initialize(): ${JSON.stringify(DRCTree)}`)
+          // console.warn('@DRC.ts initialize(): ', records_all)
           if (!records_all) {
             alert(`成績は見つかりません！！`)
           }
-    
+          
           this.drcTree = DR
           this.gpaData = GPADATA.course_grades
+
+          
           this.records_all.value = JSON.parse(records_all)
           this.maxYearInAp.value = Math.max(maxYearInAp, getMaxYearInRecords(this.records_all.value))
 
@@ -115,9 +117,9 @@ class DRC {
     })
   }
 
-  //////////////////////////////////////////////////////////
-  /////////////////////Preprocessing////////////////////////
-  //////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
+/////////////////////Preprocessing////////////////////////
+//////////////////////////////////////////////////////////
 
   /**
    *  This method mutates `drLeaves` property. The mutation involves the following steps:
@@ -161,7 +163,7 @@ class DRC {
 
   /**
    *  This method mutates `drcTree` property such that each non-leaf's 
-   *  `passed_units` becomes an observer of and sums up its direct children's *  `passed_units`. Current implementation uses `computed` from Vue Reactive *  Core API.
+   *  `passed_units` becomes an observer of and sums up its direct children's `passed_units`. Current implementation uses `computed` from Vue Reactive Core API.
    * 
    *  Note that the current implementation assumes all leaves of `drcTree` must
    *  be a computed property as well. In this way, it also entails that
@@ -192,9 +194,9 @@ class DRC {
     }
   }
 
-  //////////////////////////////////////////////////////////
-  //////////////////////////CRUD////////////////////////////
-  //////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
+//////////////////////////CRUD////////////////////////////
+//////////////////////////////////////////////////////////
 
   /** 
    *  Add multiple courses to the records_all, 
@@ -301,7 +303,6 @@ class DRC {
   }
 }
 
-
 /////////////////////////////////////////////////////////
 ////////////////////////SUBROUTINES//////////////////////
 /////////////////////////////////////////////////////////
@@ -335,7 +336,6 @@ function useDRCTreeComputed(drcTreeReference): ComputedRef<Array<Req>> {
     return []
   })
 }
-
 
 /////////////////////////////////////////////////////////
 ////////////////////////UTILITY//////////////////////
@@ -381,7 +381,7 @@ function useDRCTreeComputed(drcTreeReference): ComputedRef<Array<Req>> {
 
 /**
  * This functions filters the given grade entry by quarter
- * @params {Array<CourseRecord>} courseGrades - an Array of courseGrades objects
+ * @params {Array<ge>} courseGrades - an Array of courseGrades objects
  * @params {number} quarter - 0: returns 前期, 1: returns 後期
  * @returns filtered courseGrades specifies by `quarter` parameter
  */
@@ -487,6 +487,43 @@ function getMaxYearInRecords(ge: GradeEntry[]): number {
   return Math.max(...(ge.map(g => g.year || 0 ))) || new Date().getFullYear()
 }
 
+function categoryToSchool(category: string): string | undefined {
+  const categoriesMap = [
+    [['基幹教育セミナー', '課題協学科目', '言語文化基礎科目', '文系ディシプリン科目', '理系ディシプリン科目', '健康・スポーツ科目', '総合科目', 'フロンティア科目', '高年次基幹教育科目', 'サイバーセキュリティ科目', ], 'KED'],
+    [['（文）専攻教育科目', '（文）低年次専攻教育科目'], 'LET'],
+    [['（経）専攻教育科目', ], 'ECO'],
+    [['（理）専攻教育科目', ], 'SCI'],
+    [['（工）専攻教育科目', ], 'ENG'],
+    [['（農）コース必修科目', '農）コース選択必修科目', '（農）分野選択必修科目', '（農）分野選択必修科目・実験', '（農）コース概要科目', '（農）共通基礎科目'], 'AGR'], 
+  ]
+
+  for (const [cats, school] of categoriesMap) {
+    if ((cats as string[]).some(c => c === category)) {
+      return school as string
+    }
+  }
+}
+
+function categoryToMajor(category: string): string | undefined {
+  const categoriesMap = [
+    [['基幹教育セミナー'], 'KES'],
+    [['課題協学科目'], 'ICL'],
+    [['言語文化基礎科目'], 'LCB'],  
+    [['文系ディシプリン科目'], 'HSS'],    
+    [['健康・スポーツ科目'], 'HSP'],  
+    [['総合科目', 'フロンティア科目'], 'GES'],  
+    [['高年次基幹教育科目'], 'ASC'],  
+    [['サイバーセキュリティ科目'], 'CSC'], 
+    [['（文）専攻教育科目', '（文）低年次専攻教育科目'], 'HUM']
+  ]
+
+  for (const [cats, major] of categoriesMap) {
+    if ((cats as string[]).some(c => c === category)) {
+      return major as string
+    }
+  }
+}
+
 /**
  * Setting GradeEntry's
  * - status: a hint for different coloring in DRCTree
@@ -498,11 +535,13 @@ function getMaxYearInRecords(ge: GradeEntry[]): number {
  *    passed_unretakable: 2
  *  ------------------------
  * - label: the name of the GradeEntry, also the rendered text in DRCTree
+ * - school
+ * - major
  * 
  * @params {GradeEntry} ge - the course_node whose status is undetermined yet 
  * @returns {number} status - the set status of the course node
  */
-function setDRCTreeNodeProperties(ge:GradeEntry) {
+function setRecordsAllProperties(ge:GradeEntry) {
   ge['label'] = ge.subject
 
   /* Decide status based on LETTER_EVALUATION */
@@ -523,6 +562,9 @@ function setDRCTreeNodeProperties(ge:GradeEntry) {
   } else if (!ge.unit && !ge.last_updated){ // ongoing course
     ge.status = 0;
   }
+
+  ge['school'] = categoryToSchool(ge.category) as SCHOOL;
+  ge['major'] = categoryToMajor(ge.category);
 
   return ge
 }
@@ -636,5 +678,5 @@ ${(node.children.map(ge => {
 
 export { 
   DRC, CompiledLeafReq,
-  filterBy, aggregate, setDRCTreeNodeProperties, getMaxYearInRecords, getPlannerTable, sumUnits, getMinPartialSumSubset, pickSatisfyingMinUnits, reportDRCTreeNode
+  filterBy, aggregate, setRecordsAllProperties, getMaxYearInRecords, getPlannerTable, sumUnits, getMinPartialSumSubset, pickSatisfyingMinUnits, reportDRCTreeNode
 }

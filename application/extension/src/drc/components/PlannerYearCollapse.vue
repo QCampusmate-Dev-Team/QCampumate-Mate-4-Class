@@ -94,9 +94,9 @@ import { Delete } from '@element-plus/icons-vue'
 import AcademicPlannerTable from './AcademicPlannerTable.vue'
 import AddCourseForm from './AddCourseForm.vue'
 import { ref, inject, computed, markRaw } from 'vue'
-import { DRC, aggregate, getPlannerTable } from '../drc/DRC'
+import { DRC, aggregate, getPlannerTable } from '../DRC'
 
-const drc = await inject<Promise<DRC>>('drc')
+const drc = await inject<Promise<DRC>>('drc') as DRC
 const activeName = ref[`${new Date().getFullYear()}`];
 
 var addYear:number = 0

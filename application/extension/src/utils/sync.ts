@@ -1,7 +1,7 @@
 /* This files provides utility functions for synchronization between data in the view model and client storage*/
 /* Execution context is expected to be in a Service Worker context */
 import { PlannerTable, GradeEntry, StudentInfo} from '@qcampusmate-mate/types'
-import { filterBy, setDRCTreeNodeProperties, getMaxYearInRecords } from '../drc/DRC'
+import { filterBy, setRecordsAllProperties, getMaxYearInRecords } from '../drc/DRC'
 /** (Think about potential validations needed upon saving..)
  *  Save <currAP> along side
  */
@@ -31,6 +31,13 @@ export function saveStudentInfo(studentInfo: StudentInfo, cb: (data?: any) => vo
   })
 }
 
+interface CampusmateCourseResultsRaw
+{
+  tHeadNameMap: Object,
+  categories: string[],
+  course_grades: [],
+} 
+
 /**
  * gpaData is of following type
  * 
@@ -43,20 +50,20 @@ export function saveStudentInfo(studentInfo: StudentInfo, cb: (data?: any) => vo
  * Save grade record imported from campusmate and set the ``
  *   
  */
-export function saveImportedGradeRecord(GPAData) {
+export function saveImportedGradeRecord(GPAData: CampusmateCourseResultsRaw) {
   return new Promise((resolve, reject) => {
     try {
+      const processedCoureseRecords = (JSON.parse(JSON.stringify((GPAData.course_grades))) as GradeEntry[])
+      .map(ge => setRecordsAllProperties(ge))
+
       chrome.storage.local.set({ 
         GPADATA: GPAData, 
-        records_all: JSON.stringify((GPAData.course_grades as GradeEntry[])
-        .map(ge => setDRCTreeNodeProperties(ge))),
+        records_all: JSON.stringify(processedCoureseRecords),
         maxYearInAp: getMaxYearInRecords(GPAData.course_grades as GradeEntry[])
       }, 
-        () => { 
-          // console.log(JSON.stringify((GPAData.course_grades as GradeEntry[]).map(ge => setDRCTreeNodeProperties(ge))), null, 2)
-          resolve(GPAData.course_grades.length)
-        }
-      )
+      () => {
+        resolve(GPAData.course_grades.length)
+      })
     } catch {
       reject()
     }

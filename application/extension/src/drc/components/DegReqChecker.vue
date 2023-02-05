@@ -11,13 +11,13 @@
 
 <script lang="ts">
 import { ElTree } from 'element-plus'
-import { DRC, CompiledLeafReq } from '../drc/DRC'
+import { DRC, CompiledLeafReq } from '../DRC'
 import { computed, inject } from 'vue'
 import { Tree, GradeEntry, Req } from '@qcampusmate-mate/types'
 
 export default {
   async setup(){
-    const drc = await inject<Promise<DRC>>('drc') 
+    const drc = await inject<Promise<DRC>>('drc') as DRC
     const drcTree = computed(() => {
             return [drc.drcTree.req.keg, drc.drcTree.req.school] 
           })
