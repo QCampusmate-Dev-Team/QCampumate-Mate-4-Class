@@ -1,7 +1,6 @@
-import type { SCHOOL, QUARTER, LETTER_EVALUATION } from './Constants'
+import type { SCHOOL, QUARTER, LETTER_EVALUATION } from './constants'
 import type { stringOrUndefined } from './utils'
-import type { Tree } from './types'
-
+import type { Tree } from './degReq'
 
 export interface Course {
   subject: string;
@@ -14,7 +13,7 @@ export interface Course {
   quarter?: QUARTER;
 }
 
-export class GradeEntry implements Course, Tree{
+export class GradeEntry implements Course, Tree {
   label: string;
   subject: string;
   status?: number;
@@ -24,7 +23,7 @@ export class GradeEntry implements Course, Tree{
   unit?: number;
   category?: stringOrUndefined;
   letter_evaluation?: LETTER_EVALUATION;
-  gpa?: number | undefined;
+  gp?: number | '*' | undefined;
   year?: number | undefined;
   quarter?: QUARTER;
   numberlink?: stringOrUndefined; //"KED-KES1111J"

@@ -1,4 +1,4 @@
-import { SCHOOL } from './Constants'
+import { SCHOOL } from './constants'
 
 export interface StudentInfo {
   enrollment: number;

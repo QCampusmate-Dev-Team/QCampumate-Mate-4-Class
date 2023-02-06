@@ -1,6 +1,8 @@
-import openTab from '../utils/openDRC'
+import type { StudentInfo, GradeEntry, CampusmateCourseResults } from '@qcampusmate-mate/types'
+import CourseRecordDTO from '../utils/courseRecordDTO'
+import openDRCWindow from '../utils/openDRC'
+import randomizedGPAndLE from '../utils/random_grade'
 import { saveStudentInfo, saveImportedGradeRecord } from '../utils/sync' 
-import { StudentInfo, GradeEntry } from '@qcampusmate-mate/types'
 import DR_LET from '../../test/dr/dr_19_let_touyoushi_large0.json' 
 
 /*global chrome */
@@ -55,30 +57,32 @@ chrome.runtime.onMessage.addListener(
         sendResponse({ code: 200})
       break
       case "saveImportedGradeRecords": 
-        console.log("saveImportedGradeRecords")
-        saveImportedGradeRecord(request.data)
+        (() => new Promise((resolve, reject) => {
+          try {
+            chrome.storage.local.get('isRandomized', ({isRandomized}) => {
+              const courseResults = request.data as CampusmateCourseResults
+              const courseRecordDTOs = courseResults.course_grades.map(c => new CourseRecordDTO(c))
+
+              courseResults.course_grades = isRandomized ? courseRecordDTOs.map(c => randomizedGPAndLE(c)) : courseRecordDTOs
+              
+              console.info('@service worker event::saveImportedGradeRecords, has CourseResults: ⏬')
+              console.log(courseResults)
+              resolve(courseResults) 
+            })
+          } catch {
+            reject('@service worker event::saveImportedGradeRecords, error when trying to create randomized grade')
+          }
+        }))()
+        .then(res => saveImportedGradeRecord(res as CampusmateCourseResults))
         .then(() => {console.log('in service worker, event::saveImportedGradeRecords: successfully saved imported grade records')})
         .catch(e => { console.error(e)})
       break
       case "openDRC":
-        console.log("")
-        openTab()
+        openDRCWindow()
         sendResponse({ code: 200 })
       break
       case "putDRCTree":
-        chrome.storage.local.get(['GPADATA', 'DR'], ({ GPADATA, DR }) => {
-          if (GPADATA && DR) {
-            // console.log('in background.ts, putDRCTree: generating DRCTree')
-            // const drc = new DRC().initializeRequirementTree(DR, GPADATA)
-            // const drcTree = drc.dumpDRCTree()
-            // saveDRCTree(drcTree /* as DRCTree */, (setTree) => {
-            //   sendResponse({code:200})
-            //   console.log("in service worker, event::putDRCTree: successfully saved DRCTree", setTree)
-            // })
-          } else {
-            throw Error("ERR! in service worker, event::putDRCTree: unable to retrieve GPADATA or DR")
-          }
-        })
+        /** Not Implemented */
       break
       default:
         throw Error("ERR!! in service worker, received unknown event!!")
@@ -86,8 +90,9 @@ chrome.runtime.onMessage.addListener(
   }
 );
 
-// /** 
-//  * sync user settings with PouchDB
+// /**
+//  * TODO
+//  * sync user settings to indexDB
 //  */
 // function saveStudentProfile(profile: any): boolean {
 //   // on message "SAVE_PROFILE"
