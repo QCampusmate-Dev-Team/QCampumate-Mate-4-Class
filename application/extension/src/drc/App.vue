@@ -22,6 +22,7 @@
         <el-main>
           <planner-year-collapse></planner-year-collapse>
           <!-- <button @click="drc.addCourse"> add course</button> -->
+
         </el-main>
       </el-container>
     </el-container>

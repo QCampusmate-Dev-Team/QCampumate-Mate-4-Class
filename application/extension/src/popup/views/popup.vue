@@ -3,7 +3,6 @@
     <main>
       <h1>プラサポ</h1>
       <button @click="load(true)">成績インポート</button>
-      <!-- <button @click="tempLoad">成績インポート</button> -->
       <button @click="openDRC">履修プランナー</button>
       <button @click="$emit('SwitchView', 'settings')">学生情報設定</button>
 
@@ -18,17 +17,32 @@
     </main>
     
     <footer>
-      <a href="#">プライバシーポリシー</a>
+      <h3>オプション</h3>
+      <!-- <hr/> -->
+      <div class="options">
+        <span style="font-size:medium;">GP乱数化</span>
+        <ToggleCheck v-model="isRandom" @toggled="t => isRandom = t"/>
+      </div>
+      <!-- <a href="#">プライバシーポリシー</a> -->
     </footer>
   </div>
+ 
+ 
 </template>
 
 <script setup lang="ts">
+import ToggleCheck from '../components/ToggleCheck.vue'
 import { loadTranscript as load, exportTranscript as exportXLSX, exportTranscriptJSON as exportJSON } from "../../contentScripts/grade_io_utils";
 import openDRC from '../../utils/openDRC'
+import { ref, watch } from 'vue'
 const exportCSV = () => {
   alert('CSVエクスポートはまだ実装されていません。')
 }
+
+const isRandom = ref(true)
+watch(isRandom, () => {
+  console.log(isRandom.value)
+})
 </script>
 
 <style scoped>
@@ -73,5 +87,12 @@ const exportCSV = () => {
   footer a {
     color: #000000;
     font-size: 14px;
+  }
+
+  .options {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
   }
 </style>

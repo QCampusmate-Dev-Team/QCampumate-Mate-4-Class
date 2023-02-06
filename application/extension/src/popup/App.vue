@@ -2,7 +2,6 @@
   <KeepAlive>
     <component @switch-view="switchView" :is="current"></component>
   </KeepAlive>
-
   <!-- <KeepAlive>
     <pop-up msg="QCampusmate Main" v-if="!vis"/>
   </KeepAlive>
@@ -30,10 +29,10 @@ import { StudentInfo } from '@qcampusmate-mate/types'
 import { shallowRef, onMounted, provide, reactive} from 'vue'
 // import DR from '../../../locals/dr_mock.json'
 
-
+localStorage.getItem('')
 const current = shallowRef(PopUp)
 const studentInfo = reactive<StudentInfo>({
-  enrollment: '',
+  enrollment: NaN,
   school: '', 
   major: '',
   field: '',
@@ -75,17 +74,3 @@ onMounted(() => {
 })
 
 </script>
-
-<style scoped>
-  /* .logo {
-    height: 6em;
-    padding: 1.5em;
-    will-change: filter;
-  }
-  .logo:hover {
-    filter: drop-shadow(0 0 2em #646cffaa);
-  }
-  .logo.vue:hover {
-    filter: drop-shadow(0 0 2em #42b883aa);
-  } */
-</style>
