@@ -13,7 +13,7 @@
 {
   "category": "課題協学科目",
   "course_id": 20531706,
-  "gpa": 3,
+  "gp": 3,
   "last_updated": {},
   "letter_evaluation": "B",
   "prinstructor": "LAUWEREYNS JOHAN",
@@ -26,7 +26,7 @@
 {
   "category": "言語文化基礎科目",
   "course_id": 19534344,
-  "gpa": 2,
+  "gp": 2,
   "last_updated": {},
   "letter_evaluation": "C",
   "prinstructor": "アームストロング，Ｍ",
@@ -39,7 +39,7 @@
 {
   "category": "言語文化基礎科目",
   "course_id": 19535352,
-  "gpa": 4,
+  "gp": 4,
   "last_updated": {},
   "letter_evaluation": "A",
   "prinstructor": "アームストロング，Ｍ",
@@ -52,7 +52,7 @@
 {
   "category": "言語文化基礎科目",
   "course_id": 20538044,
-  "gpa": 4,
+  "gp": 4,
   "last_updated": {},
   "letter_evaluation": "A",
   "prinstructor": "伊藤　薫",
@@ -65,7 +65,7 @@
 {
   "category": "言語文化基礎科目",
   "course_id": 19534673,
-  "gpa": 4,
+  "gp": 4,
   "last_updated": {},
   "letter_evaluation": "A",
   "prinstructor": "鈴木　隆子",
@@ -78,7 +78,7 @@
 {
   "category": "言語文化基礎科目",
   "course_id": 20538045,
-  "gpa": 4,
+  "gp": 4,
   "last_updated": {},
   "letter_evaluation": "A",
   "prinstructor": "伊藤　薫",
@@ -115,7 +115,7 @@
 {
   "category": "言語文化基礎科目",
   "course_id": 20533156,
-  "gpa": 4,
+  "gp": 4,
   "last_updated": {},
   "letter_evaluation": "A",
   "prinstructor": "李　彦虎",
@@ -128,7 +128,7 @@
 {
   "category": "言語文化基礎科目",
   "course_id": 19531256,
-  "gpa": 4,
+  "gp": 4,
   "last_updated": {},
   "letter_evaluation": "A",
   "prinstructor": "姜　希京",
@@ -141,7 +141,7 @@
 {
   "category": "言語文化基礎科目",
   "course_id": 19534256,
-  "gpa": 2,
+  "gp": 2,
   "last_updated": {},
   "letter_evaluation": "C",
   "prinstructor": "金　京姫",
@@ -154,7 +154,7 @@
 {
   "category": "言語文化基礎科目",
   "course_id": 19534756,
-  "gpa": 4,
+  "gp": 4,
   "last_updated": {},
   "letter_evaluation": "A",
   "prinstructor": "金　京姫",
@@ -167,7 +167,7 @@
 {
   "category": "言語文化基礎科目",
   "course_id": 20534657,
-  "gpa": 2,
+  "gp": 2,
   "last_updated": {},
   "letter_evaluation": "C",
   "prinstructor": "李　廷恩",
@@ -180,7 +180,7 @@
 {
   "category": "言語文化基礎科目",
   "course_id": 20534756,
-  "gpa": 2,
+  "gp": 2,
   "last_updated": {},
   "letter_evaluation": "C",
   "prinstructor": "金　京姫",
@@ -193,7 +193,7 @@
 {
   "category": "言語文化基礎科目",
   "course_id": 21533397,
-  "gpa": 0,
+  "gp": 0,
   "last_updated": {},
   "letter_evaluation": "F",
   "prinstructor": "李　相穆",
@@ -206,7 +206,7 @@
 {
   "category": "文系ディシプリン科目",
   "course_id": 20531101,
-  "gpa": 4,
+  "gp": 4,
   "last_updated": {},
   "letter_evaluation": "A",
   "prinstructor": "岡野　潔",
@@ -219,7 +219,7 @@
 {
   "category": "文系ディシプリン科目",
   "course_id": 19533204,
-  "gpa": 2,
+  "gp": 2,
   "last_updated": {},
   "letter_evaluation": "C",
   "prinstructor": "清水　靖久",
@@ -232,7 +232,7 @@
 {
   "category": "文系ディシプリン科目",
   "course_id": 21533107,
-  "gpa": 4,
+  "gp": 4,
   "last_updated": {},
   "letter_evaluation": "A",
   "prinstructor": "伊藤　幸司",
@@ -245,7 +245,7 @@
 {
   "category": "文系ディシプリン科目",
   "course_id": 20531104,
-  "gpa": 3,
+  "gp": 3,
   "last_updated": {},
   "letter_evaluation": "B",
   "prinstructor": "静永　健",
@@ -258,7 +258,7 @@
 {
   "category": "文系ディシプリン科目",
   "course_id": 20532205,
-  "gpa": 4,
+  "gp": 4,
   "last_updated": {},
   "letter_evaluation": "A",
   "prinstructor": "東口　豊",
@@ -271,7 +271,7 @@
 {
   "category": "文系ディシプリン科目",
   "course_id": 19532001,
-  "gpa": 4,
+  "gp": 4,
   "last_updated": {},
   "letter_evaluation": "A",
   "prinstructor": "太田　好信",
@@ -284,7 +284,7 @@
 {
   "category": "文系ディシプリン科目",
   "course_id": 20533009,
-  "gpa": 4,
+  "gp": 4,
   "last_updated": {},
   "letter_evaluation": "A",
   "prinstructor": "施　光恒",
@@ -297,7 +297,7 @@
 {
   "category": "文系ディシプリン科目",
   "course_id": 19533105,
-  "gpa": 4,
+  "gp": 4,
   "last_updated": {},
   "letter_evaluation": "A",
   "prinstructor": "北澤　満",
@@ -310,7 +310,7 @@
 {
   "category": "文系ディシプリン科目",
   "course_id": 19532103,
-  "gpa": 4,
+  "gp": 4,
   "last_updated": {},
   "letter_evaluation": "A",
   "prinstructor": "瀬平劉　アントン",
@@ -323,7 +323,7 @@
 {
   "category": "文系ディシプリン科目",
   "course_id": 19532104,
-  "gpa": 3,
+  "gp": 3,
   "last_updated": {},
   "letter_evaluation": "B",
   "prinstructor": "瀬平劉　アントン",
@@ -336,7 +336,7 @@
 {
   "category": "理系ディシプリン科目",
   "course_id": 20533115,
-  "gpa": 4,
+  "gp": 4,
   "last_updated": {},
   "letter_evaluation": "A",
   "prinstructor": "斎藤　新悟",
@@ -349,7 +349,7 @@
 {
   "category": "理系ディシプリン科目",
   "course_id": 20534360,
-  "gpa": 4,
+  "gp": 4,
   "last_updated": {},
   "letter_evaluation": "A",
   "prinstructor": "花元　誠一",
@@ -362,7 +362,7 @@
 {
   "category": "理系ディシプリン科目",
   "course_id": 20535223,
-  "gpa": 4,
+  "gp": 4,
   "last_updated": {},
   "letter_evaluation": "A",
   "prinstructor": "関　元秀",
@@ -375,7 +375,7 @@
 {
   "category": "理系ディシプリン科目",
   "course_id": 21533251,
-  "gpa": 3,
+  "gp": 3,
   "last_updated": {},
   "letter_evaluation": "B",
   "prinstructor": "小島　健太郎",
@@ -388,7 +388,7 @@
 {
   "category": "理系ディシプリン科目",
   "course_id": 21533249,
-  "gpa": 4,
+  "gp": 4,
   "last_updated": {},
   "letter_evaluation": "A",
   "prinstructor": "市川　雄一",
@@ -401,7 +401,7 @@
 {
   "category": "理系ディシプリン科目",
   "course_id": 19531017,
-  "gpa": 4,
+  "gp": 4,
   "last_updated": {},
   "letter_evaluation": "A",
   "prinstructor": "割石　博之",
@@ -414,7 +414,7 @@
 {
   "category": "理系ディシプリン科目",
   "course_id": 21535026,
-  "gpa": 4,
+  "gp": 4,
   "last_updated": {},
   "letter_evaluation": "A",
   "prinstructor": "細川　貴弘",
@@ -427,7 +427,7 @@
 {
   "category": "理系ディシプリン科目",
   "course_id": 20534018,
-  "gpa": 4,
+  "gp": 4,
   "last_updated": {},
   "letter_evaluation": "A",
   "prinstructor": "安藤　詩音",
@@ -440,7 +440,7 @@
 {
   "category": "健康・スポーツ科目",
   "course_id": 19535282,
-  "gpa": 4,
+  "gp": 4,
   "last_updated": {},
   "letter_evaluation": "A",
   "prinstructor": "岸本　裕歩",
@@ -453,7 +453,7 @@
 {
   "category": "総合科目",
   "course_id": 20533828,
-  "gpa": 2,
+  "gp": 2,
   "last_updated": {},
   "letter_evaluation": "C",
   "prinstructor": "岡村　耕二",
@@ -466,7 +466,7 @@
 {
   "category": "総合科目",
   "course_id": 22538086,
-  "gpa": 3,
+  "gp": 3,
   "last_updated": {},
   "letter_evaluation": "B",
   "prinstructor": "金子　晃介",
@@ -479,7 +479,7 @@
 {
   "category": "フロンティア科目",
   "course_id": 20538006,
-  "gpa": 2,
+  "gp": 2,
   "last_updated": {},
   "letter_evaluation": "C",
   "prinstructor": "岡村　耕二",
@@ -492,7 +492,7 @@
 {
   "category": "フロンティア科目",
   "course_id": 20535901,
-  "gpa": 4,
+  "gp": 4,
   "last_updated": {},
   "letter_evaluation": "A",
   "prinstructor": "赤司　友徳",
@@ -505,7 +505,7 @@
 {
   "category": "フロンティア科目",
   "course_id": 20535902,
-  "gpa": 3,
+  "gp": 3,
   "last_updated": {},
   "letter_evaluation": "B",
   "prinstructor": "藤岡　健太郎",
@@ -518,7 +518,7 @@
 {
   "category": "フロンティア科目",
   "course_id": 19533324,
-  "gpa": 4,
+  "gp": 4,
   "last_updated": {},
   "letter_evaluation": "A",
   "prinstructor": "坂井　猛",
@@ -531,7 +531,7 @@
 {
   "category": "フロンティア科目",
   "course_id": 19533325,
-  "gpa": 3,
+  "gp": 3,
   "letter_evaluation": "B",
   "prinstructor": "坂井　猛",
   "quarter": "夏学期",
@@ -561,7 +561,7 @@
 {
   "category": "サイバーセキュリティ科目",
   "course_id": 19532363,
-  "gpa": 3,
+  "gp": 3,
   "last_updated": {},
   "letter_evaluation": "B",
   "prinstructor": "島田　敬士",
@@ -574,7 +574,7 @@
 {
   "category": "（文）専攻教育科目",
   "course_id": 20052609,
-  "gpa": 4,
+  "gp": 4,
   "last_updated": {},
   "letter_evaluation": "A",
   "prinstructor": "栗山　雅央",
@@ -587,7 +587,7 @@
 {
   "category": "（文）専攻教育科目",
   "course_id": 21051804,
-  "gpa": 3,
+  "gp": 3,
   "last_updated": {},
   "letter_evaluation": "B",
   "prinstructor": "クロンツ　テッド",
@@ -600,7 +600,7 @@
 {
   "category": "（文）専攻教育科目",
   "course_id": 22052321,
-  "gpa": 3,
+  "gp": 3,
   "last_updated": {},
   "letter_evaluation": "B",
   "prinstructor": "中尾　友香梨",
@@ -613,7 +613,7 @@
 {
   "category": "（文）専攻教育科目",
   "course_id": 20054103,
-  "gpa": 4,
+  "gp": 4,
   "last_updated": {},
   "letter_evaluation": "A",
   "prinstructor": "国分　航士",
@@ -626,7 +626,7 @@
 {
   "category": "（文）専攻教育科目",
   "course_id": 22054228,
-  "gpa": 4,
+  "gp": 4,
   "last_updated": {},
   "letter_evaluation": "A",
   "prinstructor": "南澤　良彦",
@@ -639,7 +639,7 @@
 {
   "category": "（文）専攻教育科目",
   "course_id": 20055708,
-  "gpa": 4,
+  "gp": 4,
   "last_updated": {},
   "letter_evaluation": "A",
   "prinstructor": "岡崎　敦",
@@ -652,7 +652,7 @@
 {
   "category": "（文）専攻教育科目",
   "course_id": 21055709,
-  "gpa": 3,
+  "gp": 3,
   "last_updated": {},
   "letter_evaluation": "B",
   "prinstructor": "岡崎　敦",
@@ -665,7 +665,7 @@
 {
   "category": "（文）専攻教育科目",
   "course_id": 21052302,
-  "gpa": 3,
+  "gp": 3,
   "last_updated": {},
   "letter_evaluation": "B",
   "prinstructor": "中島　楽章",
@@ -678,7 +678,7 @@
 {
   "category": "（文）専攻教育科目",
   "course_id": 21052803,
-  "gpa": 4,
+  "gp": 4,
   "last_updated": {},
   "letter_evaluation": "A",
   "prinstructor": "中島　楽章",
@@ -691,7 +691,7 @@
 {
   "category": "（文）専攻教育科目",
   "course_id": 20052302,
-  "gpa": 4,
+  "gp": 4,
   "last_updated": {},
   "letter_evaluation": "A",
   "prinstructor": "中島　楽章",
@@ -704,7 +704,7 @@
 {
   "category": "（文）専攻教育科目",
   "course_id": 20052803,
-  "gpa": 4,
+  "gp": 4,
   "last_updated": {},
   "letter_evaluation": "A",
   "prinstructor": "中島　楽章",
@@ -717,7 +717,7 @@
 {
   "category": "（文）専攻教育科目",
   "course_id": 21056002,
-  "gpa": 3,
+  "gp": 3,
   "last_updated": {},
   "letter_evaluation": "B",
   "prinstructor": "山根　直生",
@@ -730,7 +730,7 @@
 {
   "category": "（文）専攻教育科目",
   "course_id": 21052403,
-  "gpa": 2,
+  "gp": 2,
   "last_updated": {},
   "letter_evaluation": "C",
   "prinstructor": "中島　楽章",
@@ -743,7 +743,7 @@
 {
   "category": "（文）専攻教育科目",
   "course_id": 21052903,
-  "gpa": 4,
+  "gp": 4,
   "last_updated": {},
   "letter_evaluation": "A",
   "prinstructor": "中島　楽章",
@@ -756,7 +756,7 @@
 {
   "category": "（文）専攻教育科目",
   "course_id": 22052412,
-  "gpa": 2,
+  "gp": 2,
   "last_updated": {},
   "letter_evaluation": "C",
   "prinstructor": "中島　楽章",
@@ -769,7 +769,7 @@
 {
   "category": "（文）専攻教育科目",
   "course_id": 21051100,
-  "gpa": 2,
+  "gp": 2,
   "last_updated": {},
   "letter_evaluation": "C",
   "prinstructor": "杉村　伸二",
@@ -782,7 +782,7 @@
 {
   "category": "（文）専攻教育科目",
   "course_id": 21051601,
-  "gpa": 4,
+  "gp": 4,
   "last_updated": {},
   "letter_evaluation": "A",
   "prinstructor": "杉村　伸二",
@@ -795,7 +795,7 @@
 {
   "category": "（文）専攻教育科目",
   "course_id": 22051111,
-  "gpa": 4,
+  "gp": 4,
   "last_updated": {},
   "letter_evaluation": "A",
   "prinstructor": "杉村　伸二",
@@ -808,7 +808,7 @@
 {
   "category": "（文）専攻教育科目",
   "course_id": 20051601,
-  "gpa": 4,
+  "gp": 4,
   "last_updated": {},
   "letter_evaluation": "A",
   "prinstructor": "杉村　伸二",
@@ -821,7 +821,7 @@
 {
   "category": "（文）専攻教育科目",
   "course_id": 21056003,
-  "gpa": 4,
+  "gp": 4,
   "last_updated": {},
   "letter_evaluation": "A",
   "prinstructor": "剣持　久木",
@@ -834,7 +834,7 @@
 {
   "category": "（文）専攻教育科目",
   "course_id": 20056005,
-  "gpa": 4,
+  "gp": 4,
   "last_updated": {},
   "letter_evaluation": "A",
   "prinstructor": "武田　将明",
@@ -847,7 +847,7 @@
 {
   "category": "（文）専攻教育科目",
   "course_id": 22053304,
-  "gpa": 3,
+  "gp": 3,
   "last_updated": {},
   "letter_evaluation": "B",
   "prinstructor": "ジェニー　セイガー",
@@ -860,7 +860,7 @@
 {
   "category": "（文）低年次専攻教育科目",
   "course_id": 20051904,
-  "gpa": 3,
+  "gp": 3,
   "last_updated": {},
   "letter_evaluation": "B",
   "prinstructor": "横田　理博",
@@ -884,7 +884,7 @@
 {
   "category": "（文）低年次専攻教育科目",
   "course_id": 20055611,
-  "gpa": 4,
+  "gp": 4,
   "last_updated": {},
   "letter_evaluation": "A",
   "prinstructor": "髙木　信宏",
@@ -897,7 +897,7 @@
 {
   "category": "（経）専攻教育科目",
   "course_id": 21170085,
-  "gpa": 4,
+  "gp": 4,
   "last_updated": {},
   "letter_evaluation": "A",
   "prinstructor": "北原　知就",
@@ -910,7 +910,7 @@
 {
   "category": "（経）専攻教育科目",
   "course_id": 20171103,
-  "gpa": 2,
+  "gp": 2,
   "last_updated": {},
   "letter_evaluation": "C",
   "prinstructor": "村尾　徹士",
@@ -962,7 +962,7 @@
 {
   "category": "（理）専攻教育科目",
   "course_id": 21224002,
-  "gpa": 3,
+  "gp": 3,
   "last_updated": {},
   "letter_evaluation": "B",
   "prinstructor": "川崎　英文",
@@ -975,7 +975,7 @@
 {
   "category": "（理）専攻教育科目",
   "course_id": 21221034,
-  "gpa": 4,
+  "gp": 4,
   "last_updated": {},
   "letter_evaluation": "A",
   "prinstructor": "池田　大輔",
@@ -1000,7 +1000,7 @@
 {
   "category": "（工）専攻教育科目",
   "course_id": 20254209,
-  "gpa": 2,
+  "gp": 2,
   "last_updated": {},
   "letter_evaluation": "C",
   "prinstructor": "久住　憲嗣",

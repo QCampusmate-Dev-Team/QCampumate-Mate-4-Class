@@ -4,10 +4,9 @@ import { toRaw, reactive} from 'vue'
 import _ from 'lodash' 
 import { DRC, CompiledLeafReq, sumUnits, reportDRCTreeNode} from '../src/drc/DRC'
 import { DegreeRequirementBase, StudentInfo, LeafReq, Req, GradeEntry } from '@qcampusmate-mate/types'
-import dr_19_let_touyoushi_mid from './dr_19_let_touyoushi_medium0'
+import dr_19_let_touyoushi_mid from './dr/dr_19_let_touyoushi_medium0'
 import dr_19_let_touyoushi_complete from './dr/dr_19_let_touyoushi_large0.json'
-import { course_grades as let_ge_complete } from './grade_entry/grade_entry_large01.json'
-
+import let_ge_complete from './grade_entry/grade_entry_let_touyoushi_large02.json'
 
 function initializeDRC(drcInstance: DRC, dr?: DegreeRequirementBase, grade_records?: GradeEntry[]) {
   drcInstance.drcTree = _.cloneDeep(dr)

@@ -2,7 +2,8 @@ import { compileMatchOptions } from '../src/drc/FilterCompiler'
 import { expect, it } from 'vitest'
 import { GradeEntry, MatchFunctionType, MatchOptions} from '@qcampusmate-mate/types'
 import * as _ from 'lodash'
-import { course_grades as let_ge_complete } from './grade_entry/grade_entry_large01.json'
+// import { course_grades as let_ge_complete } from './grade_entry/course_result_let_touyoushi_large01.json'
+import let_ge_complete from './grade_entry/grade_entry_let_touyoushi_large02.json'
 
 describe('must has one course', () => {
   const matchKisemiMustHasCourses:MatchOptions = {
@@ -798,7 +799,7 @@ describe("test all", () => {
     const others: GradeEntry[] =  [{
       category: '（文）専攻教育科目',
       course_id: 20054103,
-      gpa: 4,
+      gp: 4,
       label: '現代史入門Ⅰ',
       last_updated: '2020/10/12',
       letter_evaluation: 'A',
@@ -817,7 +818,7 @@ describe("test all", () => {
     {
       category: '（経）専攻教育科目',
       course_id: 21170085,
-      gpa: 4,
+      gp: 4,
       label: '経済工学演習①',
       last_updated: '2022/02/18',
       letter_evaluation: 'A',
@@ -835,7 +836,7 @@ describe("test all", () => {
     {
       category: '（経）専攻教育科目',
       course_id: 20171103,
-      gpa: 4,
+      gp: 4,
       label: 'マクロ経済学Ⅰ',
       last_updated: '2020/08/21',
       letter_evaluation: 'A',
@@ -853,7 +854,7 @@ describe("test all", () => {
     {
       category: '（工）専攻教育科目',
       course_id: 20254209,
-      gpa: 2,
+      gp: 2,
       label: 'コンピュータアーキテクチャⅠ',
       last_updated: '2020/09/01',
       letter_evaluation: 'C',
@@ -871,7 +872,7 @@ describe("test all", () => {
     {
       category: '（工）専攻教育科目',
       course_id: 22256002,
-      gpa: null,
+      gp: null,
       label: 'オペレーティングシステム',
       last_updated: '',
       letter_evaluation: '',
