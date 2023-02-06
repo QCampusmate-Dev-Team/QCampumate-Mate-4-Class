@@ -1,19 +1,19 @@
 /** TODO: 
- *    1. Make CourseGradeEntry implements GradeEntry
+ *    Can consider this is done✅, tho did in a different way. But keep this 
+ *    for education purposes. 
+ *    1. Make CourseGradeEntry implements GradeEntry 
  *    2. Separate the randomization algorithm into another file as ESModule(gp randomization is needed elsewhere than exporting the grade)
- * 
+ *  　
  *  Reference:
  *    https://blog.holyblue.jp/entry/2022/07/10/182137 
  */
-import { LETTER_EVALUATION, QUARTER, stringOrUndefined, CampusmateCourseRecord, CampusmateCourseResults } from '@qcampusmate-mate/types'
+import { CampusmateCourseRecord, CampusmateCourseResults } from '@qcampusmate-mate/types'
 import * as XLSX from 'xlsx';
 
 export const loadTranscript = async (isRandomized: boolean) => {
   console.log("Loading...")
   // Get reference to current tab (page)
   let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-
-  // If the page is not campusmate? Give a feedback like: you have to go to the course result page to load the data!!
 
   // Programmatically inject a script and execute it on current tab
   chrome.scripting.executeScript({
@@ -55,33 +55,6 @@ export const exportTranscriptJSON = () => {
  * @param { isRandomized } Boolean - whether to randomize the grade
  */
 function load(isRandomized: boolean) {
-  /////////Randomization Utilities/////////
-
-  function randn_bm() {
-    var u = 0, v = 0;
-    while(u === 0) u = Math.random(); //Converting [0,1) to (0,1)
-    while(v === 0) v = Math.random();
-    return Math.sqrt( -2.0 * Math.log( u ) ) * Math.cos( 2.0 * Math.PI * v );
-  }
-
-  const rand_grade = function() {
-    const rand = randn_bm();
-    var gp;
-    if(rand > -0.3 && rand < 0.3) {
-      gp = 3;
-    } else if (rand > -1.2 && rand <= -0.3 || rand >= 0.3 && rand < 1.2){
-      gp = 4;
-    } else if (rand > -2 && rand <= -1.2 || rand >= 1.2 && rand < 2) {
-      gp = 2; 
-    } else if (rand > -2.5 && rand <= -2 || rand >= 2 && rand < 2.5) {
-      gp = 1;
-    } else {
-      gp = 0
-    }
-    return gp;
-  }
- 
-  ////////////////////////////////////////  
   var table, tBody, rows;
   try{
     table = document.querySelector('table.list') as HTMLTableElement,
@@ -91,6 +64,7 @@ function load(isRandomized: boolean) {
       throw new Error('Cannot find the table')
     }
   } catch (e) {
+    // If the page is not campusmate? Give a feedback like: you have to go to the course result page to load the data!!
     console.error(e)
     alert('成績情報が検知されていません。Campusmate-J 成績情報ページに移動してください。→ https://ku-portal.kyushu-u.ac.jp/campusweb/wssrlstr.do')
     return
@@ -128,14 +102,14 @@ function load(isRandomized: boolean) {
       // for each row, generate a CourseGradeEntry
       [...rows[i].cells].forEach((item, index) => {
         courseRecord[theadNames[index]] = item.textContent.trim()
-      })
+      });
 
-      GPAData.course_grades.push(courseRecord as CampusmateCourseRecord)
+      (GPAData.course_grades as CampusmateCourseRecord[]).push(courseRecord as CampusmateCourseRecord)
     } 
   }
 
   console.log(JSON.stringify(GPAData.course_grades, null, 2))
-  chrome.runtime.sendMessage({msg: "saveImportedGradeRecords", data: GPAData})
+  chrome.runtime.sendMessage({msg: "saveImportedGradeRecords", data: GPAData, isRandom: isRandomized})
 
   chrome.storage.local.set({ GPADATA: GPAData }, function() {
     console.log('GPADATA is set.');

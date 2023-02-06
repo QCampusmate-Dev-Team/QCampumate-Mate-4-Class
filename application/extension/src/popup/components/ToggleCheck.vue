@@ -9,7 +9,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
   interface ToggleProps {
-    value?: boolean
+    value: boolean
   }
   
   const props = withDefaults(defineProps<ToggleProps>(), {

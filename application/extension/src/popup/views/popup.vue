@@ -2,7 +2,7 @@
   <div class="container">
     <main>
       <h1>プラサポ</h1>
-      <button @click="load(true)">成績インポート</button>
+      <button @click="load(isRandom)">成績インポート</button>
       <button @click="openDRC">履修プランナー</button>
       <button @click="$emit('SwitchView', 'settings')">学生情報設定</button>
 
@@ -21,7 +21,7 @@
       <!-- <hr/> -->
       <div class="options">
         <span style="font-size:medium;">GP乱数化</span>
-        <ToggleCheck v-model="isRandom" @toggled="t => isRandom = t"/>
+        <ToggleCheck :value="isRandom" @toggled="t => isRandom = t"/>
       </div>
       <!-- <a href="#">プライバシーポリシー</a> -->
     </footer>
@@ -39,9 +39,12 @@ const exportCSV = () => {
   alert('CSVエクスポートはまだ実装されていません。')
 }
 
-const isRandom = ref(true)
+const isRandom_l = localStorage.getItem('isRandom')
+
+const isRandom = ref<boolean>( isRandom_l === '' ? true : isRandom_l === 'true')
+
 watch(isRandom, () => {
-  console.log(isRandom.value)
+  localStorage.setItem('isRandom', isRandom.value.toString())
 })
 </script>
 

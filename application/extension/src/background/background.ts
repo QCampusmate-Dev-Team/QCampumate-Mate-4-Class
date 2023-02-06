@@ -57,25 +57,24 @@ chrome.runtime.onMessage.addListener(
         sendResponse({ code: 200})
       break
       case "saveImportedGradeRecords": 
-        (() => new Promise((resolve, reject) => {
-          try {
-            chrome.storage.local.get('isRandomized', ({isRandomized}) => {
-              const courseResults = request.data as CampusmateCourseResults
-              const courseRecordDTOs = courseResults.course_grades.map(c => new CourseRecordDTO(c))
+        const isRandom = request.isRandom
+        let courseResults
+        try {
+          courseResults = request.data as CampusmateCourseResults
+          const courseRecordDTOs = courseResults.course_grades.map(c => new CourseRecordDTO(c))
 
-              courseResults.course_grades = isRandomized ? courseRecordDTOs.map(c => randomizedGPAndLE(c)) : courseRecordDTOs
-              
-              console.info('@service worker event::saveImportedGradeRecords, has CourseResults: ⏬')
-              console.log(courseResults)
-              resolve(courseResults) 
-            })
-          } catch {
-            reject('@service worker event::saveImportedGradeRecords, error when trying to create randomized grade')
-          }
-        }))()
-        .then(res => saveImportedGradeRecord(res as CampusmateCourseResults))
-        .then(() => {console.log('in service worker, event::saveImportedGradeRecords: successfully saved imported grade records')})
-        .catch(e => { console.error(e)})
+          courseResults.course_grades = isRandom ? courseRecordDTOs.map(c => randomizedGPAndLE(c)) : courseRecordDTOs
+          
+          console.info('@service worker event::saveImportedGradeRecords, has CourseResults: ⏬')
+          console.log(courseResults)
+
+        } catch (e){
+          console.error(e, '@service worker event::saveImportedGradeRecords, error when trying to create randomized grade')
+        }
+
+        saveImportedGradeRecord(courseResults as CampusmateCourseResults)
+          .then(() => {console.log('in service worker, event::saveImportedGradeRecords: successfully saved imported grade records')})
+          .catch(e => { console.error(e)})
       break
       case "openDRC":
         openDRCWindow()
