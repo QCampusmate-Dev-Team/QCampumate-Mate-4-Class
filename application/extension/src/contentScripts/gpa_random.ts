@@ -2,11 +2,11 @@ import rand_grade from '../../lib/random-grade' // manifest.contentScript ->  ".
 const testEle = document.querySelector("#main > form > table > tbody > tr.label > td")
 
 function getRandomGPA() {
-  const gpa = (rand_grade() + Math.random()).toFixed(2);
-  if (gpa > 4) {
-    return Math.floor(gpa).toFixed(2)
+  const gp = (rand_grade() + Math.random()).toFixed(2);
+  if (gp > 4) {
+    return Math.floor(gp).toFixed(2)
   }
-  return gpa
+  return gp
 }
 
 

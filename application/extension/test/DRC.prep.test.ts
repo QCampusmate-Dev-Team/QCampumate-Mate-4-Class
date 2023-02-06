@@ -3,9 +3,9 @@ import { expect, it } from 'vitest'
 import type { ComputedRef } from 'vue'
 import * as _ from 'lodash'
 import { DRC, CompiledLeafReq, sumUnits, getMinPartialSumSubset, pickSatisfyingMinUnits } from '../src/drc/DRC'
-import dr_19_let_touyoushi_sm from './dr_19_let_touyoushi_small'
+import dr_19_let_touyoushi_sm from './dr/dr_19_let_touyoushi_small'
 // All subsets are disjoint
-import dr_19_let_touyoushi_sm0 from './dr_19_let_touyoushi_small0'
+import dr_19_let_touyoushi_sm0 from './dr/dr_19_let_touyoushi_small0'
 
 
 // Union of all subsets is the original set

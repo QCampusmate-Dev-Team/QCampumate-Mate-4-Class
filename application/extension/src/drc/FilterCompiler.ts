@@ -35,10 +35,10 @@ export function compileMatchOptions (matchOptions: MatchOptions): MatchFunctionT
    * Boolean function instantiating the set of MatchOptions specified on a Degree Requirement Leaf
    * 
    * Implementation note:
-   * Due to the missing numberlinks and unreasonable numberlink encoding for some courses(e.g. HUM) in Campusmate-J, current implementation of this matching function uses two disjoint ways of matching courses based on existence of `like` keys:
-   *  1. Match using numberlinks(mustHas only), or school, major(include/exclude)
+   * Due to the missing numberlinks and unreasonable numberlink encoding for some courses(e.g. HUM) in Campusmate-J, current implementation of this matching function uses the following two ways of matching courses based on existence of `like` keys:
+   *  1. The good way: match using numberlinks(mustHas only), or school, major(include/exclude)
    * 
-   *  2. Match with (name,[school]), name is specified by `like` property
+   *  2. The sloppy way: match through (name,[school]), name is specified by `like` property that specifies a pattern
    * 
    * @param {GradeEntry}
    * @return {Boolean} - True if the GradeEntry satisfies any of the specified MatchOptions 
@@ -164,4 +164,3 @@ export function compileMatchOptions (matchOptions: MatchOptions): MatchFunctionT
     return false
   }
 }
-//////////////////////////////////////////////////

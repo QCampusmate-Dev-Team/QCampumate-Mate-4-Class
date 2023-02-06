@@ -19,13 +19,13 @@ export default defineConfig({
   ],
   
   optimizeDeps: {
-    include: ['@qcampusmate-mate/types', '@qcampusmate-mate/plasapo-core', '@qcampusmate-mate/plasapo-ui', 'element-plus', '@vue'],
+    include: ['@qcampusmate-mate/types', '@qcampusmate-mate/plasapo-core', 'element-plus', 'vue'],
   },
   build: {
     sourcemap: true,
     chunkSizeWarningLimit: 1000,
     commonjsOptions: {
-      include: [/@qcampusmate-mate*/, /element-plus/, /node_modules/, /@vue/],
+      include: [/@qcampusmate-mate*/, /element-plus/, /node_modules/, /vue/],
       // esmExternals: true,
       transformMixedEsModules: true
     },

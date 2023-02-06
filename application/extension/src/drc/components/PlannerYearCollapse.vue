@@ -94,9 +94,9 @@ import { Delete } from '@element-plus/icons-vue'
 import AcademicPlannerTable from './AcademicPlannerTable.vue'
 import AddCourseForm from './AddCourseForm.vue'
 import { ref, inject, computed, markRaw } from 'vue'
-import { DRC, aggregate, getPlannerTable } from '../drc/DRC'
+import { DRC, aggregate, getPlannerTable } from '../DRC'
 
-const drc = await inject<Promise<DRC>>('drc')
+const drc = await inject<Promise<DRC>>('drc') as DRC
 const activeName = ref[`${new Date().getFullYear()}`];
 
 var addYear:number = 0
@@ -108,6 +108,7 @@ const courseType = ref('自由選択科目')
 const dialog = ref<InstanceType<typeof AddCourseForm> | null>(null)
 const plannerTable = computed(() => {
   // console.log(JSON.stringify(getPlannerTable(drc.records_all.value, drc.maxYearInAp.value), null, 2))
+  console.log("@PlannerYearCollapse, plannerTable", getPlannerTable(drc.records_all.value, drc.maxYearInAp.value))
   return getPlannerTable(drc.records_all.value, drc.maxYearInAp.value)
 })
 

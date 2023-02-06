@@ -2,13 +2,7 @@ import { compileMatchOptions } from './FilterCompiler'
 import { ref, reactive, computed, watch } from 'vue'
 import type { Ref , UnwrapNestedRefs, ComputedRef } from 'vue'
 import * as _ from 'lodash'
-import type { Course, GradeEntry, GradeFilterOptions, PlannerTable, PlannerTableEntry, _PlannerTableEntry, DegreeRequirementBase, LeafReq, Req, MatchFunctionType, CompiledLeafReqInterface, Tree} from '@qcampusmate-mate/types';
-// import store from '../store/index.js'
-
-const LETTER_TO_GP = {
-  'A': 4, 'B': 3, 'C': 2, 'D': 1, 'F': 0,
-};
-
+import type { GradeEntry, GradeFilterOptions, PlannerTable, _PlannerTableEntry, DegreeRequirementBase, LeafReq, Req, MatchFunctionType, CompiledLeafReqInterface } from '@qcampusmate-mate/types';
 
 class CompiledLeafReq implements CompiledLeafReqInterface{
   label: string;
@@ -70,6 +64,7 @@ class DRC {
         break
       case undefined:
         console.info('@DRC, initialized(): use deafult data source:', this.dataSource['name'])
+        break
       default:
         console.error('@DRC, initialized(): specified data source is not currently supported.')
     }
@@ -77,22 +72,28 @@ class DRC {
     return new Promise<DRC>((resolve, reject) => {
       try {
         chrome.storage.local.get(["GPADATA", "DR", "records_all", "maxYearInAp"], ({ GPADATA, DR, records_all, maxYearInAp }) => {
-          // console.log(`In DRC.ts, initialize(): ${JSON.stringify(DRCTree)}`)
-
+          // console.log(`@DRC.ts initialize(): , initialize(): ${JSON.stringify(DRCTree)}`)
+          // console.warn('@DRC.ts initialize(): ', records_all)
           if (!records_all) {
             alert(`成績は見つかりません！！`)
           }
-    
+          
           this.drcTree = DR
           this.gpaData = GPADATA.course_grades
+
+          
           this.records_all.value = JSON.parse(records_all)
           this.maxYearInAp.value = Math.max(maxYearInAp, getMaxYearInRecords(this.records_all.value))
 
-          if (!this.drcTree.req) alert(JSON.stringify(reactive(this.drcTree), null, 2))
+          // if (!this.drcTree.req) alert(JSON.stringify(reactive(this.drcTree), null, 2))
           this.pickLeafRequirements()
           this.setUpPassedUnitsDeps()
           this.categorize()
+          // this.drLeaves.forEach(bin => {
+          //   console.log(reportDRCTreeNode(bin))
+          // })
 
+          console.warn('@DRC.ts initialize(): ', records_all)
           // TODO:
           // setting up reactive deps between gpaData -> drcTree
           watch(() => this.records_all.value.length, (val, oldV) => {
@@ -103,6 +104,7 @@ class DRC {
             } 
             this.categorize()
 
+            
             chrome.storage.local.set({records_all: JSON.stringify(this.records_all.value)})
           })
 
@@ -161,7 +163,7 @@ class DRC {
 
   /**
    *  This method mutates `drcTree` property such that each non-leaf's 
-   *  `passed_units` becomes an observer of and sums up its direct children's *  `passed_units`. Current implementation uses `computed` from Vue Reactive *  Core API.
+   *  `passed_units` becomes an observer of and sums up its direct children's `passed_units`. Current implementation uses `computed` from Vue Reactive Core API.
    * 
    *  Note that the current implementation assumes all leaves of `drcTree` must
    *  be a computed property as well. In this way, it also entails that
@@ -248,9 +250,9 @@ class DRC {
         .filter(e => !e.matched)
         .filter(req.matchFunction)   
 
-      console.log(`要件名: ${req.label}`)
-      console.log(matchedCourses.map(e => e.label).join('\n'))
-      console.log('==================')
+      // console.log(`要件名: ${req.label}`)
+      // console.log(matchedCourses.map(e => e.label).join('\n'))
+      // console.log('==================')
 
       // calculated the sum of units
       let passed_units = sumUnits(matchedCourses)
@@ -301,7 +303,6 @@ class DRC {
   }
 }
 
-
 /////////////////////////////////////////////////////////
 ////////////////////////SUBROUTINES//////////////////////
 /////////////////////////////////////////////////////////
@@ -336,9 +337,8 @@ function useDRCTreeComputed(drcTreeReference): ComputedRef<Array<Req>> {
   })
 }
 
-
 /////////////////////////////////////////////////////////
-////////////////////////UTILITY//////////////////////
+////////////////////////UTILITIES////////////////////////
 /////////////////////////////////////////////////////////
 
 /**
@@ -381,7 +381,7 @@ function useDRCTreeComputed(drcTreeReference): ComputedRef<Array<Req>> {
 
 /**
  * This functions filters the given grade entry by quarter
- * @params {Array<CourseRecord>} courseGrades - an Array of courseGrades objects
+ * @params {Array<ge>} courseGrades - an Array of courseGrades objects
  * @params {number} quarter - 0: returns 前期, 1: returns 後期
  * @returns filtered courseGrades specifies by `quarter` parameter
  */
@@ -411,7 +411,6 @@ function aggregate(gradeFilterOptions:GradeFilterOptions, planner_table: Planner
   const { quarter, year, category } = gradeFilterOptions;
   if (!(year)) console.error('Option is missing `year` key');
 
-
   const plannerTable = typeof quarter === 'undefined' ? planner_table[year].flat() : planner_table[year][quarter];
   // console.log(plannerTable, quarter, year, category);
 
@@ -423,7 +422,7 @@ function aggregate(gradeFilterOptions:GradeFilterOptions, planner_table: Planner
     )// Process only A, B, C, D, F courses
     .filter((e:GradeEntry | _PlannerTableEntry) => (typeof (category) === 'string' ? e.category === category : true))
     .reduce((agg, e: GradeEntry | _PlannerTableEntry) => {
-      const { unit, letter_evaluation, gpa } = e as GradeEntry | _PlannerTableEntry
+      const { unit, letter_evaluation, gp } = e as GradeEntry | _PlannerTableEntry
       
       // console.log(quarter, year)
       // if (quarter ==0 && year == 2023) {
@@ -437,17 +436,20 @@ function aggregate(gradeFilterOptions:GradeFilterOptions, planner_table: Planner
       }
 
       if (e.subject === '基幹教育セミナー') {
-        // console.log(gpa === 0 && letter === 'F');
+        // console.log(gp === 0 && letter === 'F');
       }
+      
       if (letter_evaluation === 'R') { // == 'R'
         agg[letter_evaluation][0] += unit;
         agg.passed_units += unit;
-      } else if (gpa === 0 && letter_evaluation === 'F') { // == 'F'
+      } else if (gp === 0 && letter_evaluation === 'F') { // == 'F'
         agg.total_gpa_units += unit;
         agg.F[0] += unit;
         // console.log(e['subject'], e['letter_evaluation'])
       } else if (['A', 'B', 'C', 'D'].includes(letter_evaluation)) { // == 'A, B, C, D'
-        const totalGpa = unit * LETTER_TO_GP[letter_evaluation];
+        const totalGpa = unit * ({
+          'A': 4, 'B': 3, 'C': 2, 'D': 1, 'F': 0,
+        }[letter_evaluation]);
         agg.total_gpa_units += unit;
         agg.total_gpa += totalGpa;
         agg.passed_units += unit;
@@ -497,14 +499,11 @@ function getMaxYearInRecords(ge: GradeEntry[]): number {
  *    passed_retakable: 1
  *    passed_unretakable: 2
  *  ------------------------
- * - label: the name of the GradeEntry, also the rendered text in DRCTree
  * 
  * @params {GradeEntry} ge - the course_node whose status is undetermined yet 
  * @returns {number} status - the set status of the course node
  */
-function setDRCTreeNodeProperties(ge:GradeEntry) {
-  ge['label'] = ge.subject
-
+function setStatusInRecordsAll(ge:GradeEntry) {
   /* Decide status based on LETTER_EVALUATION */
   // Passed/Not passed detection
   if (ge.letter_evaluation === 'F') {
@@ -512,12 +511,8 @@ function setDRCTreeNodeProperties(ge:GradeEntry) {
     ge.status = -2;
   } else if (['A', 'B', 'C', 'D', 'R'] // 'A', 'B', 'C', 'D', 'R'
     .includes(ge.letter_evaluation)) {
-    if (ge.letter_evaluation === 'D') {
-      // Mark 'D' courses as retakable;
-      ge.status = 1;
-    } else {
-      ge.status = 2;
-    }
+    // Mark 'D' courses as retakable;
+    ge.status = ge.letter_evaluation === 'D' ? 1 : 2
   } else if (ge.letter_evaluation === 'W') { // W
     ge.status = -1;
   } else if (!ge.unit && !ge.last_updated){ // ongoing course
@@ -590,6 +585,7 @@ function pickSatisfyingMinUnits(matchedCourses: GradeEntry[], minUnit:number, or
   try {
     const res: Set<number> = new Set()
     matchedCourses = matchedCourses.map((c, i) => {
+      c = Object.assign({}, c)
       if (!c.unit) {
         c.unit = 0 // make sure unit is 0, since this operates on a copy of the original, this is not destructive
         res.add(i)
@@ -636,5 +632,5 @@ ${(node.children.map(ge => {
 
 export { 
   DRC, CompiledLeafReq,
-  filterBy, aggregate, setDRCTreeNodeProperties, getMaxYearInRecords, getPlannerTable, sumUnits, getMinPartialSumSubset, pickSatisfyingMinUnits, reportDRCTreeNode
+  filterBy, aggregate, setStatusInRecordsAll, getMaxYearInRecords, getPlannerTable, sumUnits, getMinPartialSumSubset, pickSatisfyingMinUnits, reportDRCTreeNode
 }

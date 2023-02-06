@@ -14,11 +14,10 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-__exportStar(require("./lib/is-odd"), exports);
-__exportStar(require("./lib/types"), exports);
-__exportStar(require("./lib/Constants"), exports);
-__exportStar(require("./lib/Course"), exports);
-__exportStar(require("./lib/DegReq"), exports);
-__exportStar(require("./lib/StudentInfo"), exports);
+__exportStar(require("./lib/extension"), exports);
+__exportStar(require("./lib/constants"), exports);
+__exportStar(require("./lib/course"), exports);
+__exportStar(require("./lib/degReq"), exports);
+__exportStar(require("./lib/student"), exports);
 __exportStar(require("./lib/DRC"), exports);
 __exportStar(require("./lib/utils"), exports);

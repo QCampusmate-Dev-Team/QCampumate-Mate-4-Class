@@ -62,7 +62,7 @@
 
 <script setup lang="ts">
   import { inject, computed} from 'vue'
-  import { StudentInfo } from '../../../../lib/types'
+  import { StudentInfo } from '@qcampusmate-mate/types'
 
   const student = inject<StudentInfo>('studentInfo')
 

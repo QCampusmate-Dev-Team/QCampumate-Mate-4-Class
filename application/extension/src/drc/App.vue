@@ -22,6 +22,7 @@
         <el-main>
           <planner-year-collapse></planner-year-collapse>
           <!-- <button @click="drc.addCourse"> add course</button> -->
+
         </el-main>
       </el-container>
     </el-container>
@@ -40,8 +41,8 @@
   // import { DRC } from '@qcampusmate-mate/plasapo-core'
   import { DRC } from './DRC' 
   // import { DegReqChecker, PlannerYearCollapse } from '@qcampusmate-mate/plasapo-ui'
-  import DegReqChecker from '@/components/DegReqChecker.vue' 
-  import PlannerYearCollapse from '@/components/PlannerYearCollapse.vue'
+  import DegReqChecker from '@/drc/components/DegReqChecker.vue' 
+  import PlannerYearCollapse from '@/drc/components/PlannerYearCollapse.vue'
 
   const drc = new DRC().initialize()
   provide('drc', drc)

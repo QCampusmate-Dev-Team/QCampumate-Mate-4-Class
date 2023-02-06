@@ -1,5 +1,6 @@
-import { Course, GradeEntry } from './Course'
-import { Tree, LeafReq } from './types'
+import type { Course, GradeEntry } from './course'
+import type { Tree } from './degReq'
+import type { LETTER_EVALUATION } from './constants'
 import type { ComputedRef, UnwrapNestedRefs } from 'vue'
 
 export interface _PlannerTableEntry extends GradeEntry {
@@ -26,4 +27,11 @@ export interface CompiledLeafReqInterface extends Tree {
   minFirstYear?: number;
   passed_units: ComputedRef<number>;
   elecComp?: -1 | 0 | 1 | 2 | 3; 
+}
+
+export interface GradeFilterOptions {
+  quarter?: number;
+  year?: number;
+  evaluation?: LETTER_EVALUATION;
+  category?: string;
 }

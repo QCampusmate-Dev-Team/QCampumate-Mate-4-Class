@@ -41,9 +41,8 @@
       prop="unit"
       label="Unit"
       width="100px"
-      align="right"
-    >
-    <!-- effect="dark" -->
+      align="right">
+
     <!--  circle -->
       <template #default="scope">
         <el-tag
@@ -52,7 +51,8 @@
           type="info"
           color="gray"
           effect="dark"
-          class="unit"><b>{{scope.row.unit.toFixed(1)}}</b>
+          class="unit">
+          <b>{{scope.row.unit.toFixed(1)}}</b>
         </el-tag>
       </template>
     </el-table-column>
@@ -95,7 +95,8 @@ export default {
   setup(props) {
     const subjectCellFormatter = (row, column, cellValue, rowIndex) => {
       const isPNPorW = ['R', 'W'].includes(props.grades[rowIndex].letter_evaluation)
-      const isPlanOrInProgress = props.grades[rowIndex].isPlan || row.unit === ''
+      const isPlanOrInProgress = props.grades[rowIndex].isPlan || !row.unit 
+      // console.log(cellValue, row.unit)
 
       if(isPNPorW) {
         return `${cellValue}(*)`
@@ -104,14 +105,14 @@ export default {
       } else if(props.grades[rowIndex].letter_evaluation === 'F') {
         return `${cellValue}(0)`
       } else {
-        return `${cellValue}(${row.gpa})`
+        // console.log('@AcademicPlannerTable, subjectCellFormatter()', cellValue)
+        return `${cellValue}(${row.gp})`
       }
     }
     const tableRowClassName = ({ row, rowIndex }) => {
       switch(props.grades[rowIndex].letter_evaluation) {
         case 'F': 
           return 'failed-course'
-        break
         default:
           return ''
       }

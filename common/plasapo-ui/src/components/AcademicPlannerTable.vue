@@ -107,16 +107,16 @@ export default {
       } else if(props.grades[rowIndex].letter_evaluation === 'F') {
         return `${cellValue}(0)`
       } else {
-        return `${cellValue}(${row.gpa})`
+        return `${cellValue}(${row.gp})`
       }
 
-      // return `${cellValue}${row.unit === '' ? '' : `(${ isPNPorW ? '*' :row.gpa })`}`;
-      // Number.isNaN(parseFloat(row.gpa))
+      // return `${cellValue}${row.unit === '' ? '' : `(${ isPNPorW ? '*' :row.gp })`}`;
+      // Number.isNaN(parseFloat(row.gp))
 
     }
     const tableRowClassName = ({ row, rowIndex }) => {
       // console.log(`in AcademicPlannerTable.vue, tableRowClassName(): ${JSON.stringify(props.grades[rowIndex], null, 2)}`)
-      // console.log(`in AcademicPlannerTable.vue, tableRowClassName():${parseInt(row.gpa) === 0 ? 'failed-course' : ''}`)
+      // console.log(`in AcademicPlannerTable.vue, tableRowClassName():${parseInt(row.gp) === 0 ? 'failed-course' : ''}`)
 
       switch(props.grades[rowIndex].letter_evaluation) {
         case 'F': 
@@ -125,7 +125,7 @@ export default {
         default:
           return ''
       }
-      // return parseInt(row.gpa) === 0 ? 'failed-course' : '';
+      // return parseInt(row.gp) === 0 ? 'failed-course' : '';
     }
 
     return {

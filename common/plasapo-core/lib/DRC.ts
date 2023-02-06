@@ -119,7 +119,7 @@ export function aggregate(obj?:GradeFilterOptions, planner_table?: PlannerTable)
   //   )// Process only A, B, C, D, F courses
   //   .filter((e:GradeEntry | _PlannerTableEntry) => (typeof (category) === 'string' ? e.category === category : true))
   //   .reduce((agg, e: GradeEntry | _PlannerTableEntry) => {
-  //     const { unit, letter_evaluation, gpa } = e as GradeEntry | _PlannerTableEntry
+  //     const { unit, letter_evaluation, gp } = e as GradeEntry | _PlannerTableEntry
       
   //     // console.log(quarter, year)
   //     // if (quarter ==0 && year == 2023) {
@@ -133,12 +133,12 @@ export function aggregate(obj?:GradeFilterOptions, planner_table?: PlannerTable)
   //     }
 
   //     if (e.subject === '基幹教育セミナー') {
-  //       // console.log(gpa === 0 && letter === 'F');
+  //       // console.log(gp === 0 && letter === 'F');
   //     }
   //     if (letter_evaluation === 'R') { // == 'R'
   //       agg[letter_evaluation][0] += unit;
   //       agg.passed_units += unit;
-  //     } else if (gpa === 0 && letter_evaluation === 'F') { // == 'F'
+  //     } else if (gp === 0 && letter_evaluation === 'F') { // == 'F'
   //       agg.total_gpa_units += unit;
   //       agg.F[0] += unit;
   //       // console.log(e['subject'], e['letter_evaluation'])
